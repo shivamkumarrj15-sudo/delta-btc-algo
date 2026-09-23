@@ -1,0 +1,86 @@
+//@version=5
+indicator("⚡ Delta BTC Multi-Timeframe (1D/1H Levels & 1M Breakout Algo v3)", overlay=true)
+
+// =========================================================================
+// 1. HIGHER TIMEFRAME (1D) KEY LEVELS
+// =========================================================================
+pdh = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
+pdl = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
+pdc = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
+
+// Plot 1D Levels on Chart
+plot(pdh, "1D PDH (Previous Day High)", color=color.new(#f85149, 0), linewidth=2, style=plot.style_linebr)
+plot(pdl, "1D PDL (Previous Day Low)",  color=color.new(#2ea043, 0), linewidth=2, style=plot.style_linebr)
+plot(pdc, "1D PDC (Pivot)",             color=color.new(#58a6ff, 30), linewidth=1, style=plot.style_cross)
+
+// =========================================================================
+// 2. HIGHER TIMEFRAME (1H) KEY LEVELS
+// =========================================================================
+h1_high = request.security(syminfo.tickerid, "60", ta.highest(high, 8), lookahead=barmerge.lookahead_on)
+h1_low  = request.security(syminfo.tickerid, "60", ta.lowest(low, 8), lookahead=barmerge.lookahead_on)
+
+plot(h1_high, "1H Resistance", color=color.new(#ff7b72, 30), linewidth=1, style=plot.style_stepline)
+plot(h1_low,  "1H Support",    color=color.new(#7ee787, 30), linewidth=1, style=plot.style_stepline)
+
+// =========================================================================
+// 3. 1-MINUTE FIGHT & CANDLE A/B BREAKOUT DETECTION (BUY & SELL)
+// =========================================================================
+is_near_support = (low <= pdl * 1.002 and low >= pdl * 0.998) or (low <= h1_low * 1.002 and low >= h1_low * 0.998) or (low <= pdc * 1.001 and low >= pdc * 0.999)
+is_near_resist  = (high >= pdh * 0.998 and high <= pdh * 1.002) or (high >= h1_high * 0.998 and high <= h1_high * 1.002) or (high >= pdc * 0.999 and high <= pdc * 1.001)
+
+// Candle A: Solid Body Dominance Candle (>45% body ratio)
+candle_range = high - low
+candle_body  = math.abs(close - open)
+is_solid_body = candle_range > 0 and (candle_body / candle_range >= 0.45)
+
+// Fight Winners
+is_candle_a_buy  = is_near_support and close > open and is_solid_body and (close[1] < open[1] or low <= low[1])
+is_candle_a_sell = is_near_resist  and close < open and is_solid_body and (close[1] > open[1] or high >= high[1])
+
+// Highlight Candle A (Cyan for Buy, Magenta for Sell)
+barcolor(is_candle_a_buy ? color.new(#58a6ff, 0) : is_candle_a_sell ? color.new(#bc8cff, 0) : na, title="Candle A Highlight")
+
+// Candle B Breakout Trigger
+buy_trigger  = is_candle_a_buy[1] and high > high[1]
+sell_trigger = is_candle_a_sell[1] and low < low[1]
+
+// Stop Loss & Infinite Trailing Targets
+var float sl_price = na
+var float tp_1_2  = na
+var float tp_1_5  = na
+var float tp_1_7  = na
+var float tp_1_10 = na
+var float tp_1_20 = na
+var float tp_1_25 = na
+
+if (buy_trigger)
+    sl_price := low[1] - 2.0
+    float risk = high[1] - sl_price
+    tp_1_2  := high[1] + (risk * 2.0)
+    tp_1_5  := high[1] + (risk * 5.0)
+    tp_1_7  := high[1] + (risk * 7.0)
+    tp_1_10 := high[1] + (risk * 10.0)
+    tp_1_20 := high[1] + (risk * 20.0)
+    tp_1_25 := high[1] + (risk * 25.0)
+
+if (sell_trigger)
+    sl_price := high[1] + 2.0
+    float risk = sl_price - low[1]
+    tp_1_2  := low[1] - (risk * 2.0)
+    tp_1_5  := low[1] - (risk * 5.0)
+    tp_1_7  := low[1] - (risk * 7.0)
+    tp_1_10 := low[1] - (risk * 10.0)
+    tp_1_20 := low[1] - (risk * 20.0)
+    tp_1_25 := low[1] - (risk * 25.0)
+
+// Plot Entry Arrows & Targets
+plotshape(buy_trigger,  title="BUY Trigger",  style=shape.triangleup,   location=location.belowbar, color=color.green, size=size.normal, text="⚡ BUY BREAKOUT")
+plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location=location.abovebar, color=color.red,   size=size.normal, text="⚡ SELL BREAKOUT")
+
+plot(buy_trigger or sell_trigger ? sl_price : na, "SL Line", color=color.red,    linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_2   : na, "1:2 CTC Trigger", color=color.yellow, linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_5   : na, "1:5 50% Exit",    color=color.green,  linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_7   : na, "1:7 (SL to 1:5)", color=color.blue,   linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_10  : na, "1:10 40% Exit",   color=color.purple, linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_20  : na, "1:20 (SL to 1:15)", color=color.orange, linewidth=2, style=plot.style_circles)
+plot(buy_trigger or sell_trigger ? tp_1_25  : na, "1:25 (SL to 1:20)", color=color.white,  linewidth=2, style=plot.style_circles)

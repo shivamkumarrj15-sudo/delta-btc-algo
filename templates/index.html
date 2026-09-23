@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delta Exchange BTC - Pro Analysis & Algo Terminal</title>
+    <!-- TradingView Advanced Charting Library Script -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Top Navigation Header */
+        header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 54px;
+            flex-shrink: 0;
+        }
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo {
+            font-size: 15px;
+            font-weight: 800;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+        }
+        .symbol-badge {
+            background: #21262d;
+            border: 1px solid #30363d;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #f0f6fc;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .mode-badge {
+            font-size: 11px;
+            background: #1f6feb22;
+            color: #58a6ff;
+            border: 1px solid #1f6feb;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .ticker-metrics {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .ticker-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .ticker-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+        .ticker-val {
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+        .price-up { color: #2ea043 !important; }
+        .price-down { color: #f85149 !important; }
+
+        /* Main Workspace Layout */
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 54px);
+            overflow: hidden;
+        }
+        .chart-container {
+            flex: 1;
+            position: relative;
+            background: #0d1117;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #30363d;
+            height: 100%;
+        }
+        .chart-header {
+            padding: 6px 14px;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        /* Timeframe Buttons Bar */
+        .tf-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tf-label {
+            font-size: 11px;
+            color: #8b949e;
+            margin-right: 4px;
+            font-weight: 600;
+        }
+        .tf-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s ease;
+        }
+        .tf-btn:hover {
+            background: #30363d;
+            color: #f0f6fc;
+            border-color: #58a6ff;
+        }
+        .tf-btn.active {
+            background: #1f6feb;
+            color: #ffffff;
+            border-color: #58a6ff;
+            box-shadow: 0 0 8px rgba(31, 111, 235, 0.4);
+        }
+
+        #tv_chart_wrapper {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Sidebar Control & Position Panel */
+        .side-panel {
+            width: 420px;
+            background: #161b22;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-left: 1px solid #30363d;
+            flex-shrink: 0;
+        }
+        .side-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .side-panel::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+        .panel-section {
+            padding: 12px 14px;
+            border-bottom: 1px solid #30363d;
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .metric-box {
+            background: #21262d;
+            border: 1px solid #30363d;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        .metric-box .label { font-size: 10px; color: #8b949e; font-weight: 500; }
+        .metric-box .value { font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+
+        /* Logic Inspector Box */
+        .logic-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 11px;
+        }
+        .logic-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .logic-item:last-child {
+            margin-bottom: 0;
+        }
+        .circle-badge {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1f6feb;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .circle-badge.green { background: #2ea043; }
+        .circle-badge.red { background: #f85149; }
+        .circle-badge.amber { background: #d29922; }
+        .circle-badge.purple { background: #a371f7; }
+
+        .logic-content {
+            flex: 1;
+        }
+        .logic-content-title {
+            font-weight: 700;
+            color: #f0f6fc;
+            margin-bottom: 2px;
+        }
+        .logic-content-desc {
+            color: #8b949e;
+            font-size: 10.5px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Active Trade Card */
+        .trade-card {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 4px;
+        }
+        .trade-card.buy { border-left: 4px solid #2ea043; }
+        .trade-card.sell { border-left: 4px solid #f85149; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .card-badge {
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-buy { background: #2ea04322; color: #2ea043; border: 1px solid #2ea043; }
+        .badge-sell { background: #f8514922; color: #f85149; border: 1px solid #f85149; }
+        .trade-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .progress-track {
+            background: #30363d;
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #58a6ff;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Level Pill Badges */
+        .level-pill {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0d1117;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            border: 1px solid #21262d;
+        }
+
+        /* Trade Records Table */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-row {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+            transition: border-color 0.2s ease;
+        }
+        .history-row:hover {
+            border-color: #58a6ff;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-inspect {
+            background: #1f6feb22;
+            border: 1px solid #1f6feb;
+            color: #58a6ff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-inspect:hover {
+            background: #1f6feb;
+            color: #ffffff;
+        }
+
+        /* Logs & History List */
+        .logs-list {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            max-height: 140px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .log-entry {
+            background: #0d1117;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border-left: 2px solid #58a6ff;
+            color: #8b949e;
+        }
+        .log-entry.signal { border-left-color: #2ea043; color: #f0f6fc; }
+        .log-entry.tp { border-left-color: #e3b341; color: #f0f6fc; }
+        .log-entry.sl { border-left-color: #f85149; color: #f85149; }
+
+        /* A-Z Trade Reason Modal / Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 16px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+            overflow: hidden;
+            animation: modalFadeIn 0.2s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            padding: 14px 18px;
+            background: #21262d;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: #f0f6fc;
+        }
+        .modal-body {
+            padding: 16px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            font-size: 12px;
+        }
+
+        /* Step circle timeline in modal */
+        .step-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+        .step-timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 14px;
+            bottom: 14px;
+            width: 2px;
+            background: #30363d;
+            z-index: 0;
+        }
+        .step-node {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .step-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #1f6feb;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 2px solid #161b22;
+        }
+        .step-badge.b-blue { background: #1f6feb; }
+        .step-badge.b-amber { background: #d29922; }
+        .step-badge.b-green { background: #2ea043; }
+        .step-badge.b-purple { background: #a371f7; }
+        .step-badge.b-red { background: #f85149; }
+
+        .step-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 10px 12px;
+            flex: 1;
+        }
+        .step-card-title {
+            font-weight: 700;
+            color: #f0f6fc;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .step-card-desc {
+            color: #8b949e;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+        .step-metric-badge {
+            display: inline-block;
+            background: #21262d;
+            border: 1px solid #30363d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #58a6ff;
+            margin-top: 4px;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="brand-section">
+            <div class="brand-logo">⚡ DELTA ALGO TERMINAL</div>
+            <div class="symbol-badge">BTCUSD PERP</div>
+            <span class="mode-badge">
+                PAPER TRADING ($1,000)
+            </span>
+        </div>
+        <div class="ticker-metrics">
+            <div class="ticker-item">
+                <span class="ticker-label">LIVE BTC PRICE</span>
+                <span id="top_price" class="ticker-val price-up">$0.00</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">DAILY TRADES</span>
+                <span id="top_daily_trades" class="ticker-val">0 / 4</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">1H COOLDOWN</span>
+                <span id="top_cooldown" class="ticker-val price-up">READY</span>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-label">BOT ENGINE</span>
+                <span id="ws_status" class="ticker-val price-up">● LIVE SYNC</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- Advanced TradingView Interactive Chart Container with 1D, 1H, 15m, 1m Switching & NO Volume Indicator -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <!-- 4 Timeframe Buttons: 1D, 1H, 15m, 1m -->
+                <div class="tf-bar">
+                    <span class="tf-label">⏱️ Timeframe:</span>
+                    <button class="tf-btn active" id="tf_1" onclick="switchTimeframe('1')">1 min</button>
+                    <button class="tf-btn" id="tf_15" onclick="switchTimeframe('15')">15 min</button>
+                    <button class="tf-btn" id="tf_60" onclick="switchTimeframe('60')">1 Hour</button>
+                    <button class="tf-btn" id="tf_D" onclick="switchTimeframe('D')">1 Day</button>
+                </div>
+
+                <div style="font-family:'JetBrains Mono'; color:#8b949e; font-size:11px;">
+                    🛠️ Manual Drawing Suite (Trendline, Box, Long/Short, Measure) • Volume Removed
+                </div>
+            </div>
+            <div id="tv_chart_wrapper">
+                <div id="tradingview_chart_element" style="height:100%; width:100%;"></div>
+            </div>
+        </div>
+
+        <!-- Right Side Control & Trade Manager -->
+        <div class="side-panel">
+            <!-- 1. Capital & Margin Allocation Section -->
+            <div class="panel-section">
+                <div class="section-title">Capital Allocation & Risk (Max 2% Daily Risk)</div>
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="label">Total Equity</div>
+                        <div id="metric_equity" class="value">$1,000.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Margin in Use</div>
+                        <div id="metric_margin" class="value" style="color:#e3b341;">$0.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Free Capital</div>
+                        <div id="metric_free" class="value" style="color:#58a6ff;">$1,000.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Net Realized PnL</div>
+                        <div id="metric_pnl" class="value">$0.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Win Rate</div>
+                        <div id="metric_winrate" class="value">0.0%</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Profit Factor</div>
+                        <div id="metric_pf" class="value">1.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 🧠 Live Setup & Trade Logic Inspector -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span>🧠 Live Trade Logic & Signal Inspector</span>
+                    <span id="logic_state_badge" style="font-size:10px; background:#1f6feb22; color:#58a6ff; border:1px solid #1f6feb; padding:1px 6px; border-radius:4px;">SCANNING</span>
+                </div>
+                <div id="live_logic_container" class="logic-card">
+                    <!-- Step 1: HTF Level -->
+                    <div class="logic-item">
+                        <div class="circle-badge">1</div>
+                        <div class="logic-content">
+                            <div class="logic-content-title">Higher Timeframe (1D/1H) Level</div>
+                            <div id="logic_htf_desc" class="logic-content-desc">Scanning near 1D PDH/PDL or 1H Swings...</div>
+                        </div>
+                    </div>
+                    <!-- Step 2: Fight & Exhaustion -->
+                    <div class="logic-item">
+                        <div class="circle-badge amber">2</div>
+                        <div class="logic-content">
+                            <div class="logic-content-title">Buyer vs Seller Fight</div>
+                            <div id="logic_fight_desc" class="logic-content-desc">Awaiting price test & rejection wick at key level.</div>
+                        </div>
+                    </div>
+                    <!-- Step 3: Candle A Solid Body Dominance -->
+                    <div class="logic-item">
+                        <div class="circle-badge green">3</div>
+                        <div class="logic-content">
+                            <div class="logic-content-title">Candle A Dominance (>45% Body)</div>
+                            <div id="logic_candle_a_desc" class="logic-content-desc">Waiting for solid body reversal candle.</div>
+                        </div>
+                    </div>
+                    <!-- Step 4: Candle B Breakout Trigger -->
+                    <div class="logic-item">
+                        <div class="circle-badge purple">4</div>
+                        <div class="logic-content">
+                            <div class="logic-content-title">Candle B Trigger & Execution</div>
+                            <div id="logic_candle_b_desc" class="logic-content-desc">Awaiting breakout of Candle A boundary.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Active Position Card & 5-Stage Trailing Progress -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span>Active Bot Position</span>
+                    <span id="active_status_badge" style="font-size:11px; color:#8b949e;">SCANNING</span>
+                </div>
+                <div id="active_trade_container">
+                    <div style="text-align: center; padding: 14px; color: #8b949e; font-size: 11px; background: #0d1117; border-radius: 6px; border:1px solid #21262d;">
+                        🔍 Scanning for 1D/1H Level Touch & Buyer/Seller Fight Breakout...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Marked Levels on Chart -->
+            <div class="panel-section">
+                <div class="section-title">Marked 1D & 1H Key Levels & Strategy Lines</div>
+                <div id="levels_list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto;">
+                    <div style="color:#8b949e; font-size:11px; font-family:'JetBrains Mono';">Loading levels from 1D/1H candles...</div>
+                </div>
+            </div>
+
+            <!-- 5. Trade Records History & A-Z Logic Inspector -->
+            <div class="panel-section">
+                <div class="section-title">
+                    <span>📜 Trade Records & A-Z Reasoning</span>
+                    <span id="records_count_badge" style="font-size:10px; color:#8b949e;">0 Trades</span>
+                </div>
+                <div id="trade_history_container" class="history-list">
+                    <div style="color:#8b949e; font-size:11px; text-align:center; padding:10px; font-family:'JetBrains Mono';">
+                        No closed trades yet today.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Real-Time Activity & Trade Execution Logs -->
+            <div class="panel-section" style="flex:1;">
+                <div class="section-title">Bot Activity & Signal Logs</div>
+                <div id="logs_container" class="logs-list">
+                    <div class="log-entry">Bot initialized. Connected to Delta Exchange live feed.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- A-Z Trade Reason & Marked Logic Inspector Modal -->
+    <div id="tradeReasonModal" class="modal-overlay" onclick="handleModalBackdropClick(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>🔍 A-Z Trade Logic & Marked Rule Breakdown</span>
+                    <span id="modal_trade_badge" class="card-badge badge-buy">BUY</span>
+                </div>
+                <button class="modal-close" onclick="closeReasonModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Top Summary Card -->
+                <div style="background:#21262d; border:1px solid #30363d; border-radius:8px; padding:10px 14px; display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; font-family:'JetBrains Mono';">
+                    <div>
+                        <div style="font-size:10px; color:#8b949e;">ENTRY PRICE</div>
+                        <div id="modal_entry_price" style="font-size:12px; font-weight:700; color:#f0f6fc;">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px; color:#8b949e;">LEVERAGE / MARGIN</div>
+                        <div id="modal_leverage" style="font-size:12px; font-weight:700; color:#58a6ff;">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px; color:#8b949e;">STOP LOSS (CANDLE A)</div>
+                        <div id="modal_sl_price" style="font-size:12px; font-weight:700; color:#f85149;">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px; color:#8b949e;">REALIZED PnL</div>
+                        <div id="modal_realized_pnl" style="font-size:12px; font-weight:700; color:#2ea043;">-</div>
+                    </div>
+                </div>
+
+                <!-- 5-Step Marked Circle Timeline Breakdown -->
+                <div class="step-timeline">
+                    <!-- Step 1: HTF Level Touch -->
+                    <div class="step-node">
+                        <div class="step-badge b-blue">1</div>
+                        <div class="step-card">
+                            <div class="step-card-title">📍 Higher Timeframe (1D/1H) Level Touch & Interaction</div>
+                            <div id="modal_step1_desc" class="step-card-desc">
+                                Price tapped key HTF support/resistance level, establishing directional bias.
+                            </div>
+                            <div id="modal_step1_badges"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Buyer vs Seller Fight -->
+                    <div class="step-node">
+                        <div class="step-badge b-amber">2</div>
+                        <div class="step-card">
+                            <div class="step-card-title">🥊 1-Minute Buyer vs Seller Battle & Exhaustion</div>
+                            <div id="modal_step2_desc" class="step-card-desc">
+                                Opposing side attempted continuation but suffered exhaustion, forming rejection wicks.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Candle A Solid Body Dominance -->
+                    <div class="step-node">
+                        <div class="step-badge b-green">3</div>
+                        <div class="step-card">
+                            <div class="step-card-title">🕯️ Candle A Solid Body Dominance (>45% Body Ratio)</div>
+                            <div id="modal_step3_desc" class="step-card-desc">
+                                Strong institutional dominance candle formed at the level confirming momentum.
+                            </div>
+                            <div id="modal_step3_metrics" style="margin-top:6px; font-family:'JetBrains Mono'; font-size:11px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Candle B Breakout & Dynamic Order Execution -->
+                    <div class="step-node">
+                        <div class="step-badge b-purple">4</div>
+                        <div class="step-card">
+                            <div class="step-card-title">⚡ Candle B Breakout & Instant Order Execution</div>
+                            <div id="modal_step4_desc" class="step-card-desc">
+                                Candle B broke Candle A High/Low. Bot placed instant market order with dynamic leverage and strict 1% risk allocation.
+                            </div>
+                            <div id="modal_step4_badges"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Trailing Stop Loss & Exit Rationale -->
+                    <div class="step-node">
+                        <div class="step-badge b-red">5</div>
+                        <div class="step-card">
+                            <div class="step-card-title">🎯 Multi-Stage Trailing Stop Loss & Profit Booking</div>
+                            <div id="modal_step5_desc" class="step-card-desc">
+                                Trailed SL from CTC (1:2) $\rightarrow$ 1:5 (50% exit) $\rightarrow$ 1:7 $\rightarrow$ 1:10 (40% exit) $\rightarrow$ 10% Runner.
+                            </div>
+                            <div id="modal_step5_exit" style="margin-top:6px; font-weight:700; color:#f0f6fc;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complete Audit Logs -->
+                <div>
+                    <div style="font-size:11px; font-weight:700; color:#8b949e; text-transform:uppercase; margin-bottom:6px;">
+                        📜 Execution Timestamp Audit Trail
+                    </div>
+                    <div id="modal_audit_logs" style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:8px 10px; font-family:'JetBrains Mono'; font-size:11px; max-height:120px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; color:#8b949e;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initialize Full Advanced TradingView Chart Widget with 1D, 1H, 15m, 1m Switching & NO VOLUME INDICATOR -->
+    <script type="text/javascript">
+        let currentInterval = "1";
+
+        function initTradingView(interval = "1") {
+            currentInterval = interval;
+            document.getElementById("tradingview_chart_element").innerHTML = "";
+
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "BINANCE:BTCUSDT.P",
+                "interval": interval,
+                "timezone": "Asia/Kolkata",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#161b22",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "hide_side_toolbar": false, // Full left drawing suite active (trendline, measure, box)
+                "allow_symbol_change": true,
+                "save_image": true,
+                "container_id": "tradingview_chart_element",
+                "studies": [], // NO default studies
+                "disabled_features": [
+                    "use_localstorage_for_settings",
+                    "create_volume_indicator_by_default", // Strictly disables default volume indicator
+                    "volume_force_overlay"                // Strictly prevents volume overlay
+                ],
+                "enabled_features": [
+                    "drawing_templates",
+                    "study_templates",
+                    "side_toolbar_in_fullscreen_mode",
+                    "header_in_fullscreen_mode"
+                ],
+                "overrides": {
+                    "mainSeriesProperties.style": 1,
+                    "mainSeriesProperties.candleStyle.upColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.downColor": "#f85149",
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.borderDownColor": "#f85149",
+                    "mainSeriesProperties.candleStyle.wickUpColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.wickDownColor": "#f85149",
+                    "paneProperties.background": "#0d1117",
+                    "paneProperties.vertGridProperties.color": "#161b22",
+                    "paneProperties.horzGridProperties.color": "#161b22"
+                }
+            });
+        }
+
+        function switchTimeframe(tf) {
+            document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById('tf_' + tf);
+            if (btn) btn.classList.add('active');
+            initTradingView(tf);
+        }
+
+        window.onload = () => {
+            initTradingView("1");
+        };
+    </script>
+
+    <!-- WebSocket Connection to Local Bot Backend for Real-Time Trades & Status -->
+    <script>
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+        let ws;
+        let cachedClosedTrades = [];
+
+        function connectWebSocket() {
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                document.getElementById('ws_status').innerText = '● LIVE SYNC';
+                document.getElementById('ws_status').className = 'ticker-val price-up';
+            };
+
+            ws.onclose = () => {
+                document.getElementById('ws_status').innerText = '○ RECONNECTING...';
+                document.getElementById('ws_status').className = 'ticker-val price-down';
+                setTimeout(connectWebSocket, 2000);
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleServerUpdate(data);
+            };
+        }
+
+        function handleServerUpdate(data) {
+            if (!data) return;
+
+            // 1. Update Top Ticker Bar
+            if (data.current_price) {
+                const pElem = document.getElementById('top_price');
+                pElem.innerText = `$${Number(data.current_price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            }
+
+            // 2. Update Portfolio & Capital Allocation
+            if (data.portfolio) {
+                const pf = data.portfolio;
+                document.getElementById('metric_equity').innerText = `$${Number(pf.total_equity).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('metric_margin').innerText = `$${Number(pf.margin_in_use || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('metric_free').innerText = `$${Number(pf.free_capital || 1000).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('metric_winrate').innerText = `${pf.win_rate_pct}% (${pf.win_trades}W / ${pf.loss_trades}L)`;
+                
+                const pnlElem = document.getElementById('metric_pnl');
+                pnlElem.innerText = `${pf.net_pnl >= 0 ? '+' : ''}$${Number(pf.net_pnl).toFixed(2)} (${pf.return_pct}%)`;
+                pnlElem.className = `value ${pf.net_pnl >= 0 ? 'price-up' : 'price-down'}`;
+                
+                document.getElementById('metric_pf').innerText = `${pf.profit_factor}`;
+
+                // Daily limits & Cooldown display
+                document.getElementById('top_daily_trades').innerText = `${pf.daily_trades_taken} / ${pf.max_daily_trades}`;
+                
+                const cdElem = document.getElementById('top_cooldown');
+                if (pf.cooldown_remaining_sec > 0) {
+                    const mins = Math.ceil(pf.cooldown_remaining_sec / 60);
+                    cdElem.innerText = `⏳ ${mins}m LEFT`;
+                    cdElem.className = 'ticker-val price-down';
+                } else {
+                    cdElem.innerText = 'READY';
+                    cdElem.className = 'ticker-val price-up';
+                }
+            }
+
+            // 3. Update 1D & 1H Key Level List
+            if (data.levels && data.levels.length > 0) {
+                const levelsListContainer = document.getElementById('levels_list');
+                levelsListContainer.innerHTML = '';
+
+                data.levels.forEach(lvl => {
+                    const isSupport = lvl.level_type.includes('SUPPORT') || lvl.description.includes('PDL');
+                    const color = isSupport ? '#2ea043' : '#f85149';
+                    const div = document.createElement('div');
+                    div.className = 'level-pill';
+                    div.innerHTML = `
+                        <span><b style="color:${color};">[${lvl.timeframe.toUpperCase()}]</b> ${lvl.description}</span>
+                        <b style="color:#f0f6fc;">$${Number(lvl.price).toLocaleString()}</b>
+                    `;
+                    levelsListContainer.appendChild(div);
+                });
+            }
+
+            // 4. Update Live Logic Inspector Box
+            const logicBadge = document.getElementById('logic_state_badge');
+            if (data.active_trade) {
+                const t = data.active_trade;
+                logicBadge.innerText = `IN TRADE (${t.side} ${t.leverage}X)`;
+                logicBadge.style.color = '#58a6ff';
+                logicBadge.style.borderColor = '#58a6ff';
+
+                document.getElementById('logic_htf_desc').innerHTML = `<b style="color:#58a6ff;">${t.level_info || 'Key HTF Level'}</b> (Confirmed Bounce)`;
+                document.getElementById('logic_fight_desc').innerHTML = `Opposing exhaustion verified. Rejection wick defended.`;
+                document.getElementById('logic_candle_a_desc').innerHTML = `Solid Body Candle A confirmed: Low <b>$${t.candle_a_low || t.original_sl}</b> | High <b>$${t.candle_a_high || t.entry_price}</b>`;
+                document.getElementById('logic_candle_b_desc').innerHTML = `Executed at <b>$${Number(t.entry_price).toLocaleString()}</b> with <b>${t.leverage}x</b> leverage (Risk: $${Number(t.risk_amount||10).toFixed(2)}).`;
+            } else if (data.pending_setup) {
+                const ps = data.pending_setup;
+                logicBadge.innerText = `CANDLE A FORMED (${ps.side})`;
+                logicBadge.style.color = '#e3b341';
+                logicBadge.style.borderColor = '#e3b341';
+
+                document.getElementById('logic_htf_desc').innerHTML = `<b style="color:#e3b341;">${ps.level_info}</b> (Touch detected)`;
+                document.getElementById('logic_fight_desc').innerHTML = `Fight won by ${ps.side == 'BUY' ? 'Buyers' : 'Sellers'}.`;
+                document.getElementById('logic_candle_a_desc').innerHTML = `Candle A Solid Body (O: $${ps.candle_a_open}, C: $${ps.candle_a_close}).`;
+                document.getElementById('logic_candle_b_desc').innerHTML = `Waiting for breakout ${ps.side == 'BUY' ? 'above $' + ps.candle_a_high : 'below $' + ps.candle_a_low}...`;
+            } else {
+                logicBadge.innerText = `SCANNING`;
+                logicBadge.style.color = '#8b949e';
+                logicBadge.style.borderColor = '#30363d';
+
+                document.getElementById('logic_htf_desc').innerText = `Scanning near 1D PDH/PDL or 1H Swings...`;
+                document.getElementById('logic_fight_desc').innerText = `Awaiting price test & rejection wick at key level.`;
+                document.getElementById('logic_candle_a_desc').innerText = `Waiting for solid body reversal candle.`;
+                document.getElementById('logic_candle_b_desc').innerText = `Awaiting breakout of Candle A boundary.`;
+            }
+
+            // 5. Update Active Position Card & 5-Stage Trailing Progress
+            const tradeContainer = document.getElementById('active_trade_container');
+            const statusBadge = document.getElementById('active_status_badge');
+
+            if (data.active_trade) {
+                const t = data.active_trade;
+                statusBadge.innerText = `IN TRADE (${t.leverage}X)`;
+                statusBadge.style.color = '#58a6ff';
+
+                const unrealizedPnl = Number(t.unrealized_pnl || 0);
+                const pnlClass = unrealizedPnl >= 0 ? 'price-up' : 'price-down';
+                const sideClass = t.side.toLowerCase();
+
+                const stagePercent = [10, 30, 55, 75, 95, 100][Math.min(5, t.stage)];
+                const stageText = [
+                    "Stage 0: Active (SL at Candle A Low/High)",
+                    "Stage 1: 1:2 RR Hit (SL @ Cost-to-Cost)",
+                    "Stage 2: 1:5 RR Hit (50% Banked, SL @ 1:2)",
+                    "Stage 3: 1:7 RR Hit (SL @ 1:5)",
+                    "Stage 4: 1:10 RR Hit (40% Banked, SL @ 1:7, 10% Runner Trailing!)",
+                    "Stage 5: 1:20 RR Hit (SL @ 1:15)",
+                    "Stage 6: 1:25 RR Hit (SL @ 1:20)",
+                    "Stage 7+: Runner Ladder Trailing (+5R Step)"
+                ][Math.min(7, t.stage)];
+
+                tradeContainer.innerHTML = `
+                    <div class="trade-card ${sideClass}">
+                        <div class="card-header">
+                            <span class="card-badge badge-${sideClass}">${t.side} ${t.symbol} (${t.leverage}x)</span>
+                            <span class="${pnlClass}" style="font-weight:700; font-family:'JetBrains Mono'; font-size:13px;">
+                                ${unrealizedPnl >= 0 ? '+' : ''}$${unrealizedPnl.toFixed(2)}
+                            </span>
+                        </div>
+                        <div class="trade-row"><span>Entry Price:</span> <b>$${Number(t.entry_price).toLocaleString()}</b></div>
+                        <div class="trade-row"><span>Current SL:</span> <b style="color:#f85149;">$${Number(t.current_sl).toLocaleString()}</b></div>
+                        <div class="trade-row"><span>1:2 CTC TP:</span> <b style="color:#e3b341;">$${Number(t.stage_1_tp).toLocaleString()}</b></div>
+                        <div class="trade-row"><span>1:5 (50% TP):</span> <b style="color:#2ea043;">$${Number(t.stage_2_tp).toLocaleString()}</b></div>
+                        <div class="trade-row"><span>1:10 (40% TP):</span> <b style="color:#a371f7;">$${Number(t.stage_4_tp).toLocaleString()}</b></div>
+                        <div class="trade-row"><span>Remaining Qty:</span> <b>${t.remaining_qty} BTC</b></div>
+                        <div class="trade-row"><span>Margin Allocated:</span> <b>$${Number(t.margin_used || 0).toFixed(2)}</b></div>
+                        <div style="font-size:11px; color:#8b949e; margin-top:6px;">${stageText}</div>
+                        <div class="progress-track"><div class="progress-fill" style="width: ${stagePercent}%;"></div></div>
+                    </div>
+                `;
+            } else {
+                statusBadge.innerText = 'SCANNING';
+                statusBadge.style.color = '#8b949e';
+                tradeContainer.innerHTML = `
+                    <div style="text-align: center; padding: 14px; color: #8b949e; font-size: 11px; background: #0d1117; border-radius: 6px; border:1px solid #21262d;">
+                        🔍 Scanning for 1D/1H Level Touch & Buyer/Seller Fight Breakout...
+                    </div>
+                `;
+            }
+
+            // 6. Update Closed Trade Records
+            if (data.closed_trades) {
+                cachedClosedTrades = data.closed_trades;
+                const histContainer = document.getElementById('trade_history_container');
+                const countBadge = document.getElementById('records_count_badge');
+                countBadge.innerText = `${cachedClosedTrades.length} Trades`;
+
+                if (cachedClosedTrades.length === 0) {
+                    histContainer.innerHTML = `
+                        <div style="color:#8b949e; font-size:11px; text-align:center; padding:10px; font-family:'JetBrains Mono';">
+                            No closed trades yet today.
+                        </div>
+                    `;
+                } else {
+                    histContainer.innerHTML = '';
+                    cachedClosedTrades.slice().reverse().forEach((tr, index) => {
+                        const originalIndex = cachedClosedTrades.length - 1 - index;
+                        const pnl = Number(tr.realized_pnl || 0);
+                        const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
+                        const sideClass = tr.side.toLowerCase();
+                        
+                        const card = document.createElement('div');
+                        card.className = 'history-row';
+                        card.innerHTML = `
+                            <div class="history-header">
+                                <span class="card-badge badge-${sideClass}">${tr.side} (${tr.leverage}x)</span>
+                                <b style="color:${pnlColor}; font-family:'JetBrains Mono'; font-size:12px;">
+                                    ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${tr.pnl_percent}%)
+                                </b>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; color:#8b949e; font-size:10px; font-family:'JetBrains Mono';">
+                                <span>Entry: $${Number(tr.entry_price).toLocaleString()}</span>
+                                <span>SL: $${Number(tr.final_sl).toLocaleString()}</span>
+                            </div>
+                            <div style="color:#8b949e; font-size:10px;">${tr.exit_reason || 'Closed'}</div>
+                            <button class="btn-inspect" onclick="openReasonModal(${originalIndex})">
+                                <span>🔍 A-Z Logic Details</span>
+                            </button>
+                        `;
+                        histContainer.appendChild(card);
+                    });
+                }
+            }
+
+            // 7. Update Execution Logs
+            if (data.logs && data.logs.length > 0) {
+                const logsContainer = document.getElementById('logs_container');
+                logsContainer.innerHTML = '';
+                data.logs.slice(-15).reverse().forEach(log => {
+                    const div = document.createElement('div');
+                    let logClass = 'log-entry';
+                    if (log.includes('EXECUTED') || log.includes('BUY') || log.includes('SELL')) logClass += ' signal';
+                    if (log.includes('1:5') || log.includes('1:10') || log.includes('1:2') || log.includes('1:7')) logClass += ' tp';
+                    if (log.includes('SL') || log.includes('Loss') || log.includes('Cooldown')) logClass += ' sl';
+                    div.className = logClass;
+                    div.innerText = log;
+                    logsContainer.appendChild(div);
+                });
+            }
+        }
+
+        // =========================================================================
+        // A-Z Reason Modal Controller
+        // =========================================================================
+        function openReasonModal(tradeIndex) {
+            const tr = cachedClosedTrades[tradeIndex];
+            if (!tr) return;
+
+            const isBuy = tr.side === 'BUY';
+            const badge = document.getElementById('modal_trade_badge');
+            badge.innerText = `${tr.side} (${tr.leverage}x)`;
+            badge.className = `card-badge ${isBuy ? 'badge-buy' : 'badge-sell'}`;
+
+            document.getElementById('modal_entry_price').innerText = `$${Number(tr.entry_price).toLocaleString()}`;
+            document.getElementById('modal_leverage').innerText = `${tr.leverage}x ($${Number(tr.margin_used).toFixed(2)})`;
+            document.getElementById('modal_sl_price').innerText = `$${Number(tr.original_sl).toLocaleString()}`;
+            
+            const pnl = Number(tr.realized_pnl);
+            const pnlElem = document.getElementById('modal_realized_pnl');
+            pnlElem.innerText = `${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${tr.pnl_percent}%)`;
+            pnlElem.style.color = pnl >= 0 ? '#2ea043' : '#f85149';
+
+            // Step 1: HTF Level
+            document.getElementById('modal_step1_desc').innerHTML = `
+                Price interacted with key <b>${tr.level_info || '1D/1H Key Level'}</b>. 
+                This confirmed higher-timeframe support/resistance alignment before entry.
+            `;
+            const s1Badges = document.getElementById('modal_step1_badges');
+            s1Badges.innerHTML = `
+                <span class="step-metric-badge">Level: ${tr.level_info || 'S/R'}</span>
+                <span class="step-metric-badge">Time: ${tr.entry_time}</span>
+            `;
+
+            // Step 2: Fight & Exhaustion
+            document.getElementById('modal_step2_desc').innerHTML = isBuy
+                ? `1-Minute candles showed aggressive selling into support, followed by seller exhaustion and long rejection wicks, proving buyers absorbed supply.`
+                : `1-Minute candles tested resistance, but buyers exhausted with long upper wicks, showing sellers took total control.`;
+
+            // Step 3: Candle A Solid Body
+            document.getElementById('modal_step3_desc').innerHTML = `
+                <b>Candle A</b> closed with a solid ${isBuy ? 'green' : 'red'} body exceeding the 45% body-to-range threshold, validating dominant institutional flow.
+            `;
+            document.getElementById('modal_step3_metrics').innerHTML = `
+                <span class="step-metric-badge">Candle A High: $${Number(tr.candle_a_high || tr.entry_price).toLocaleString()}</span>
+                <span class="step-metric-badge">Candle A Low: $${Number(tr.candle_a_low || tr.original_sl).toLocaleString()}</span>
+                <span class="step-metric-badge">Confidence: ${Math.round((tr.confidence_score||0.85)*100)}%</span>
+            `;
+
+            // Step 4: Candle B Trigger & Execution
+            document.getElementById('modal_step4_desc').innerHTML = `
+                <b>Candle B</b> instantly broke ${isBuy ? 'above Candle A High ($' + tr.candle_a_high + ')' : 'below Candle A Low ($' + tr.candle_a_low + ')'}. 
+                Executed position size with <b>${tr.leverage}x Dynamic Leverage</b> and strictly limited risk to <b>1% ($${tr.risk_amount})</b> of equity.
+            `;
+            document.getElementById('modal_step4_badges').innerHTML = `
+                <span class="step-metric-badge">Qty: ${tr.initial_qty} BTC</span>
+                <span class="step-metric-badge">Margin: $${tr.margin_used}</span>
+                <span class="step-metric-badge">Position Value: $${tr.position_value}</span>
+            `;
+
+            // Step 5: Trailing SL & Exit
+            document.getElementById('modal_step5_desc').innerHTML = `
+                Strategy applied 5-Stage Continuous Trailing Ladder (1:2 CTC $\\rightarrow$ 1:5 $\\rightarrow$ 1:7 $\\rightarrow$ 1:10 $\\rightarrow$ 1:20 $\\rightarrow$ 1:25 $\\rightarrow$ Runner).
+            `;
+            document.getElementById('modal_step5_exit').innerHTML = `
+                🏁 Exit Outcome: <span style="color:${pnl >= 0 ? '#2ea043' : '#f85149'};">${tr.exit_reason || 'Closed'}</span> | Max RR: <b>1:${tr.max_rr_reached}</b>
+            `;
+
+            // Audit Logs
+            const logsContainer = document.getElementById('modal_audit_logs');
+            logsContainer.innerHTML = '';
+            if (tr.logs && tr.logs.length > 0) {
+                tr.logs.forEach(lg => {
+                    const d = document.createElement('div');
+                    d.innerText = lg;
+                    logsContainer.appendChild(d);
+                });
+            } else {
+                logsContainer.innerHTML = `<div>Trade opened at ${tr.entry_time} and closed at ${tr.exit_time}.</div>`;
+            }
+
+            document.getElementById('tradeReasonModal').classList.add('active');
+        }
+
+        function closeReasonModal() {
+            document.getElementById('tradeReasonModal').classList.remove('active');
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === 'tradeReasonModal') {
+                closeReasonModal();
+            }
+        }
+
+        // Close on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeReasonModal();
+        });
+
+        connectWebSocket();
+    </script>
+</body>
+</html>
