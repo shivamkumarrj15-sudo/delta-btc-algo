@@ -804,15 +804,32 @@
         </div>
     </div>
 
-    <!-- Initialize Full Advanced TradingView Chart Widget with 1D, 1H, 15m, 1m Switching & NO VOLUME INDICATOR -->
+    <!-- Initialize Full Advanced TradingView Chart Widget with 1D, 1H, 15m, 1m Switching & Multi-Timeframe Drawing Persistence -->
     <script type="text/javascript">
         let currentInterval = "1";
+        let tvWidgetInstance = null;
 
         function initTradingView(interval = "1") {
             currentInterval = interval;
+
+            // If widget instance already exists and supports chart resolution switching, change resolution directly to preserve active session drawings
+            if (tvWidgetInstance && typeof tvWidgetInstance.chart === 'function') {
+                try {
+                    const chart = tvWidgetInstance.chart();
+                    if (chart && typeof chart.setResolution === 'function') {
+                        chart.setResolution(interval, function() {
+                            console.log("Timeframe resolution switched to:", interval);
+                        });
+                        return;
+                    }
+                } catch (e) {
+                    console.warn("Direct resolution switch failed, re-initializing widget:", e);
+                }
+            }
+
             document.getElementById("tradingview_chart_element").innerHTML = "";
 
-            new TradingView.widget({
+            tvWidgetInstance = new TradingView.widget({
                 "autosize": true,
                 "symbol": "BINANCE:BTCUSDT.P",
                 "interval": interval,
@@ -823,21 +840,36 @@
                 "toolbar_bg": "#161b22",
                 "enable_publishing": false,
                 "hide_top_toolbar": false,
-                "hide_side_toolbar": false, // Full left drawing suite active (trendline, measure, box)
+                "hide_side_toolbar": false, // Full left drawing suite active (trendline, horizontal line, measure, box)
                 "allow_symbol_change": true,
                 "save_image": true,
                 "container_id": "tradingview_chart_element",
+                "client_id": "delta_algo_user",
+                "user_id": "delta_btc_trader",
+                "charts_storage_url": "https://saveload.tradingview.com",
+                "charts_storage_api_version": "1.1",
+                "load_last_chart": true,
                 "studies": [], // NO default studies
                 "disabled_features": [
-                    "use_localstorage_for_settings",
                     "create_volume_indicator_by_default", // Strictly disables default volume indicator
                     "volume_force_overlay"                // Strictly prevents volume overlay
                 ],
                 "enabled_features": [
+                    "save_chart_properties_to_local_storage", // Saves all marked levels & lines permanently
+                    "use_localstorage_for_settings",          // Retains drawings when switching 1D, 1H, 1M
+                    "items_favoriting",
                     "drawing_templates",
                     "study_templates",
                     "side_toolbar_in_fullscreen_mode",
-                    "header_in_fullscreen_mode"
+                    "header_in_fullscreen_mode",
+                    "header_resolutions",
+                    "header_widget",
+                    "header_chart_type",
+                    "header_indicators",
+                    "header_compare",
+                    "header_undo_redo",
+                    "header_screenshot",
+                    "header_saveload"
                 ],
                 "overrides": {
                     "mainSeriesProperties.style": 1,
