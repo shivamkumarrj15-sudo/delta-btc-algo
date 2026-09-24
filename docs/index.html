@@ -559,34 +559,25 @@
 
     <!-- Main Workspace -->
     <div class="workspace">
-        <!-- Advanced TradingView Interactive Chart Container with 1D ➔ 1H ➔ 1M Drawing Sync & NO Volume Indicator -->
+        <!-- Advanced TradingView Interactive Chart Container with 1D ➔ 1H ➔ 1M Candle Switching & NO Volume Indicator -->
         <div class="chart-container">
             <div class="chart-header">
-                <!-- Multi-Timeframe Workflow & Resolution Sync Bar -->
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #58a6ff; font-size: 11px;">
-                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2ea043; box-shadow: 0 0 6px #2ea043;"></span>
-                        <span>MTF DRAWING SYNC ACTIVE</span>
-                    </div>
-
-                    <div style="display: flex; gap: 4px; align-items: center;">
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #58a6ff;">
-                            ➊ 1D Levels (D)
-                        </span>
-                        <span style="color: #8b949e; font-size: 10px;">➔</span>
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #d29922;">
-                            ➋ 1H S/R (1h)
-                        </span>
-                        <span style="color: #8b949e; font-size: 10px;">➔</span>
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #2ea043;">
-                            ➌ 1M Fight (1m)
-                        </span>
-                    </div>
+                <!-- 4 Direct Timeframe Candle Switcher Buttons -->
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span class="tf-label" style="font-weight:700; color:#8b949e;">⏱️ CANDLE:</span>
+                    <button class="tf-btn" id="tf_D" onclick="switchTimeframe('D')">📅 1 Day (1D)</button>
+                    <button class="tf-btn" id="tf_60" onclick="switchTimeframe('60')">⏰ 1 Hour (1H)</button>
+                    <button class="tf-btn" id="tf_15" onclick="switchTimeframe('15')">⏱️ 15 Min (15M)</button>
+                    <button class="tf-btn active" id="tf_1" onclick="switchTimeframe('1')">⚡ 1 Min (1M)</button>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono'; font-size: 11px; color: #8b949e;">
-                    <span>💡 <b>Switch via Chart Top Bar:</b> Click <b>[1m] [15m] [1h] [D]</b> (or type <b>1</b>, <b>60</b>, <b>D</b> + Enter)</span>
-                    <span style="color: #2ea043; font-weight: 700;">● ALL DRAWINGS STAY 100% SYNCED</span>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button onclick="copyPineScript()" style="background:#1f6feb22; border:1px solid #1f6feb; color:#58a6ff; padding:3px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono'; transition:all 0.2s;" onmouseover="this.style.background='#1f6feb'; this.style.color='#fff';" onmouseout="this.style.background='#1f6feb22'; this.style.color='#58a6ff';">
+                        📋 Copy MTF Auto-Levels Indicator
+                    </button>
+                    <span style="font-family:'JetBrains Mono'; color:#2ea043; font-size:11px; font-weight:700;">
+                        ● 1D/1H/1M SYNC READY
+                    </span>
                 </div>
             </div>
             <div id="tv_chart_wrapper">
@@ -818,24 +809,25 @@
         </div>
     </div>
 
-    <!-- Initialize Advanced TradingView Chart Widget with 1D Default & Multi-Timeframe In-Memory & LocalStorage Sync -->
+    <!-- Initialize Advanced TradingView Chart Widget with 1D, 1H, 15M, 1M Switching & Pine Script Auto-Levels -->
     <script type="text/javascript">
-        let tvWidgetInstance = null;
+        let currentInterval = "1";
 
-        function initTradingView() {
-            if (tvWidgetInstance) return; // Prevent duplicate instantiation
+        function initTradingView(interval = "1") {
+            currentInterval = interval;
+            document.getElementById("tradingview_chart_element").innerHTML = "";
 
-            tvWidgetInstance = new TradingView.widget({
+            new TradingView.widget({
                 "autosize": true,
                 "symbol": "BINANCE:BTCUSDT.P",
-                "interval": "D", // Starts on 1 Day (1D) so user marks 1D levels first, then clicks 1h / 1m in top bar!
+                "interval": interval,
                 "timezone": "Asia/Kolkata",
                 "theme": "dark",
                 "style": "1",
                 "locale": "en",
                 "toolbar_bg": "#161b22",
                 "enable_publishing": false,
-                "hide_top_toolbar": false, // Top toolbar contains 1m, 5m, 15m, 1h, 4h, D resolutions
+                "hide_top_toolbar": false,
                 "hide_side_toolbar": false, // Full left drawing suite active (trendline, horizontal line, measure, box)
                 "allow_symbol_change": true,
                 "withdateranges": true,
@@ -846,14 +838,17 @@
                 "charts_storage_url": "https://saveload.tradingview.com",
                 "charts_storage_api_version": "1.1",
                 "load_last_chart": true,
+                "favorites": {
+                    "intervals": ["1", "5", "15", "60", "240", "D"]
+                },
                 "studies": [], // NO default studies
                 "disabled_features": [
                     "create_volume_indicator_by_default", // Strictly disables default volume indicator
                     "volume_force_overlay"                // Strictly prevents volume overlay
                 ],
                 "enabled_features": [
-                    "save_chart_properties_to_local_storage", // Saves all marked levels & lines permanently
-                    "use_localstorage_for_settings",          // Retains drawings when switching 1D, 1H, 1M
+                    "save_chart_properties_to_local_storage",
+                    "use_localstorage_for_settings",
                     "items_favoriting",
                     "drawing_templates",
                     "study_templates",
@@ -883,8 +878,60 @@
             });
         }
 
+        function switchTimeframe(tf) {
+            document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById('tf_' + tf);
+            if (btn) btn.classList.add('active');
+            initTradingView(tf);
+        }
+
+        function copyPineScript() {
+            const pineCode = `//@version=5
+indicator("⚡ Delta BTC Multi-Timeframe (1D/1H Levels & 1M Breakout Algo v3)", overlay=true)
+
+// 1D Levels (PDH, PDL, PDC)
+pdh = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
+pdl = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
+pdc = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
+
+plot(pdh, "1D PDH (Previous Day High)", color=color.new(#f85149, 0), linewidth=2, style=plot.style_linebr)
+plot(pdl, "1D PDL (Previous Day Low)",  color=color.new(#2ea043, 0), linewidth=2, style=plot.style_linebr)
+plot(pdc, "1D PDC (Pivot)",             color=color.new(#58a6ff, 30), linewidth=1, style=plot.style_cross)
+
+// 1H Key S/R Swings
+h1_high = request.security(syminfo.tickerid, "60", ta.highest(high, 8), lookahead=barmerge.lookahead_on)
+h1_low  = request.security(syminfo.tickerid, "60", ta.lowest(low, 8), lookahead=barmerge.lookahead_on)
+
+plot(h1_high, "1H Resistance", color=color.new(#ff7b72, 30), linewidth=1, style=plot.style_stepline)
+plot(h1_low,  "1H Support",    color=color.new(#7ee787, 30), linewidth=1, style=plot.style_stepline)
+
+// 1M Fight & Breakout Triggers
+candle_range = high - low
+candle_body  = math.abs(close - open)
+is_solid_body = candle_range > 0 and (candle_body / candle_range >= 0.45)
+is_near_support = (low <= pdl * 1.002 and low >= pdl * 0.998) or (low <= h1_low * 1.002 and low >= h1_low * 0.998)
+is_near_resist  = (high >= pdh * 0.998 and high <= pdh * 1.002) or (high >= h1_high * 0.998 and high <= h1_high * 1.002)
+
+is_candle_a_buy  = is_near_support and close > open and is_solid_body
+is_candle_a_sell = is_near_resist  and close < open and is_solid_body
+
+barcolor(is_candle_a_buy ? color.new(#58a6ff, 0) : is_candle_a_sell ? color.new(#bc8cff, 0) : na)
+
+buy_trigger  = is_candle_a_buy[1] and high > high[1]
+sell_trigger = is_candle_a_sell[1] and low < low[1]
+
+plotshape(buy_trigger,  title="BUY Trigger",  style=shape.triangleup,   location=location.belowbar, color=color.green, size=size.normal, text="⚡ BUY BREAKOUT")
+plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location=location.abovebar, color=color.red,   size=size.normal, text="⚡ SELL BREAKOUT")`;
+
+            navigator.clipboard.writeText(pineCode).then(() => {
+                alert("✅ Pine Script Copied!\n\nTradingView me Pine Editor me paste karein -> Add to chart karein. 1D PDH/PDL aur 1H lines 1M chart par automatically draw ho jayengi!");
+            }).catch(err => {
+                prompt("Ctrl+C dabakar Pine Script Copy karein:", pineCode);
+            });
+        }
+
         window.onload = () => {
-            initTradingView();
+            initTradingView("1");
         };
     </script>
 
