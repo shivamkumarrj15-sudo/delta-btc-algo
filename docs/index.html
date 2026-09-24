@@ -559,20 +559,34 @@
 
     <!-- Main Workspace -->
     <div class="workspace">
-        <!-- Advanced TradingView Interactive Chart Container with 1D, 1H, 15m, 1m Switching & NO Volume Indicator -->
+        <!-- Advanced TradingView Interactive Chart Container with 1D ➔ 1H ➔ 1M Drawing Sync & NO Volume Indicator -->
         <div class="chart-container">
             <div class="chart-header">
-                <!-- 4 Timeframe Buttons: 1D, 1H, 15m, 1m -->
-                <div class="tf-bar">
-                    <span class="tf-label">⏱️ Timeframe:</span>
-                    <button class="tf-btn active" id="tf_1" onclick="switchTimeframe('1')">1 min</button>
-                    <button class="tf-btn" id="tf_15" onclick="switchTimeframe('15')">15 min</button>
-                    <button class="tf-btn" id="tf_60" onclick="switchTimeframe('60')">1 Hour</button>
-                    <button class="tf-btn" id="tf_D" onclick="switchTimeframe('D')">1 Day</button>
+                <!-- Multi-Timeframe Workflow & Resolution Sync Bar -->
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #58a6ff; font-size: 11px;">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2ea043; box-shadow: 0 0 6px #2ea043;"></span>
+                        <span>MTF DRAWING SYNC ACTIVE</span>
+                    </div>
+
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #58a6ff;">
+                            ➊ 1D Levels (D)
+                        </span>
+                        <span style="color: #8b949e; font-size: 10px;">➔</span>
+                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #d29922;">
+                            ➋ 1H S/R (1h)
+                        </span>
+                        <span style="color: #8b949e; font-size: 10px;">➔</span>
+                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #2ea043;">
+                            ➌ 1M Fight (1m)
+                        </span>
+                    </div>
                 </div>
 
-                <div style="font-family:'JetBrains Mono'; color:#8b949e; font-size:11px;">
-                    🛠️ Manual Drawing Suite (Trendline, Box, Long/Short, Measure) • Volume Removed
+                <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono'; font-size: 11px; color: #8b949e;">
+                    <span>💡 <b>Switch via Chart Top Bar:</b> Click <b>[1m] [15m] [1h] [D]</b> (or type <b>1</b>, <b>60</b>, <b>D</b> + Enter)</span>
+                    <span style="color: #2ea043; font-weight: 700;">● ALL DRAWINGS STAY 100% SYNCED</span>
                 </div>
             </div>
             <div id="tv_chart_wrapper">
@@ -804,44 +818,27 @@
         </div>
     </div>
 
-    <!-- Initialize Full Advanced TradingView Chart Widget with 1D, 1H, 15m, 1m Switching & Multi-Timeframe Drawing Persistence -->
+    <!-- Initialize Advanced TradingView Chart Widget with 1D Default & Multi-Timeframe In-Memory & LocalStorage Sync -->
     <script type="text/javascript">
-        let currentInterval = "1";
         let tvWidgetInstance = null;
 
-        function initTradingView(interval = "1") {
-            currentInterval = interval;
-
-            // If widget instance already exists and supports chart resolution switching, change resolution directly to preserve active session drawings
-            if (tvWidgetInstance && typeof tvWidgetInstance.chart === 'function') {
-                try {
-                    const chart = tvWidgetInstance.chart();
-                    if (chart && typeof chart.setResolution === 'function') {
-                        chart.setResolution(interval, function() {
-                            console.log("Timeframe resolution switched to:", interval);
-                        });
-                        return;
-                    }
-                } catch (e) {
-                    console.warn("Direct resolution switch failed, re-initializing widget:", e);
-                }
-            }
-
-            document.getElementById("tradingview_chart_element").innerHTML = "";
+        function initTradingView() {
+            if (tvWidgetInstance) return; // Prevent duplicate instantiation
 
             tvWidgetInstance = new TradingView.widget({
                 "autosize": true,
                 "symbol": "BINANCE:BTCUSDT.P",
-                "interval": interval,
+                "interval": "D", // Starts on 1 Day (1D) so user marks 1D levels first, then clicks 1h / 1m in top bar!
                 "timezone": "Asia/Kolkata",
                 "theme": "dark",
                 "style": "1",
                 "locale": "en",
                 "toolbar_bg": "#161b22",
                 "enable_publishing": false,
-                "hide_top_toolbar": false,
+                "hide_top_toolbar": false, // Top toolbar contains 1m, 5m, 15m, 1h, 4h, D resolutions
                 "hide_side_toolbar": false, // Full left drawing suite active (trendline, horizontal line, measure, box)
                 "allow_symbol_change": true,
+                "withdateranges": true,
                 "save_image": true,
                 "container_id": "tradingview_chart_element",
                 "client_id": "delta_algo_user",
@@ -886,15 +883,8 @@
             });
         }
 
-        function switchTimeframe(tf) {
-            document.querySelectorAll('.tf-btn').forEach(btn => btn.classList.remove('active'));
-            const btn = document.getElementById('tf_' + tf);
-            if (btn) btn.classList.add('active');
-            initTradingView(tf);
-        }
-
         window.onload = () => {
-            initTradingView("1");
+            initTradingView();
         };
     </script>
 
