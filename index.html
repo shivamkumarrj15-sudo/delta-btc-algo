@@ -919,7 +919,7 @@
             tvWidgetInstance = new TradingView.widget({
                 "autosize": true,
                 "symbol": "BINANCE:BTCUSDT.P",
-                "interval": "D", // Starts on 1 Day (1D) so user marks 1D levels first, then clicks 1h / 1m in top bar!
+                "interval": "D", // Starts on 1 Day (1D) so user marks 1D levels first, then clicks 1h / 15m / 1m in chart top bar!
                 "timezone": "Asia/Kolkata",
                 "theme": "dark",
                 "style": "1",
@@ -932,22 +932,19 @@
                 "withdateranges": true,
                 "save_image": true,
                 "container_id": "tradingview_chart_element",
-                "client_id": "delta_algo_user",
-                "user_id": "delta_btc_trader",
-                "charts_storage_url": "https://saveload.tradingview.com",
-                "charts_storage_api_version": "1.1",
-                "load_last_chart": true,
+                "hide_volume": true,
                 "favorites": {
                     "intervals": ["1", "5", "15", "60", "240", "D"]
                 },
                 "studies": [], // NO default studies
                 "disabled_features": [
                     "create_volume_indicator_by_default", // Strictly disables default volume indicator
-                    "volume_force_overlay"                // Strictly prevents volume overlay
+                    "volume_force_overlay",               // Strictly prevents volume overlay
+                    "header_saveload"                     // Disable cloud saveload to prevent CORS auth reset
                 ],
                 "enabled_features": [
                     "save_chart_properties_to_local_storage", // Saves all marked levels & lines permanently
-                    "use_localstorage_for_settings",          // Retains drawings when switching 1D, 1H, 1M
+                    "use_localstorage_for_settings",          // Retains drawings when switching 1D, 1H, 15M, 1M
                     "items_favoriting",
                     "drawing_templates",
                     "study_templates",
@@ -957,10 +954,8 @@
                     "header_widget",
                     "header_chart_type",
                     "header_indicators",
-                    "header_compare",
                     "header_undo_redo",
-                    "header_screenshot",
-                    "header_saveload"
+                    "header_screenshot"
                 ],
                 "overrides": {
                     "mainSeriesProperties.style": 1,
