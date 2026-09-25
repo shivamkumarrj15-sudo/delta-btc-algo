@@ -304,11 +304,42 @@
             justify-content: space-between;
             align-items: center;
             background: #0d1117;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 11px;
             border: 1px solid #21262d;
+            transition: all 0.2s ease;
+        }
+        .level-pill:hover {
+            border-color: #30363d;
+        }
+        .level-pill.custom-level {
+            background: #161b22;
+            border-left: 3px solid #58a6ff;
+        }
+        .level-pill.custom-level.res {
+            border-left: 3px solid #f85149;
+        }
+        .level-pill.custom-level.sup {
+            border-left: 3px solid #2ea043;
+        }
+        .level-del-btn {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+        }
+        .level-del-btn:hover {
+            color: #f85149;
+            background: #f8514922;
         }
 
         /* Trade Records Table */
@@ -686,11 +717,16 @@
                 </div>
             </div>
 
-            <!-- 4. Marked Levels on Chart -->
+            <!-- 4. Permanent Marked 1D & 1H Levels (Saved permanently in LocalStorage) -->
             <div class="panel-section">
-                <div class="section-title">Marked 1D & 1H Key Levels & Strategy Lines</div>
-                <div id="levels_list" style="display:flex; flex-direction:column; gap:4px; max-height:120px; overflow-y:auto;">
-                    <div style="color:#8b949e; font-size:11px; font-family:'JetBrains Mono';">Loading levels from 1D/1H candles...</div>
+                <div class="section-title">
+                    <span>📍 Marked 1D & 1H Key Levels</span>
+                    <button onclick="openAddLevelModal()" style="background:#1f6feb22; border:1px solid #1f6feb; color:#58a6ff; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono'; transition:all 0.2s;" onmouseover="this.style.background='#1f6feb'; this.style.color='#fff';" onmouseout="this.style.background='#1f6feb22'; this.style.color='#58a6ff';">
+                        + Mark Level
+                    </button>
+                </div>
+                <div id="levels_list" style="display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto;">
+                    <div style="color:#8b949e; font-size:11px; font-family:'JetBrains Mono';">Loading levels...</div>
                 </div>
             </div>
 
@@ -822,6 +858,57 @@
         </div>
     </div>
 
+    <!-- Add Custom 1D/1H Level Modal (Permanently Stored in LocalStorage) -->
+    <div id="addLevelModal" class="modal-overlay" onclick="handleAddLevelBackdrop(event)">
+        <div class="modal-content" style="max-width:440px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>📍 Mark 1D or 1H Key Level</span>
+                </div>
+                <button class="modal-close" onclick="closeAddLevelModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="gap:12px;">
+                <div>
+                    <label style="font-size:11px; color:#8b949e; display:block; margin-bottom:4px; font-weight:600;">TIMEFRAME:</label>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" id="lvl_tf_1d" onclick="selectLevelTf('1D')" style="flex:1; padding:6px; background:#1f6feb; border:1px solid #58a6ff; color:#fff; border-radius:4px; font-weight:700; font-size:11px; cursor:pointer;">1D (Daily)</button>
+                        <button type="button" id="lvl_tf_1h" onclick="selectLevelTf('1H')" style="flex:1; padding:6px; background:#21262d; border:1px solid #30363d; color:#8b949e; border-radius:4px; font-weight:700; font-size:11px; cursor:pointer;">1H (Hourly)</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="font-size:11px; color:#8b949e; display:block; margin-bottom:4px; font-weight:600;">LEVEL TYPE:</label>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" id="lvl_type_res" onclick="selectLevelType('RESISTANCE')" style="flex:1; padding:6px; background:#f8514922; border:1px solid #f85149; color:#f85149; border-radius:4px; font-weight:700; font-size:11px; cursor:pointer;">🔴 Resistance (Sell)</button>
+                        <button type="button" id="lvl_type_sup" onclick="selectLevelType('SUPPORT')" style="flex:1; padding:6px; background:#21262d; border:1px solid #30363d; color:#8b949e; border-radius:4px; font-weight:700; font-size:11px; cursor:pointer;">🟢 Support (Buy)</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <label style="font-size:11px; color:#8b949e; font-weight:600;">PRICE LEVEL ($):</label>
+                        <button type="button" onclick="useCurrentPriceForLevel()" style="background:none; border:none; color:#58a6ff; font-size:10px; cursor:pointer; text-decoration:underline;">Use Current BTC Price</button>
+                    </div>
+                    <input type="number" id="custom_level_price" placeholder="e.g. 84500.00" step="0.5" style="width:100%; background:#0d1117; border:1px solid #30363d; color:#f0f6fc; padding:8px 10px; border-radius:6px; font-family:'JetBrains Mono'; font-size:13px; font-weight:700;">
+                </div>
+
+                <div>
+                    <label style="font-size:11px; color:#8b949e; display:block; margin-bottom:4px; font-weight:600;">LABEL / DESCRIPTION (OPTIONAL):</label>
+                    <input type="text" id="custom_level_desc" placeholder="e.g. 1D Major Supply / PDH" style="width:100%; background:#0d1117; border:1px solid #30363d; color:#f0f6fc; padding:8px 10px; border-radius:6px; font-size:11px;">
+                </div>
+
+                <div style="margin-top:8px; display:flex; gap:8px;">
+                    <button type="button" onclick="saveCustomLevel()" style="flex:1; background:#238636; border:1px solid #2ea043; color:#ffffff; padding:8px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;">
+                        💾 Save Marked Level
+                    </button>
+                    <button type="button" onclick="closeAddLevelModal()" style="background:#21262d; border:1px solid #30363d; color:#8b949e; padding:8px 14px; border-radius:6px; font-size:12px; cursor:pointer;">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Initialize Advanced TradingView Chart Widget with 1D Default & Multi-Timeframe In-Memory & LocalStorage Sync -->
     <script type="text/javascript">
         let tvWidgetInstance = null;
@@ -890,10 +977,6 @@
             });
         }
 
-        window.onload = () => {
-            initTradingView();
-        };
-
         function copyPineScript() {
             const pineCode = `//@version=5
 indicator("⚡ Delta BTC Multi-Timeframe (1D/1H Levels & 1M Breakout Algo v3)", overlay=true)
@@ -938,101 +1021,334 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
                 prompt("Ctrl+C dabakar Pine Script Copy karein:", pineCode);
             });
         }
-
-        window.onload = () => {
-            initTradingView("1");
-        };
     </script>
 
-    <!-- WebSocket Connection to Local Bot Backend for Real-Time Trades & Status -->
+    <!-- App State & Level Management & WebSocket Script -->
     <script>
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
-        let ws;
+        let currentLivePrice = 0;
         let cachedClosedTrades = [];
+        let latestServerLevels = [];
+        let selectedLevelTf = '1D';
+        let selectedLevelType = 'RESISTANCE';
 
-        function connectWebSocket() {
-            ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => {
-                document.getElementById('ws_status').innerText = '● LIVE SYNC';
-                document.getElementById('ws_status').className = 'ticker-val price-up';
-            };
-
-            ws.onclose = () => {
-                document.getElementById('ws_status').innerText = '○ RECONNECTING...';
-                document.getElementById('ws_status').className = 'ticker-val price-down';
-                setTimeout(connectWebSocket, 2000);
-            };
-
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                handleServerUpdate(data);
-            };
+        // =========================================================================
+        // Permanent Custom Level Management (Saved in localStorage)
+        // =========================================================================
+        function getStoredCustomLevels() {
+            try {
+                const data = localStorage.getItem('delta_custom_marked_levels');
+                return data ? JSON.parse(data) : [];
+            } catch (e) {
+                console.error("Failed to read stored levels:", e);
+                return [];
+            }
         }
 
-        function handleServerUpdate(data) {
-            if (!data) return;
+        function saveStoredCustomLevels(levels) {
+            try {
+                localStorage.setItem('delta_custom_marked_levels', JSON.stringify(levels));
+            } catch (e) {
+                console.error("Failed to save levels:", e);
+            }
+        }
 
-            // 1. Update Top Ticker Bar
-            if (data.current_price) {
-                const pElem = document.getElementById('top_price');
-                pElem.innerText = `$${Number(data.current_price).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        function openAddLevelModal() {
+            const modal = document.getElementById('addLevelModal');
+            if (!modal) return;
+            
+            // Auto fill current live price if empty
+            const priceInput = document.getElementById('custom_level_price');
+            if (priceInput && (!priceInput.value || parseFloat(priceInput.value) <= 0) && currentLivePrice > 0) {
+                priceInput.value = currentLivePrice;
+            }
+            modal.classList.add('active');
+        }
+
+        function closeAddLevelModal() {
+            const modal = document.getElementById('addLevelModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function handleAddLevelBackdrop(e) {
+            if (e.target.id === 'addLevelModal') {
+                closeAddLevelModal();
+            }
+        }
+
+        function selectLevelTf(tf) {
+            selectedLevelTf = tf;
+            const btn1d = document.getElementById('lvl_tf_1d');
+            const btn1h = document.getElementById('lvl_tf_1h');
+            if (tf === '1D') {
+                btn1d.style.background = '#1f6feb';
+                btn1d.style.borderColor = '#58a6ff';
+                btn1d.style.color = '#ffffff';
+                btn1h.style.background = '#21262d';
+                btn1h.style.borderColor = '#30363d';
+                btn1h.style.color = '#8b949e';
+            } else {
+                btn1h.style.background = '#d29922';
+                btn1h.style.borderColor = '#e3b341';
+                btn1h.style.color = '#ffffff';
+                btn1d.style.background = '#21262d';
+                btn1d.style.borderColor = '#30363d';
+                btn1d.style.color = '#8b949e';
+            }
+        }
+
+        function selectLevelType(type) {
+            selectedLevelType = type;
+            const btnRes = document.getElementById('lvl_type_res');
+            const btnSup = document.getElementById('lvl_type_sup');
+            if (type === 'RESISTANCE') {
+                btnRes.style.background = '#f8514922';
+                btnRes.style.borderColor = '#f85149';
+                btnRes.style.color = '#f85149';
+                btnSup.style.background = '#21262d';
+                btnSup.style.borderColor = '#30363d';
+                btnSup.style.color = '#8b949e';
+            } else {
+                btnSup.style.background = '#2ea04322';
+                btnSup.style.borderColor = '#2ea043';
+                btnSup.style.color = '#2ea043';
+                btnRes.style.background = '#21262d';
+                btnRes.style.borderColor = '#30363d';
+                btnRes.style.color = '#8b949e';
+            }
+        }
+
+        function useCurrentPriceForLevel() {
+            if (currentLivePrice > 0) {
+                document.getElementById('custom_level_price').value = currentLivePrice;
+            } else {
+                alert('Live price abhi load ho raha hai, thoda intezar karein.');
+            }
+        }
+
+        function saveCustomLevel() {
+            const priceInput = document.getElementById('custom_level_price');
+            const descInput = document.getElementById('custom_level_desc');
+            const priceVal = parseFloat(priceInput.value);
+
+            if (!priceVal || priceVal <= 0 || isNaN(priceVal)) {
+                alert('Kripya valid BTC price enter karein (e.g. 84500)!');
+                return;
             }
 
-            // 2. Update Portfolio & Capital Allocation
-            if (data.portfolio) {
-                const pf = data.portfolio;
-                document.getElementById('metric_equity').innerText = `$${Number(pf.total_equity).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-                document.getElementById('metric_margin').innerText = `$${Number(pf.margin_in_use || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-                document.getElementById('metric_free').innerText = `$${Number(pf.free_capital || 1000).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-                document.getElementById('metric_winrate').innerText = `${pf.win_rate_pct}% (${pf.win_trades}W / ${pf.loss_trades}L)`;
-                
-                const pnlElem = document.getElementById('metric_pnl');
-                pnlElem.innerText = `${pf.net_pnl >= 0 ? '+' : ''}$${Number(pf.net_pnl).toFixed(2)} (${pf.return_pct}%)`;
-                pnlElem.className = `value ${pf.net_pnl >= 0 ? 'price-up' : 'price-down'}`;
-                
-                document.getElementById('metric_pf').innerText = `${pf.profit_factor}`;
+            const descVal = descInput.value.trim() || `${selectedLevelTf} ${selectedLevelType === 'RESISTANCE' ? 'Resistance' : 'Support'}`;
 
-                // Daily limits & Cooldown display
-                document.getElementById('top_daily_trades').innerText = `${pf.daily_trades_taken} / ${pf.max_daily_trades}`;
-                
-                const cdElem = document.getElementById('top_cooldown');
-                if (pf.cooldown_remaining_sec > 0) {
-                    const mins = Math.ceil(pf.cooldown_remaining_sec / 60);
-                    cdElem.innerText = `⏳ ${mins}m LEFT`;
-                    cdElem.className = 'ticker-val price-down';
-                } else {
-                    cdElem.innerText = 'READY';
-                    cdElem.className = 'ticker-val price-up';
-                }
+            const newLevel = {
+                id: 'lvl_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                timeframe: selectedLevelTf,
+                level_type: selectedLevelType,
+                price: priceVal,
+                description: descVal,
+                created_at: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            const levels = getStoredCustomLevels();
+            levels.push(newLevel);
+            saveStoredCustomLevels(levels);
+
+            // Reset inputs & close
+            descInput.value = '';
+            closeAddLevelModal();
+            renderAllLevels();
+        }
+
+        function deleteCustomLevel(id) {
+            let levels = getStoredCustomLevels();
+            levels = levels.filter(lvl => lvl.id !== id);
+            saveStoredCustomLevels(levels);
+            renderAllLevels();
+        }
+
+        function renderAllLevels(serverLevels = null) {
+            if (serverLevels) {
+                latestServerLevels = serverLevels;
             }
 
-            // 3. Update 1D & 1H Key Level List
-            if (data.levels && data.levels.length > 0) {
-                const levelsListContainer = document.getElementById('levels_list');
-                levelsListContainer.innerHTML = '';
+            const levelsListContainer = document.getElementById('levels_list');
+            if (!levelsListContainer) return;
+            levelsListContainer.innerHTML = '';
 
-                data.levels.forEach(lvl => {
-                    const isSupport = lvl.level_type.includes('SUPPORT') || lvl.description.includes('PDL');
-                    const color = isSupport ? '#2ea043' : '#f85149';
+            const customLevels = getStoredCustomLevels();
+
+            // 1. Render User-Marked Permanent Levels
+            if (customLevels.length === 0) {
+                const emptyHint = document.createElement('div');
+                emptyHint.style.cssText = "font-size:10.5px; color:#8b949e; background:#0d1117; padding:8px 10px; border-radius:6px; border:1px dashed #30363d; line-height:1.4;";
+                emptyHint.innerHTML = `📌 Koi custom level mark nahi hai. Upar <b style="color:#58a6ff;">+ Mark Level</b> click karke 1D/1H level add karein (ye timeframe badalne ya refresh par kabhi remove nahi hoga).`;
+                levelsListContainer.appendChild(emptyHint);
+            } else {
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = "display:flex; justify-content:space-between; font-size:10px; font-weight:700; color:#58a6ff; text-transform:uppercase; margin-bottom:2px;";
+                headerDiv.innerHTML = `<span>👤 Marked by You (${customLevels.length}):</span><span style="color:#8b949e;">Permanent</span>`;
+                levelsListContainer.appendChild(headerDiv);
+
+                customLevels.forEach(lvl => {
+                    const isSup = lvl.level_type === 'SUPPORT';
+                    const color = isSup ? '#2ea043' : '#f85149';
+                    const typeClass = isSup ? 'sup' : 'res';
+                    const tfColor = lvl.timeframe === '1D' ? '#58a6ff' : '#d29922';
+
+                    let distHtml = '';
+                    if (currentLivePrice > 0) {
+                        const diffPct = ((lvl.price - currentLivePrice) / currentLivePrice) * 100;
+                        const absPct = Math.abs(diffPct);
+                        if (absPct <= 0.15) {
+                            distHtml = `<span style="color:#e3b341; font-weight:800; font-size:9.5px; background:#e3b34122; padding:1px 4px; border-radius:3px; border:1px solid #e3b341;">🎯 FIGHT ZONE</span>`;
+                        } else {
+                            distHtml = `<span style="color:#8b949e; font-size:9.5px;">(${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(2)}%)</span>`;
+                        }
+                    }
+
                     const div = document.createElement('div');
-                    div.className = 'level-pill';
+                    div.className = `level-pill custom-level ${typeClass}`;
                     div.innerHTML = `
-                        <span><b style="color:${color};">[${lvl.timeframe.toUpperCase()}]</b> ${lvl.description}</span>
-                        <b style="color:#f0f6fc;">$${Number(lvl.price).toLocaleString()}</b>
+                        <div style="display:flex; align-items:center; gap:6px; overflow:hidden;">
+                            <span style="background:#21262d; border:1px solid #30363d; color:${tfColor}; font-weight:800; font-size:9.5px; padding:1px 4px; border-radius:3px;">${lvl.timeframe}</span>
+                            <span style="color:${color}; font-weight:700; font-size:10px;">${isSup ? 'SUP' : 'RES'}</span>
+                            <span style="color:#c9d1d9; font-size:10.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${lvl.description}">${lvl.description}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            ${distHtml}
+                            <b style="color:#f0f6fc; font-size:11px;">$${Number(lvl.price).toLocaleString()}</b>
+                            <button class="level-del-btn" onclick="deleteCustomLevel('${lvl.id}')" title="Delete Level">🗑️</button>
+                        </div>
                     `;
                     levelsListContainer.appendChild(div);
                 });
             }
 
+            // 2. Render Algo Auto-Detected Levels (PDH, PDL, PDC, 1H Swings)
+            if (latestServerLevels.length > 0) {
+                const autoHeader = document.createElement('div');
+                autoHeader.style.cssText = "font-size:10px; font-weight:700; color:#8b949e; text-transform:uppercase; margin-top:6px; margin-bottom:2px;";
+                autoHeader.innerText = "⚡ Algo Auto-Detected S/R:";
+                levelsListContainer.appendChild(autoHeader);
+
+                latestServerLevels.forEach(lvl => {
+                    const isSupport = (lvl.level_type || '').includes('SUPPORT') || (lvl.description || '').includes('PDL');
+                    const color = isSupport ? '#2ea043' : '#f85149';
+                    const div = document.createElement('div');
+                    div.className = 'level-pill';
+                    div.innerHTML = `
+                        <span><b style="color:${color};">[${(lvl.timeframe || '1D').toUpperCase()}]</b> ${lvl.description}</span>
+                        <b style="color:#f0f6fc;">$${Number(lvl.price).toLocaleString()}</b>
+                    `;
+                    levelsListContainer.appendChild(div);
+                });
+            }
+        }
+
+        // =========================================================================
+        // WebSocket Connection to Backend for Real-Time Trades & Status
+        // =========================================================================
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
+        let ws;
+
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket(wsUrl);
+
+                ws.onopen = () => {
+                    const statusElem = document.getElementById('ws_status');
+                    if (statusElem) {
+                        statusElem.innerText = '● LIVE SYNC';
+                        statusElem.className = 'ticker-val price-up';
+                    }
+                };
+
+                ws.onclose = () => {
+                    const statusElem = document.getElementById('ws_status');
+                    if (statusElem) {
+                        statusElem.innerText = '○ RECONNECTING...';
+                        statusElem.className = 'ticker-val price-down';
+                    }
+                    setTimeout(connectWebSocket, 2000);
+                };
+
+                ws.onerror = (err) => {
+                    console.warn("WebSocket error:", err);
+                };
+
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleServerUpdate(data);
+                    } catch (e) {
+                        console.error("Error processing WS message:", e);
+                    }
+                };
+            } catch (e) {
+                console.error("WebSocket init failed:", e);
+                setTimeout(connectWebSocket, 3000);
+            }
+        }
+
+        function handleServerUpdate(data) {
+            if (!data) return;
+
+            // 1. Update Top Ticker Bar & Live Price
+            if (data.current_price) {
+                currentLivePrice = Number(data.current_price);
+                const pElem = document.getElementById('top_price');
+                if (pElem) {
+                    pElem.innerText = `$${currentLivePrice.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                }
+            }
+
+            // 2. Update Portfolio & Capital Allocation
+            if (data.portfolio) {
+                const pf = data.portfolio;
+                const eq = document.getElementById('metric_equity');
+                const mg = document.getElementById('metric_margin');
+                const fr = document.getElementById('metric_free');
+                const wr = document.getElementById('metric_winrate');
+                const pnlElem = document.getElementById('metric_pnl');
+                const pfElem = document.getElementById('metric_pf');
+                const tradesCount = document.getElementById('top_daily_trades');
+                const cdElem = document.getElementById('top_cooldown');
+
+                if (eq) eq.innerText = `$${Number(pf.total_equity).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                if (mg) mg.innerText = `$${Number(pf.margin_in_use || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                if (fr) fr.innerText = `$${Number(pf.free_capital || 1000).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                if (wr) wr.innerText = `${pf.win_rate_pct}% (${pf.win_trades}W / ${pf.loss_trades}L)`;
+                
+                if (pnlElem) {
+                    pnlElem.innerText = `${pf.net_pnl >= 0 ? '+' : ''}$${Number(pf.net_pnl).toFixed(2)} (${pf.return_pct}%)`;
+                    pnlElem.className = `value ${pf.net_pnl >= 0 ? 'price-up' : 'price-down'}`;
+                }
+                
+                if (pfElem) pfElem.innerText = `${pf.profit_factor}`;
+                if (tradesCount) tradesCount.innerText = `${pf.daily_trades_taken} / ${pf.max_daily_trades}`;
+                
+                if (cdElem) {
+                    if (pf.cooldown_remaining_sec > 0) {
+                        const mins = Math.ceil(pf.cooldown_remaining_sec / 60);
+                        cdElem.innerText = `⏳ ${mins}m LEFT`;
+                        cdElem.className = 'ticker-val price-down';
+                    } else {
+                        cdElem.innerText = 'READY';
+                        cdElem.className = 'ticker-val price-up';
+                    }
+                }
+            }
+
+            // 3. Update 1D & 1H Key Level List (Custom Marked + Server Auto)
+            renderAllLevels(data.levels);
+
             // 4. Update Live Logic Inspector Box
             const logicBadge = document.getElementById('logic_state_badge');
             if (data.active_trade) {
                 const t = data.active_trade;
-                logicBadge.innerText = `IN TRADE (${t.side} ${t.leverage}X)`;
-                logicBadge.style.color = '#58a6ff';
-                logicBadge.style.borderColor = '#58a6ff';
+                if (logicBadge) {
+                    logicBadge.innerText = `IN TRADE (${t.side} ${t.leverage}X)`;
+                    logicBadge.style.color = '#58a6ff';
+                    logicBadge.style.borderColor = '#58a6ff';
+                }
 
                 document.getElementById('logic_htf_desc').innerHTML = `<b style="color:#58a6ff;">${t.level_info || 'Key HTF Level'}</b> (Confirmed Bounce)`;
                 document.getElementById('logic_fight_desc').innerHTML = `Opposing exhaustion verified. Rejection wick defended.`;
@@ -1040,18 +1356,22 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
                 document.getElementById('logic_candle_b_desc').innerHTML = `Executed at <b>$${Number(t.entry_price).toLocaleString()}</b> with <b>${t.leverage}x</b> leverage (Risk: $${Number(t.risk_amount||10).toFixed(2)}).`;
             } else if (data.pending_setup) {
                 const ps = data.pending_setup;
-                logicBadge.innerText = `CANDLE A FORMED (${ps.side})`;
-                logicBadge.style.color = '#e3b341';
-                logicBadge.style.borderColor = '#e3b341';
+                if (logicBadge) {
+                    logicBadge.innerText = `CANDLE A FORMED (${ps.side})`;
+                    logicBadge.style.color = '#e3b341';
+                    logicBadge.style.borderColor = '#e3b341';
+                }
 
                 document.getElementById('logic_htf_desc').innerHTML = `<b style="color:#e3b341;">${ps.level_info}</b> (Touch detected)`;
                 document.getElementById('logic_fight_desc').innerHTML = `Fight won by ${ps.side == 'BUY' ? 'Buyers' : 'Sellers'}.`;
                 document.getElementById('logic_candle_a_desc').innerHTML = `Candle A Solid Body (O: $${ps.candle_a_open}, C: $${ps.candle_a_close}).`;
                 document.getElementById('logic_candle_b_desc').innerHTML = `Waiting for breakout ${ps.side == 'BUY' ? 'above $' + ps.candle_a_high : 'below $' + ps.candle_a_low}...`;
             } else {
-                logicBadge.innerText = `SCANNING`;
-                logicBadge.style.color = '#8b949e';
-                logicBadge.style.borderColor = '#30363d';
+                if (logicBadge) {
+                    logicBadge.innerText = `SCANNING`;
+                    logicBadge.style.color = '#8b949e';
+                    logicBadge.style.borderColor = '#30363d';
+                }
 
                 document.getElementById('logic_htf_desc').innerText = `Scanning near 1D PDH/PDL or 1H Swings...`;
                 document.getElementById('logic_fight_desc').innerText = `Awaiting price test & rejection wick at key level.`;
@@ -1065,8 +1385,10 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
 
             if (data.active_trade) {
                 const t = data.active_trade;
-                statusBadge.innerText = `IN TRADE (${t.leverage}X)`;
-                statusBadge.style.color = '#58a6ff';
+                if (statusBadge) {
+                    statusBadge.innerText = `IN TRADE (${t.leverage}X)`;
+                    statusBadge.style.color = '#58a6ff';
+                }
 
                 const unrealizedPnl = Number(t.unrealized_pnl || 0);
                 const pnlClass = unrealizedPnl >= 0 ? 'price-up' : 'price-down';
@@ -1084,33 +1406,39 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
                     "Stage 7+: Runner Ladder Trailing (+5R Step)"
                 ][Math.min(7, t.stage)];
 
-                tradeContainer.innerHTML = `
-                    <div class="trade-card ${sideClass}">
-                        <div class="card-header">
-                            <span class="card-badge badge-${sideClass}">${t.side} ${t.symbol} (${t.leverage}x)</span>
-                            <span class="${pnlClass}" style="font-weight:700; font-family:'JetBrains Mono'; font-size:13px;">
-                                ${unrealizedPnl >= 0 ? '+' : ''}$${unrealizedPnl.toFixed(2)}
-                            </span>
+                if (tradeContainer) {
+                    tradeContainer.innerHTML = `
+                        <div class="trade-card ${sideClass}">
+                            <div class="card-header">
+                                <span class="card-badge badge-${sideClass}">${t.side} ${t.symbol} (${t.leverage}x)</span>
+                                <span class="${pnlClass}" style="font-weight:700; font-family:'JetBrains Mono'; font-size:13px;">
+                                    ${unrealizedPnl >= 0 ? '+' : ''}$${unrealizedPnl.toFixed(2)}
+                                </span>
+                            </div>
+                            <div class="trade-row"><span>Entry Price:</span> <b>$${Number(t.entry_price).toLocaleString()}</b></div>
+                            <div class="trade-row"><span>Current SL:</span> <b style="color:#f85149;">$${Number(t.current_sl).toLocaleString()}</b></div>
+                            <div class="trade-row"><span>1:2 CTC TP:</span> <b style="color:#e3b341;">$${Number(t.stage_1_tp).toLocaleString()}</b></div>
+                            <div class="trade-row"><span>1:5 (50% TP):</span> <b style="color:#2ea043;">$${Number(t.stage_2_tp).toLocaleString()}</b></div>
+                            <div class="trade-row"><span>1:10 (40% TP):</span> <b style="color:#a371f7;">$${Number(t.stage_4_tp).toLocaleString()}</b></div>
+                            <div class="trade-row"><span>Remaining Qty:</span> <b>${t.remaining_qty} BTC</b></div>
+                            <div class="trade-row"><span>Margin Allocated:</span> <b>$${Number(t.margin_used || 0).toFixed(2)}</b></div>
+                            <div style="font-size:11px; color:#8b949e; margin-top:6px;">${stageText}</div>
+                            <div class="progress-track"><div class="progress-fill" style="width: ${stagePercent}%;"></div></div>
                         </div>
-                        <div class="trade-row"><span>Entry Price:</span> <b>$${Number(t.entry_price).toLocaleString()}</b></div>
-                        <div class="trade-row"><span>Current SL:</span> <b style="color:#f85149;">$${Number(t.current_sl).toLocaleString()}</b></div>
-                        <div class="trade-row"><span>1:2 CTC TP:</span> <b style="color:#e3b341;">$${Number(t.stage_1_tp).toLocaleString()}</b></div>
-                        <div class="trade-row"><span>1:5 (50% TP):</span> <b style="color:#2ea043;">$${Number(t.stage_2_tp).toLocaleString()}</b></div>
-                        <div class="trade-row"><span>1:10 (40% TP):</span> <b style="color:#a371f7;">$${Number(t.stage_4_tp).toLocaleString()}</b></div>
-                        <div class="trade-row"><span>Remaining Qty:</span> <b>${t.remaining_qty} BTC</b></div>
-                        <div class="trade-row"><span>Margin Allocated:</span> <b>$${Number(t.margin_used || 0).toFixed(2)}</b></div>
-                        <div style="font-size:11px; color:#8b949e; margin-top:6px;">${stageText}</div>
-                        <div class="progress-track"><div class="progress-fill" style="width: ${stagePercent}%;"></div></div>
-                    </div>
-                `;
+                    `;
+                }
             } else {
-                statusBadge.innerText = 'SCANNING';
-                statusBadge.style.color = '#8b949e';
-                tradeContainer.innerHTML = `
-                    <div style="text-align: center; padding: 14px; color: #8b949e; font-size: 11px; background: #0d1117; border-radius: 6px; border:1px solid #21262d;">
-                        🔍 Scanning for 1D/1H Level Touch & Buyer/Seller Fight Breakout...
-                    </div>
-                `;
+                if (statusBadge) {
+                    statusBadge.innerText = 'SCANNING';
+                    statusBadge.style.color = '#8b949e';
+                }
+                if (tradeContainer) {
+                    tradeContainer.innerHTML = `
+                        <div style="text-align: center; padding: 14px; color: #8b949e; font-size: 11px; background: #0d1117; border-radius: 6px; border:1px solid #21262d;">
+                            🔍 Scanning for 1D/1H Level Touch & Buyer/Seller Fight Breakout...
+                        </div>
+                    `;
+                }
             }
 
             // 6. Update Closed Trade Records
@@ -1118,59 +1446,63 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
                 cachedClosedTrades = data.closed_trades;
                 const histContainer = document.getElementById('trade_history_container');
                 const countBadge = document.getElementById('records_count_badge');
-                countBadge.innerText = `${cachedClosedTrades.length} Trades`;
+                if (countBadge) countBadge.innerText = `${cachedClosedTrades.length} Trades`;
 
-                if (cachedClosedTrades.length === 0) {
-                    histContainer.innerHTML = `
-                        <div style="color:#8b949e; font-size:11px; text-align:center; padding:10px; font-family:'JetBrains Mono';">
-                            No closed trades yet today.
-                        </div>
-                    `;
-                } else {
-                    histContainer.innerHTML = '';
-                    cachedClosedTrades.slice().reverse().forEach((tr, index) => {
-                        const originalIndex = cachedClosedTrades.length - 1 - index;
-                        const pnl = Number(tr.realized_pnl || 0);
-                        const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
-                        const sideClass = tr.side.toLowerCase();
-                        
-                        const card = document.createElement('div');
-                        card.className = 'history-row';
-                        card.innerHTML = `
-                            <div class="history-header">
-                                <span class="card-badge badge-${sideClass}">${tr.side} (${tr.leverage}x)</span>
-                                <b style="color:${pnlColor}; font-family:'JetBrains Mono'; font-size:12px;">
-                                    ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${tr.pnl_percent}%)
-                                </b>
+                if (histContainer) {
+                    if (cachedClosedTrades.length === 0) {
+                        histContainer.innerHTML = `
+                            <div style="color:#8b949e; font-size:11px; text-align:center; padding:10px; font-family:'JetBrains Mono';">
+                                No closed trades yet today.
                             </div>
-                            <div style="display:flex; justify-content:space-between; color:#8b949e; font-size:10px; font-family:'JetBrains Mono';">
-                                <span>Entry: $${Number(tr.entry_price).toLocaleString()}</span>
-                                <span>SL: $${Number(tr.final_sl).toLocaleString()}</span>
-                            </div>
-                            <div style="color:#8b949e; font-size:10px;">${tr.exit_reason || 'Closed'}</div>
-                            <button class="btn-inspect" onclick="openReasonModal(${originalIndex})">
-                                <span>🔍 A-Z Logic Details</span>
-                            </button>
                         `;
-                        histContainer.appendChild(card);
-                    });
+                    } else {
+                        histContainer.innerHTML = '';
+                        cachedClosedTrades.slice().reverse().forEach((tr, index) => {
+                            const originalIndex = cachedClosedTrades.length - 1 - index;
+                            const pnl = Number(tr.realized_pnl || 0);
+                            const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
+                            const sideClass = tr.side.toLowerCase();
+                            
+                            const card = document.createElement('div');
+                            card.className = 'history-row';
+                            card.innerHTML = `
+                                <div class="history-header">
+                                    <span class="card-badge badge-${sideClass}">${tr.side} (${tr.leverage}x)</span>
+                                    <b style="color:${pnlColor}; font-family:'JetBrains Mono'; font-size:12px;">
+                                        ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${tr.pnl_percent}%)
+                                    </b>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; color:#8b949e; font-size:10px; font-family:'JetBrains Mono';">
+                                    <span>Entry: $${Number(tr.entry_price).toLocaleString()}</span>
+                                    <span>SL: $${Number(tr.final_sl).toLocaleString()}</span>
+                                </div>
+                                <div style="color:#8b949e; font-size:10px;">${tr.exit_reason || 'Closed'}</div>
+                                <button class="btn-inspect" onclick="openReasonModal(${originalIndex})">
+                                    <span>🔍 A-Z Logic Details</span>
+                                </button>
+                            `;
+                            histContainer.appendChild(card);
+                        });
+                    }
                 }
             }
 
             // 7. Update Execution Logs
             if (data.logs && data.logs.length > 0) {
                 const logsContainer = document.getElementById('logs_container');
-                logsContainer.innerHTML = '';
-                data.logs.slice(-15).reverse().forEach(log => {
-                    const div = document.createElement('div');
-                    let logClass = 'log-entry';
-                    if (log.includes('EXECUTED') || log.includes('BUY') || log.includes('SELL')) logClass += ' signal';
-                    if (log.includes('1:5') || log.includes('1:10') || log.includes('1:2') || log.includes('1:7')) logClass += ' tp';
-                    if (log.includes('SL') || log.includes('Loss') || log.includes('Cooldown')) logClass += ' sl';
-                    div.className = logClass;
-                    div.innerText = log;
-                    logsContainer.appendChild(div);
-                });
+                if (logsContainer) {
+                    logsContainer.innerHTML = '';
+                    data.logs.slice(-15).reverse().forEach(log => {
+                        const div = document.createElement('div');
+                        let logClass = 'log-entry';
+                        if (log.includes('EXECUTED') || log.includes('BUY') || log.includes('SELL')) logClass += ' signal';
+                        if (log.includes('1:5') || log.includes('1:10') || log.includes('1:2') || log.includes('1:7')) logClass += ' tp';
+                        if (log.includes('SL') || log.includes('Loss') || log.includes('Cooldown')) logClass += ' sl';
+                        div.className = logClass;
+                        div.innerText = log;
+                        logsContainer.appendChild(div);
+                    });
+                }
             }
         }
 
@@ -1268,10 +1600,18 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
 
         // Close on ESC key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeReasonModal();
+            if (e.key === 'Escape') {
+                closeReasonModal();
+                closeAddLevelModal();
+            }
         });
 
-        connectWebSocket();
+        // Initialize UI & Connections
+        window.addEventListener('DOMContentLoaded', () => {
+            initTradingView();
+            renderAllLevels();
+            connectWebSocket();
+        });
     </script>
 </body>
 </html>
