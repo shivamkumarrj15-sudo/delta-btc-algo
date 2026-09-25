@@ -6,6 +6,8 @@
     <title>Delta Exchange BTC - Pro Analysis & Algo Terminal</title>
     <!-- TradingView Advanced Charting Library Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- TradingView Lightweight Charts Library (Direct First-Party Drawing & Multi-Timeframe Persistence) -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -590,41 +592,60 @@
 
     <!-- Main Workspace -->
     <div class="workspace">
-        <!-- Advanced TradingView Interactive Chart Container with Permanent 1D ➔ 1H ➔ 1M Drawing Sync & NO Volume Indicator -->
+        <!-- Advanced Multi-Timeframe Interactive Chart Container with 100% Permanent Line Drawing Persistence -->
         <div class="chart-container">
+            <!-- Top Control Bar -->
             <div class="chart-header">
-                <!-- Multi-Timeframe Workflow & Resolution Sync Bar -->
+                <!-- Left: View Mode Toggle & Multi-Timeframe Buttons -->
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: #58a6ff; font-size: 11px;">
-                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2ea043; box-shadow: 0 0 8px #2ea043;"></span>
-                        <span>⚡ MTF LEVEL SYNC (1D ➔ 1H ➔ 1M):</span>
+                    <!-- Mode Switcher -->
+                    <div style="display: flex; background: #0d1117; padding: 2px; border-radius: 6px; border: 1px solid #30363d;">
+                        <button type="button" id="btn_mode_lw" onclick="switchChartMode('LW')" style="background:#1f6feb; border:none; color:#fff; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono';">
+                            ⚡ MTF Permanent Chart
+                        </button>
+                        <button type="button" id="btn_mode_tv" onclick="switchChartMode('TV')" style="background:transparent; border:none; color:#8b949e; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono';">
+                            🌐 TradingView Studio
+                        </button>
                     </div>
 
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #58a6ff;">
-                            ➊ Mark 1D Levels (D)
-                        </span>
-                        <span style="color: #8b949e; font-size: 10px;">➔</span>
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #d29922;">
-                            ➋ Mark 1H S/R (1h)
-                        </span>
-                        <span style="color: #8b949e; font-size: 10px;">➔</span>
-                        <span style="background: #21262d; border: 1px solid #30363d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: 'JetBrains Mono'; color: #2ea043;">
-                            ➌ Trade 1M Breakout (1m)
-                        </span>
+                    <!-- Timeframe Switcher (1D, 4H, 1H, 15M, 5M, 1M) -->
+                    <div id="lw_tf_bar" class="tf-bar">
+                        <button type="button" class="tf-btn active" id="tf_btn_1D" onclick="changeLwTimeframe('1D')">1D (Daily)</button>
+                        <button type="button" class="tf-btn" id="tf_btn_4H" onclick="changeLwTimeframe('4H')">4H</button>
+                        <button type="button" class="tf-btn" id="tf_btn_1H" onclick="changeLwTimeframe('1H')">1H (Hourly)</button>
+                        <button type="button" class="tf-btn" id="tf_btn_15M" onclick="changeLwTimeframe('15M')">15m</button>
+                        <button type="button" class="tf-btn" id="tf_btn_5M" onclick="changeLwTimeframe('5M')">5m</button>
+                        <button type="button" class="tf-btn" id="tf_btn_1M" onclick="changeLwTimeframe('1M')">1m (Trigger)</button>
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <button onclick="copyPineScript()" style="background:#1f6feb22; border:1px solid #1f6feb; color:#58a6ff; padding:4px 12px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono'; transition:all 0.2s;" onmouseover="this.style.background='#1f6feb'; this.style.color='#fff';" onmouseout="this.style.background='#1f6feb22'; this.style.color='#58a6ff';">
-                        📋 Copy MTF Auto-Levels Indicator
+                <!-- Right: Quick Level Actions & Indicator -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" onclick="openAddLevelModal()" style="background:#238636; border:1px solid #2ea043; color:#fff; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono'; display:flex; align-items:center; gap:4px;">
+                        <span>+ 📍 Mark Level</span>
                     </button>
-                    <span style="font-family:'JetBrains Mono'; color:#2ea043; font-size:11px; font-weight:700;">
-                        ● NO DRAWINGS LOST
+                    <button type="button" onclick="copyPineScript()" style="background:#1f6feb22; border:1px solid #1f6feb; color:#58a6ff; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; font-family:'JetBrains Mono';">
+                        📋 Pine Script
+                    </button>
+                    <span style="font-family:'JetBrains Mono'; color:#2ea043; font-size:10px; font-weight:700; background:#2ea04318; border:1px solid #2ea04344; padding:3px 6px; border-radius:4px;">
+                        ● 100% PERMANENT
                     </span>
                 </div>
             </div>
-            <div id="tv_chart_wrapper">
+
+            <!-- Chart Viewports -->
+            <div id="lw_chart_wrapper" style="flex:1; width:100%; height:100%; position:relative; background:#0d1117;">
+                <div id="lightweight_chart_element" style="width:100%; height:100%;"></div>
+                <div id="chart_hud_overlay" style="position:absolute; top:12px; left:14px; font-family:'JetBrains Mono'; font-size:11px; color:#8b949e; pointer-events:none; background:rgba(22,27,34,0.85); backdrop-filter:blur(4px); padding:4px 10px; border-radius:6px; border:1px solid #30363d; display:flex; gap:12px; z-index:10;">
+                    <span style="color:#58a6ff; font-weight:700;">BTCUSDT <span id="hud_tf_badge">1D</span></span>
+                    <span>O: <b id="hud_open" style="color:#f0f6fc;">-</b></span>
+                    <span>H: <b id="hud_high" style="color:#2ea043;">-</b></span>
+                    <span>L: <b id="hud_low" style="color:#f85149;">-</b></span>
+                    <span>C: <b id="hud_close" style="color:#f0f6fc;">-</b></span>
+                </div>
+            </div>
+
+            <div id="tv_chart_wrapper" style="flex:1; width:100%; height:100%; position:relative; display:none;">
                 <div id="tradingview_chart_element" style="height:100%; width:100%;"></div>
             </div>
         </div>
@@ -909,125 +930,219 @@
         </div>
     </div>
 
-    <!-- Initialize Advanced TradingView Chart Widget with 1D Default & Multi-Timeframe In-Memory & LocalStorage Sync -->
-    <script type="text/javascript">
-        let tvWidgetInstance = null;
-
-        function initTradingView() {
-            if (tvWidgetInstance) return; // Prevent duplicate instantiation
-
-            tvWidgetInstance = new TradingView.widget({
-                "autosize": true,
-                "symbol": "BINANCE:BTCUSDT.P",
-                "interval": "D", // Starts on 1 Day (1D) so user marks 1D levels first, then clicks 1h / 15m / 1m in chart top bar!
-                "timezone": "Asia/Kolkata",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#161b22",
-                "enable_publishing": false,
-                "hide_top_toolbar": false, // Top toolbar contains 1m, 5m, 15m, 1h, 4h, D resolutions
-                "hide_side_toolbar": false, // Full left drawing suite active (trendline, horizontal line, measure, box)
-                "allow_symbol_change": true,
-                "withdateranges": true,
-                "save_image": true,
-                "container_id": "tradingview_chart_element",
-                "hide_volume": true,
-                "favorites": {
-                    "intervals": ["1", "5", "15", "60", "240", "D"]
-                },
-                "studies": [], // NO default studies
-                "disabled_features": [
-                    "create_volume_indicator_by_default", // Strictly disables default volume indicator
-                    "volume_force_overlay",               // Strictly prevents volume overlay
-                    "header_saveload"                     // Disable cloud saveload to prevent CORS auth reset
-                ],
-                "enabled_features": [
-                    "save_chart_properties_to_local_storage", // Saves all marked levels & lines permanently
-                    "use_localstorage_for_settings",          // Retains drawings when switching 1D, 1H, 15M, 1M
-                    "items_favoriting",
-                    "drawing_templates",
-                    "study_templates",
-                    "side_toolbar_in_fullscreen_mode",
-                    "header_in_fullscreen_mode",
-                    "header_resolutions",
-                    "header_widget",
-                    "header_chart_type",
-                    "header_indicators",
-                    "header_undo_redo",
-                    "header_screenshot"
-                ],
-                "overrides": {
-                    "mainSeriesProperties.style": 1,
-                    "mainSeriesProperties.candleStyle.upColor": "#2ea043",
-                    "mainSeriesProperties.candleStyle.downColor": "#f85149",
-                    "mainSeriesProperties.candleStyle.borderUpColor": "#2ea043",
-                    "mainSeriesProperties.candleStyle.borderDownColor": "#f85149",
-                    "mainSeriesProperties.candleStyle.wickUpColor": "#2ea043",
-                    "mainSeriesProperties.candleStyle.wickDownColor": "#f85149",
-                    "paneProperties.background": "#0d1117",
-                    "paneProperties.vertGridProperties.color": "#161b22",
-                    "paneProperties.horzGridProperties.color": "#161b22"
-                }
-            });
-        }
-
-        function copyPineScript() {
-            const pineCode = `//@version=5
-indicator("⚡ Delta BTC Multi-Timeframe (1D/1H Levels & 1M Breakout Algo v3)", overlay=true)
-
-// 1D Levels (PDH, PDL, PDC)
-pdh = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
-pdl = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
-pdc = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
-
-plot(pdh, "1D PDH (Previous Day High)", color=color.new(#f85149, 0), linewidth=2, style=plot.style_linebr)
-plot(pdl, "1D PDL (Previous Day Low)",  color=color.new(#2ea043, 0), linewidth=2, style=plot.style_linebr)
-plot(pdc, "1D PDC (Pivot)",             color=color.new(#58a6ff, 30), linewidth=1, style=plot.style_cross)
-
-// 1H Key S/R Swings
-h1_high = request.security(syminfo.tickerid, "60", ta.highest(high, 8), lookahead=barmerge.lookahead_on)
-h1_low  = request.security(syminfo.tickerid, "60", ta.lowest(low, 8), lookahead=barmerge.lookahead_on)
-
-plot(h1_high, "1H Resistance", color=color.new(#ff7b72, 30), linewidth=1, style=plot.style_stepline)
-plot(h1_low,  "1H Support",    color=color.new(#7ee787, 30), linewidth=1, style=plot.style_stepline)
-
-// 1M Fight & Breakout Triggers
-candle_range = high - low
-candle_body  = math.abs(close - open)
-is_solid_body = candle_range > 0 and (candle_body / candle_range >= 0.45)
-is_near_support = (low <= pdl * 1.002 and low >= pdl * 0.998) or (low <= h1_low * 1.002 and low >= h1_low * 0.998)
-is_near_resist  = (high >= pdh * 0.998 and high <= pdh * 1.002) or (high >= h1_high * 0.998 and high <= h1_high * 1.002)
-
-is_candle_a_buy  = is_near_support and close > open and is_solid_body
-is_candle_a_sell = is_near_resist  and close < open and is_solid_body
-
-barcolor(is_candle_a_buy ? color.new(#58a6ff, 0) : is_candle_a_sell ? color.new(#bc8cff, 0) : na)
-
-buy_trigger  = is_candle_a_buy[1] and high > high[1]
-sell_trigger = is_candle_a_sell[1] and low < low[1]
-
-plotshape(buy_trigger,  title="BUY Trigger",  style=shape.triangleup,   location=location.belowbar, color=color.green, size=size.normal, text="⚡ BUY BREAKOUT")
-plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location=location.abovebar, color=color.red,   size=size.normal, text="⚡ SELL BREAKOUT")`;
-
-            navigator.clipboard.writeText(pineCode).then(() => {
-                alert("✅ Pine Script Copied!\n\nTradingView me Pine Editor me paste karein -> Add to chart karein. 1D PDH/PDL aur 1H lines 1M chart par automatically draw ho jayengi!");
-            }).catch(err => {
-                prompt("Ctrl+C dabakar Pine Script Copy karein:", pineCode);
-            });
-        }
-    </script>
-
-    <!-- App State & Level Management & WebSocket Script -->
+    <!-- App State, Lightweight Chart Engine & Permanent Multi-Timeframe Levels Script -->
     <script>
         let currentLivePrice = 0;
         let cachedClosedTrades = [];
         let latestServerLevels = [];
         let selectedLevelTf = '1D';
         let selectedLevelType = 'RESISTANCE';
+        let currentLwTf = '1D';
+        let activeChartMode = 'LW'; // 'LW' or 'TV'
+
+        let lwChart = null;
+        let candleSeries = null;
+        let activePriceLines = [];
+        let lastCandleData = null;
+        let tvWidgetInstance = null;
 
         // =========================================================================
-        // Permanent Custom Level Management (Saved in localStorage)
+        // 1. TradingView Lightweight Charts Engine (First-Party Permanent Canvas)
+        // =========================================================================
+        function initLightweightChart() {
+            const container = document.getElementById('lightweight_chart_element');
+            if (!container) return;
+
+            // Clean up existing instance if any
+            container.innerHTML = '';
+
+            lwChart = LightweightCharts.createChart(container, {
+                width: container.clientWidth,
+                height: container.clientHeight || 500,
+                layout: {
+                    background: { type: 'solid', color: '#0d1117' },
+                    textColor: '#c9d1d9',
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 11
+                },
+                grid: {
+                    vertLines: { color: '#161b22' },
+                    horzLines: { color: '#161b22' }
+                },
+                crosshair: {
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                    vertLine: { color: '#58a6ff', width: 1, style: LightweightCharts.LineStyle.Dashed },
+                    horzLine: { color: '#58a6ff', width: 1, style: LightweightCharts.LineStyle.Dashed }
+                },
+                rightPriceScale: {
+                    borderColor: '#30363d',
+                    scaleMargins: { top: 0.1, bottom: 0.1 },
+                    autoScale: true
+                },
+                timeScale: {
+                    borderColor: '#30363d',
+                    timeVisible: true,
+                    secondsVisible: false
+                }
+            });
+
+            candleSeries = lwChart.addCandlestickSeries({
+                upColor: '#2ea043',
+                downColor: '#f85149',
+                borderUpColor: '#2ea043',
+                borderDownColor: '#f85149',
+                wickUpColor: '#2ea043',
+                wickDownColor: '#f85149'
+            });
+
+            // HUD Crosshair Hover Listener
+            lwChart.subscribeCrosshairMove(param => {
+                if (!param || !param.time || !param.seriesData) return;
+                const data = param.seriesData.get(candleSeries);
+                if (data) {
+                    const openElem = document.getElementById('hud_open');
+                    const highElem = document.getElementById('hud_high');
+                    const lowElem = document.getElementById('hud_low');
+                    const closeElem = document.getElementById('hud_close');
+                    if (openElem) openElem.innerText = `$${Number(data.open).toLocaleString()}`;
+                    if (highElem) highElem.innerText = `$${Number(data.high).toLocaleString()}`;
+                    if (lowElem) lowElem.innerText = `$${Number(data.low).toLocaleString()}`;
+                    if (closeElem) closeElem.innerText = `$${Number(data.close).toLocaleString()}`;
+                }
+            });
+
+            // Auto Resize Handler
+            window.addEventListener('resize', () => {
+                if (lwChart && container) {
+                    lwChart.applyOptions({
+                        width: container.clientWidth,
+                        height: container.clientHeight
+                    });
+                }
+            });
+
+            // Load initial 1D candles
+            loadCandlesForTimeframe(currentLwTf);
+        }
+
+        async function loadCandlesForTimeframe(tf) {
+            const tfMap = { '1D': '1d', '4H': '4h', '1H': '1h', '15M': '15m', '5M': '5m', '1M': '1m' };
+            const interval = tfMap[tf] || '1d';
+            const hudTf = document.getElementById('hud_tf_badge');
+            if (hudTf) hudTf.innerText = tf;
+
+            try {
+                // Fetch from Binance public API
+                const res = await fetch(`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=${interval}&limit=250`);
+                const raw = await res.json();
+                if (Array.isArray(raw)) {
+                    const formatted = raw.map(k => ({
+                        time: Math.floor(k[0] / 1000),
+                        open: parseFloat(k[1]),
+                        high: parseFloat(k[2]),
+                        low: parseFloat(k[3]),
+                        close: parseFloat(k[4])
+                    }));
+                    if (candleSeries && formatted.length > 0) {
+                        candleSeries.setData(formatted);
+                        lastCandleData = formatted[formatted.length - 1];
+                        lwChart.timeScale().fitContent();
+                    }
+                }
+            } catch (e) {
+                console.warn("Binance API fetch failed, trying local fallback:", e);
+            }
+
+            // Always refresh all permanent price lines onto the newly loaded timeframe
+            refreshAllChartPriceLines();
+        }
+
+        function changeLwTimeframe(tf) {
+            currentLwTf = tf;
+            // Update UI buttons
+            ['1D', '4H', '1H', '15M', '5M', '1M'].forEach(t => {
+                const btn = document.getElementById(`tf_btn_${t}`);
+                if (btn) {
+                    if (t === tf) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+            loadCandlesForTimeframe(tf);
+        }
+
+        function switchChartMode(mode) {
+            activeChartMode = mode;
+            const btnLw = document.getElementById('btn_mode_lw');
+            const btnTv = document.getElementById('btn_mode_tv');
+            const wrapLw = document.getElementById('lw_chart_wrapper');
+            const wrapTv = document.getElementById('tv_chart_wrapper');
+            const tfBar = document.getElementById('lw_tf_bar');
+
+            if (mode === 'LW') {
+                if (wrapLw) wrapLw.style.display = 'block';
+                if (wrapTv) wrapTv.style.display = 'none';
+                if (tfBar) tfBar.style.display = 'flex';
+                if (btnLw) { btnLw.style.background = '#1f6feb'; btnLw.style.color = '#fff'; }
+                if (btnTv) { btnTv.style.background = 'transparent'; btnTv.style.color = '#8b949e'; }
+                if (lwChart) {
+                    const container = document.getElementById('lightweight_chart_element');
+                    lwChart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+                    lwChart.timeScale().fitContent();
+                    refreshAllChartPriceLines();
+                }
+            } else {
+                if (wrapLw) wrapLw.style.display = 'none';
+                if (wrapTv) wrapTv.style.display = 'block';
+                if (tfBar) tfBar.style.display = 'none';
+                if (btnTv) { btnTv.style.background = '#1f6feb'; btnTv.style.color = '#fff'; }
+                if (btnLw) { btnLw.style.background = 'transparent'; btnLw.style.color = '#8b949e'; }
+                initTradingView();
+            }
+        }
+
+        // =========================================================================
+        // 2. Permanent Price Line Rendering Engine (Drawn On Chart)
+        // =========================================================================
+        function drawPriceLineOnChart(lvl) {
+            if (!candleSeries) return;
+
+            const isSup = lvl.level_type === 'SUPPORT';
+            let color = isSup ? '#2ea043' : '#f85149';
+            if (lvl.timeframe === '1H') color = isSup ? '#7ee787' : '#ff7b72';
+
+            try {
+                const line = candleSeries.createPriceLine({
+                    price: parseFloat(lvl.price),
+                    color: color,
+                    lineWidth: 2,
+                    lineStyle: LightweightCharts.LineStyle.Solid,
+                    axisLabelVisible: true,
+                    title: `[${lvl.timeframe}] ${lvl.description || (isSup ? 'SUP' : 'RES')}`
+                });
+                activePriceLines.push({ id: lvl.id, lineInstance: line });
+            } catch (e) {
+                console.error("Error creating price line on chart:", e);
+            }
+        }
+
+        function clearAllChartPriceLines() {
+            if (!candleSeries) return;
+            activePriceLines.forEach(item => {
+                try {
+                    candleSeries.removePriceLine(item.lineInstance);
+                } catch (e) {}
+            });
+            activePriceLines = [];
+        }
+
+        function refreshAllChartPriceLines() {
+            clearAllChartPriceLines();
+            const levels = getStoredCustomLevels();
+            levels.forEach(lvl => drawPriceLineOnChart(lvl));
+        }
+
+        // =========================================================================
+        // 3. Permanent Custom Level Management (Saved in localStorage)
         // =========================================================================
         function getStoredCustomLevels() {
             try {
@@ -1149,6 +1264,7 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
             descInput.value = '';
             closeAddLevelModal();
             renderAllLevels();
+            refreshAllChartPriceLines();
         }
 
         function deleteCustomLevel(id) {
@@ -1156,6 +1272,7 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
             levels = levels.filter(lvl => lvl.id !== id);
             saveStoredCustomLevels(levels);
             renderAllLevels();
+            refreshAllChartPriceLines();
         }
 
         function renderAllLevels(serverLevels = null) {
@@ -1178,7 +1295,7 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
             } else {
                 const headerDiv = document.createElement('div');
                 headerDiv.style.cssText = "display:flex; justify-content:space-between; font-size:10px; font-weight:700; color:#58a6ff; text-transform:uppercase; margin-bottom:2px;";
-                headerDiv.innerHTML = `<span>👤 Marked by You (${customLevels.length}):</span><span style="color:#8b949e;">Permanent</span>`;
+                headerDiv.innerHTML = `<span>👤 Marked by You (${customLevels.length}):</span><span style="color:#2ea043; font-weight:800;">● Saved & Permanent</span>`;
                 levelsListContainer.appendChild(headerDiv);
 
                 customLevels.forEach(lvl => {
@@ -1238,7 +1355,114 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
         }
 
         // =========================================================================
-        // WebSocket Connection to Backend for Real-Time Trades & Status
+        // 4. TradingView Studio Widget (Fallback Option)
+        // =========================================================================
+        function initTradingView() {
+            if (tvWidgetInstance) return;
+
+            tvWidgetInstance = new TradingView.widget({
+                "autosize": true,
+                "symbol": "BINANCE:BTCUSDT.P",
+                "interval": "D",
+                "timezone": "Asia/Kolkata",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#161b22",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "withdateranges": true,
+                "save_image": true,
+                "container_id": "tradingview_chart_element",
+                "hide_volume": true,
+                "favorites": {
+                    "intervals": ["1", "5", "15", "60", "240", "D"]
+                },
+                "studies": [],
+                "disabled_features": [
+                    "create_volume_indicator_by_default",
+                    "volume_force_overlay",
+                    "header_saveload"
+                ],
+                "enabled_features": [
+                    "save_chart_properties_to_local_storage",
+                    "use_localstorage_for_settings",
+                    "items_favoriting",
+                    "drawing_templates",
+                    "study_templates",
+                    "side_toolbar_in_fullscreen_mode",
+                    "header_in_fullscreen_mode",
+                    "header_resolutions",
+                    "header_widget",
+                    "header_chart_type",
+                    "header_indicators",
+                    "header_undo_redo",
+                    "header_screenshot"
+                ],
+                "overrides": {
+                    "mainSeriesProperties.style": 1,
+                    "mainSeriesProperties.candleStyle.upColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.downColor": "#f85149",
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.borderDownColor": "#f85149",
+                    "mainSeriesProperties.candleStyle.wickUpColor": "#2ea043",
+                    "mainSeriesProperties.candleStyle.wickDownColor": "#f85149",
+                    "paneProperties.background": "#0d1117",
+                    "paneProperties.vertGridProperties.color": "#161b22",
+                    "paneProperties.horzGridProperties.color": "#161b22"
+                }
+            });
+        }
+
+        function copyPineScript() {
+            const pineCode = `//@version=5
+indicator("⚡ Delta BTC Multi-Timeframe (1D/1H Levels & 1M Breakout Algo v3)", overlay=true)
+
+// 1D Levels (PDH, PDL, PDC)
+pdh = request.security(syminfo.tickerid, "D", high[1], lookahead=barmerge.lookahead_on)
+pdl = request.security(syminfo.tickerid, "D", low[1], lookahead=barmerge.lookahead_on)
+pdc = request.security(syminfo.tickerid, "D", close[1], lookahead=barmerge.lookahead_on)
+
+plot(pdh, "1D PDH (Previous Day High)", color=color.new(#f85149, 0), linewidth=2, style=plot.style_linebr)
+plot(pdl, "1D PDL (Previous Day Low)",  color=color.new(#2ea043, 0), linewidth=2, style=plot.style_linebr)
+plot(pdc, "1D PDC (Pivot)",             color=color.new(#58a6ff, 30), linewidth=1, style=plot.style_cross)
+
+// 1H Key S/R Swings
+h1_high = request.security(syminfo.tickerid, "60", ta.highest(high, 8), lookahead=barmerge.lookahead_on)
+h1_low  = request.security(syminfo.tickerid, "60", ta.lowest(low, 8), lookahead=barmerge.lookahead_on)
+
+plot(h1_high, "1H Resistance", color=color.new(#ff7b72, 30), linewidth=1, style=plot.style_stepline)
+plot(h1_low,  "1H Support",    color=color.new(#7ee787, 30), linewidth=1, style=plot.style_stepline)
+
+// 1M Fight & Breakout Triggers
+candle_range = high - low
+candle_body  = math.abs(close - open)
+is_solid_body = candle_range > 0 and (candle_body / candle_range >= 0.45)
+is_near_support = (low <= pdl * 1.002 and low >= pdl * 0.998) or (low <= h1_low * 1.002 and low >= h1_low * 0.998)
+is_near_resist  = (high >= pdh * 0.998 and high <= pdh * 1.002) or (high >= h1_high * 0.998 and high <= h1_high * 1.002)
+
+is_candle_a_buy  = is_near_support and close > open and is_solid_body
+is_candle_a_sell = is_near_resist  and close < open and is_solid_body
+
+barcolor(is_candle_a_buy ? color.new(#58a6ff, 0) : is_candle_a_sell ? color.new(#bc8cff, 0) : na)
+
+buy_trigger  = is_candle_a_buy[1] and high > high[1]
+sell_trigger = is_candle_a_sell[1] and low < low[1]
+
+plotshape(buy_trigger,  title="BUY Trigger",  style=shape.triangleup,   location=location.belowbar, color=color.green, size=size.normal, text="⚡ BUY BREAKOUT")
+plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location=location.abovebar, color=color.red,   size=size.normal, text="⚡ SELL BREAKOUT")`;
+
+            navigator.clipboard.writeText(pineCode).then(() => {
+                alert("✅ Pine Script Copied!\n\nTradingView me Pine Editor me paste karein -> Add to chart karein. 1D PDH/PDL aur 1H lines 1M chart par automatically draw ho jayengi!");
+            }).catch(err => {
+                prompt("Ctrl+C dabakar Pine Script Copy karein:", pineCode);
+            });
+        }
+
+        // =========================================================================
+        // 5. WebSocket Connection & Live Backend Updates
         // =========================================================================
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
@@ -1292,6 +1516,18 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
                 const pElem = document.getElementById('top_price');
                 if (pElem) {
                     pElem.innerText = `$${currentLivePrice.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                }
+
+                // Update real-time candle tick in Lightweight Chart
+                if (candleSeries && lastCandleData) {
+                    const updatedCandle = {
+                        time: lastCandleData.time,
+                        open: lastCandleData.open,
+                        high: Math.max(lastCandleData.high, currentLivePrice),
+                        low: Math.min(lastCandleData.low, currentLivePrice),
+                        close: currentLivePrice
+                    };
+                    candleSeries.update(updatedCandle);
                 }
             }
 
@@ -1502,7 +1738,7 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
         }
 
         // =========================================================================
-        // A-Z Reason Modal Controller
+        // 6. A-Z Reason Modal Controller
         // =========================================================================
         function openReasonModal(tradeIndex) {
             const tr = cachedClosedTrades[tradeIndex];
@@ -1601,9 +1837,11 @@ plotshape(sell_trigger, title="SELL Trigger", style=shape.triangledown, location
             }
         });
 
-        // Initialize UI & Connections
+        // =========================================================================
+        // 7. Initialization on Page Load
+        // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
-            initTradingView();
+            initLightweightChart();
             renderAllLevels();
             connectWebSocket();
         });
