@@ -250,11 +250,18 @@ async def market_worker():
         # Poll interval: 1.5 seconds for real-time responsiveness
         await asyncio.sleep(1.5)
 
+@app.get("/health")
+@app.get("/healthz")
+async def health_check():
+    """Health check endpoint for Render / Cloud monitoring."""
+    return {"status": "ok", "price": latest_state.get("current_price", 0), "timestamp": time.time()}
+
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(market_worker())
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("DASHBOARD_PORT", 8501))
+    port = int(os.getenv("PORT", os.getenv("DASHBOARD_PORT", 8501)))
+    print(f"🚀 Starting Delta Algo Server on port {port}...")
     uvicorn.run("web_server:app", host="0.0.0.0", port=port, reload=False)
