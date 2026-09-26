@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Exchange BTC - Pro Trading Terminal (Manual Buy/Sell & Replay)</title>
+    <title>Delta Exchange BTC - Pro Trading Terminal & Paper Trading</title>
     <!-- TradingView Advanced Charting Library Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -129,32 +129,6 @@
             font-weight: 800;
         }
 
-        /* Replay Mode Toggle Button */
-        .btn-replay {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #58a6ff;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-        .btn-replay:hover {
-            background: #1f6feb22;
-            border-color: #58a6ff;
-        }
-        .btn-replay.active {
-            background: #d29922;
-            border-color: #e3b341;
-            color: #ffffff;
-            animation: pulse 1.5s infinite;
-        }
-
         /* Header Right Controls */
         .header-right {
             display: flex;
@@ -204,20 +178,20 @@
             height: 100%;
         }
 
-        /* ON-CHART TRADING DOCK (Top Left Overlay - Exact TradingView / Exchange Style) */
+        /* ON-CHART TRADING DOCK (Positioned Below Chart Top Toolbar to prevent overlap) */
         .chart-trading-overlay {
             position: absolute;
-            top: 14px;
-            left: 54px;
+            top: 56px;
+            left: 56px;
             z-index: 40;
             display: flex;
             align-items: center;
-            background: rgba(18, 23, 33, 0.92);
+            background: rgba(18, 23, 33, 0.94);
             backdrop-filter: blur(8px);
             border: 1px solid #2d384e;
             border-radius: 8px;
             padding: 4px 6px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.65);
             gap: 6px;
         }
         
@@ -233,7 +207,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 90px;
+            min-width: 92px;
             transition: all 0.15s;
             color: #ffffff;
         }
@@ -255,9 +229,9 @@
         }
         .btn-sub-label {
             font-size: 9.5px;
-            opacity: 0.85;
+            opacity: 0.9;
             font-family: 'Inter', sans-serif;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .onchart-center-config {
@@ -293,59 +267,19 @@
             cursor: pointer;
         }
 
-        /* REPLAY CONTROLLER TOOLBAR (Appears when Replay mode is ON) */
-        .replay-control-bar {
-            display: none;
-            position: absolute;
-            top: 14px;
-            right: 80px;
-            z-index: 45;
-            background: rgba(18, 23, 33, 0.94);
-            backdrop-filter: blur(8px);
-            border: 1px solid #d29922;
-            border-radius: 8px;
-            padding: 6px 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.7);
-            align-items: center;
-            gap: 10px;
-        }
-        .replay-control-bar.active {
-            display: flex;
-        }
-        .replay-title-tag {
-            font-size: 11px;
-            font-weight: 800;
-            color: #e3b341;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .replay-btn {
-            background: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .replay-btn:hover { background: #30363d; color: #ffffff; }
-        .replay-btn.active-play { background: #2ea043; color: #fff; border-color: #2ea043; }
-
-        /* ON-CHART ACTIVE POSITION FLOATING HUD (Bottom Left) */
+        /* ON-CHART ACTIVE POSITION FLOATING HUD (Top Left, right next to or below order box) */
         .chart-position-hud {
             display: none;
             position: absolute;
-            bottom: 24px;
-            left: 20px;
+            top: 110px;
+            left: 56px;
             z-index: 40;
-            background: rgba(18, 23, 33, 0.92);
+            background: rgba(18, 23, 33, 0.95);
             backdrop-filter: blur(8px);
             border: 1px solid #2d384e;
             border-radius: 8px;
             padding: 8px 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.75);
             align-items: center;
             gap: 14px;
             font-family: 'JetBrains Mono', monospace;
@@ -368,7 +302,7 @@
             background: #f8514922;
             border: 1px solid #f85149;
             color: #f85149;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 800;
@@ -488,20 +422,20 @@
 </head>
 <body>
 
-    <!-- Top TradingView / Exchange Navigation Header -->
+    <!-- Top Navigation Header -->
     <header id="main_header">
         <div class="header-left">
-            <div class="symbol-title" onclick="showToast('Delta Exchange BTC/USD Perpetual', 'info')">
+            <div class="symbol-title" onclick="showToast('Delta Exchange BTC/USD Perpetual (Pure Paper Trading)', 'info')">
                 <span style="color:#58a6ff; font-size:16px;">⚡</span>
                 <span>BTCUSD</span>
-                <span style="color:#8b949e; font-size:11px; font-weight:600;">Delta / Binance</span>
+                <span style="color:#8b949e; font-size:11px; font-weight:600;">Paper Terminal</span>
             </div>
 
             <div class="live-price-box" id="header_live_price">
                 <span id="price_display">$84,150.00</span>
             </div>
 
-            <!-- Timeframe Dropdown (Exact Match to TradingView) -->
+            <!-- Timeframe Dropdown -->
             <div class="tf-dropdown-container">
                 <button class="tf-dropdown-btn" onclick="toggleTfMenu()">
                     <span id="current_tf_label">1 minute</span> ▾
@@ -529,11 +463,6 @@
                     <div class="tf-item" onclick="selectTimeframe('M', '1 month')"><span>1 month</span><span style="color:#8b949e;">1M</span></div>
                 </div>
             </div>
-
-            <!-- Replay Simulator Toggle Button -->
-            <button class="btn-replay" id="btn_replay_toggle" onclick="toggleReplayMode()">
-                <span>⏮</span> <span>Replay</span>
-            </button>
         </div>
 
         <div class="header-right">
@@ -559,7 +488,7 @@
     <!-- Main Workspace Container -->
     <div class="main-container" id="main_workspace">
         
-        <!-- ON-CHART TRADING DOCK (Top-Left Direct Floating Buy / Sell Bar) -->
+        <!-- ON-CHART TRADING DOCK (Cleanly placed below top toolbar) -->
         <div class="chart-trading-overlay" id="chart_trading_dock">
             <!-- SELL / SHORT BUTTON -->
             <button class="onchart-btn onchart-btn-sell" onclick="executeQuickTrade('SELL')">
@@ -567,9 +496,9 @@
                 <span class="btn-sub-label">SELL / SHORT</span>
             </button>
 
-            <!-- Center Amount & Leverage Configuration -->
+            <!-- Center Margin & Leverage Configuration -->
             <div class="onchart-center-config">
-                <input type="number" class="onchart-margin-input" id="quick_margin_amt" value="100" min="1" step="10" title="Margin Amount ($)">
+                <input type="number" class="onchart-margin-input" id="quick_margin_amt" value="100" min="1" step="10" title="Margin Amount in USDT">
                 <select class="onchart-lev-select" id="quick_leverage_select" title="Leverage">
                     <option value="5">5x</option>
                     <option value="10">10x</option>
@@ -586,17 +515,6 @@
             </button>
         </div>
 
-        <!-- REPLAY CONTROLLER TOOLBAR (Appears in Replay Mode) -->
-        <div class="replay-control-bar" id="replay_bar">
-            <div class="replay-title-tag">
-                <span>⏮</span> REPLAY SIMULATOR
-            </div>
-            <button class="replay-btn" onclick="replayStepBack()">⏪ -50 Bars</button>
-            <button class="replay-btn" id="btn_replay_play" onclick="toggleReplayPlay()">▶ Play</button>
-            <button class="replay-btn" onclick="replayStepForward()">⏭ Step Next Bar</button>
-            <button class="replay-btn" onclick="toggleReplayMode()" style="color:#f85149;">✕ Exit Replay</button>
-        </div>
-
         <!-- Floating Fullscreen Shortcut -->
         <button class="btn-floating-fs" onclick="toggleFullScreen()" title="Full Screen View">
             ⛶ Full Screen
@@ -605,11 +523,12 @@
         <!-- Pure Candlestick TradingView Pro Chart Container (Clean, Zero Auto-Indicators) -->
         <div id="tradingview_chart_element"></div>
 
-        <!-- ON-CHART ACTIVE POSITION HUD (Bottom Left) -->
+        <!-- ON-CHART ACTIVE POSITION FLOATING HUD -->
         <div class="chart-position-hud" id="chart_pos_hud">
             <div>
                 <span class="pos-badge pos-badge-buy" id="hud_side_badge">BUY 25x</span>
                 <span style="color:#8b949e; margin-left:6px;">Entry: <b style="color:#f0f6fc;" id="hud_entry_price">$84,150.00</b></span>
+                <span style="color:#8b949e; margin-left:6px;">Margin: <b style="color:#f0f6fc;" id="hud_margin_price">$100.00</b></span>
             </div>
             <div>
                 <span style="color:#8b949e;">PnL:</span> 
@@ -638,20 +557,16 @@
 
     <script>
         // =========================================================================
-        // Global State
+        // Pure Client-Side & Server-Synced Paper Trading State (100% Offline & Local)
+        // (Zero requests sent to real Delta broker accounts)
         // =========================================================================
         let currentInterval = '1';
         let currentLivePrice = 84150.00;
-        let isReplayMode = false;
-        let replayPlaying = false;
-        let replayIntervalTimer = null;
-        let activePositionData = null;
-        let closedTradesList = [];
-        let accountState = {
-            balance: 10000.0,
-            free_margin: 10000.0,
-            equity: 10000.0
-        };
+        
+        // Persistent LocalStorage Paper State
+        let localPaperBalance = parseFloat(localStorage.getItem('delta_paper_balance')) || 10000.0;
+        let localActivePosition = JSON.parse(localStorage.getItem('delta_paper_active_position')) || null;
+        let localClosedTrades = JSON.parse(localStorage.getItem('delta_paper_history')) || [];
 
         // =========================================================================
         // 1. Pure TradingView Pro Chart Initialization (NO AUTO-INDICATORS)
@@ -683,7 +598,7 @@
                 "favorites": {
                     "intervals": ["1", "2", "3", "5", "10", "15", "30", "45", "60", "120", "240", "D", "W", "M"]
                 },
-                "studies": [], // CLEAN: ZERO AUTO-INDICATORS LOADED BY DEFAULT
+                "studies": [], // ZERO AUTO-INDICATORS LOADED BY DEFAULT
                 "enabled_features": [
                     "save_chart_properties_to_local_storage",
                     "use_localstorage_for_settings",
@@ -743,121 +658,188 @@
         }
 
         // =========================================================================
-        // 3. Replay Mode Simulator
+        // 3. Instant In-App Paper Trade Execution (Zero Broker API requests)
         // =========================================================================
-        function toggleReplayMode() {
-            isReplayMode = !isReplayMode;
-            const btn = document.getElementById('btn_replay_toggle');
-            const bar = document.getElementById('replay_bar');
-
-            if (isReplayMode) {
-                btn.classList.add('active');
-                bar.classList.add('active');
-                showToast("⏮ Replay Simulator Mode ON. Click Step Next or Play to advance candles!", "info");
-            } else {
-                btn.classList.remove('active');
-                bar.classList.remove('active');
-                if (replayIntervalTimer) clearInterval(replayIntervalTimer);
-                replayPlaying = false;
-                const playBtn = document.getElementById('btn_replay_play');
-                if (playBtn) { playBtn.innerText = "▶ Play"; playBtn.classList.remove('active-play'); }
-                showToast("Live Real-Time Market Feed Resumed.", "info");
+        function executeQuickTrade(side) {
+            if (localActivePosition) {
+                showToast("⚠️ Ek active position already open hai! Pehle use close karein.", "error");
+                return;
             }
-        }
 
-        function toggleReplayPlay() {
-            replayPlaying = !replayPlaying;
-            const playBtn = document.getElementById('btn_replay_play');
-            if (replayPlaying) {
-                playBtn.innerText = "⏸ Pause";
-                playBtn.classList.add('active-play');
-                replayIntervalTimer = setInterval(replayStepForward, 1500);
-            } else {
-                playBtn.innerText = "▶ Play";
-                playBtn.classList.remove('active-play');
-                if (replayIntervalTimer) clearInterval(replayIntervalTimer);
-            }
-        }
-
-        function replayStepForward() {
-            // Simulate next bar price tick
-            const variation = (Math.random() - 0.49) * 40;
-            currentLivePrice = Math.max(1000, currentLivePrice + variation);
-            updateLivePriceDisplays();
-        }
-
-        function replayStepBack() {
-            showToast("Rewound 50 bars back in historical replay.", "info");
-        }
-
-        // =========================================================================
-        // 4. On-Chart Instant BUY / SELL Execution
-        // =========================================================================
-        async function executeQuickTrade(side) {
             const marginInput = document.getElementById('quick_margin_amt');
             const levSelect = document.getElementById('quick_leverage_select');
             const margin = parseFloat(marginInput.value) || 100;
             const leverage = parseInt(levSelect.value) || 25;
 
-            const payload = {
+            if (margin > localPaperBalance) {
+                showToast(`❌ Insufficient Balance! (Available: $${localPaperBalance.toFixed(2)})`, "error");
+                return;
+            }
+
+            const posValue = margin * leverage;
+            const qty = posValue / currentLivePrice;
+            const nowTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Create Paper Position
+            localActivePosition = {
+                trade_id: 'pos_' + Date.now(),
+                symbol: 'BTCUSD',
                 side: side,
-                margin_amount: margin,
-                leverage: leverage,
                 entry_price: currentLivePrice,
-                symbol: "BTCUSD"
+                margin_used: margin,
+                leverage: leverage,
+                qty: qty,
+                position_value: posValue,
+                entry_time: nowTime
             };
 
-            try {
-                const res = await fetch('/api/trade/open', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    showToast(`⚡ Instant ${side} Order Executed at $${currentLivePrice.toLocaleString()}!`, "success");
-                } else {
-                    showToast(`❌ Order Failed: ${data.detail || data.message || 'Error'}`, "error");
-                }
-            } catch (e) {
-                console.error("Quick trade error:", e);
-                showToast("Network error executing order.", "error");
-            }
+            // Save in localStorage
+            localStorage.setItem('delta_paper_active_position', JSON.stringify(localActivePosition));
+
+            // Sync with backend if available
+            fetch('/api/trade/open', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    side: side,
+                    margin_amount: margin,
+                    leverage: leverage,
+                    entry_price: currentLivePrice,
+                    symbol: "BTCUSD"
+                })
+            }).catch(() => {});
+
+            renderPositionHUD(localActivePosition, currentLivePrice);
+            showToast(`⚡ ${side} Position Opened at Entry Price: $${currentLivePrice.toLocaleString('en-US', {minimumFractionDigits:2})}!`, "success");
         }
 
-        async function closeActivePosition() {
-            try {
-                const res = await fetch('/api/trade/close', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason: "Manual Market Close" })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    showToast(`✅ Position Closed! Realized PnL: $${Number(data.pnl).toFixed(2)}`, "success");
-                } else {
-                    showToast(`❌ Close Failed: ${data.detail || data.message}`, "error");
-                }
-            } catch (e) {
-                console.error("Close position error:", e);
-            }
+        function closeActivePosition() {
+            if (!localActivePosition) return;
+
+            const isBuy = localActivePosition.side === 'BUY';
+            const exitPrice = currentLivePrice;
+            const pnl = isBuy ? (exitPrice - localActivePosition.entry_price) * localActivePosition.qty : (localActivePosition.entry_price - exitPrice) * localActivePosition.qty;
+            const roi = localActivePosition.margin_used > 0 ? (pnl / localActivePosition.margin_used) * 100 : 0;
+            const exitTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Update balance
+            localPaperBalance += pnl;
+            localStorage.setItem('delta_paper_balance', localPaperBalance.toString());
+
+            // Add to Closed History
+            const record = {
+                trade_id: localActivePosition.trade_id,
+                symbol: localActivePosition.symbol,
+                side: localActivePosition.side,
+                entry_price: localActivePosition.entry_price,
+                exit_price: exitPrice,
+                margin_used: localActivePosition.margin_used,
+                leverage: localActivePosition.leverage,
+                realized_pnl: pnl,
+                pnl_percent: roi,
+                entry_time: localActivePosition.entry_time,
+                exit_time: exitTime,
+                exit_reason: "Manual Market Close"
+            };
+            localClosedTrades.push(record);
+            localStorage.setItem('delta_paper_history', JSON.stringify(localClosedTrades));
+
+            // Clear Active Position
+            localActivePosition = null;
+            localStorage.removeItem('delta_paper_active_position');
+
+            // Sync with backend if available
+            fetch('/api/trade/close', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: "Manual Market Close" })
+            }).catch(() => {});
+
+            updateHeaderBalance();
+            renderPositionHUD(null, currentLivePrice);
+            
+            const sign = pnl >= 0 ? '+' : '';
+            showToast(`✅ Position Closed at $${exitPrice.toLocaleString()} | PnL: ${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(2)}%)`, pnl >= 0 ? "success" : "error");
         }
 
-        async function resetPaperAccount() {
+        function resetPaperAccount() {
             if (!confirm("Kya aap balance ko wapas $10,000.00 par reset karna chahte hain?")) return;
 
-            try {
-                const res = await fetch('/api/trade/reset', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ initial_balance: 10000.0 })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    showToast("🔄 Account Balance Reset to $10,000.00", "success");
-                }
-            } catch (e) {
-                console.error("Reset error:", e);
+            localPaperBalance = 10000.0;
+            localActivePosition = null;
+            localClosedTrades = [];
+            localStorage.setItem('delta_paper_balance', '10000');
+            localStorage.removeItem('delta_paper_active_position');
+            localStorage.setItem('delta_paper_history', '[]');
+
+            fetch('/api/trade/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ initial_balance: 10000.0 })
+            }).catch(() => {});
+
+            updateHeaderBalance();
+            renderPositionHUD(null, currentLivePrice);
+            showToast("🔄 Account Balance Reset to $10,000.00", "success");
+        }
+
+        function updateHeaderBalance() {
+            const balElem = document.getElementById('hdr_balance');
+            if (balElem) balElem.innerText = `$${Number(localPaperBalance).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+        }
+
+        // =========================================================================
+        // 4. Live Position HUD Renderer
+        // =========================================================================
+        function renderPositionHUD(trade, price) {
+            const hud = document.getElementById('chart_pos_hud');
+            if (!hud) return;
+
+            if (!trade) {
+                hud.style.display = 'none';
+                return;
+            }
+
+            hud.style.display = 'flex';
+            const isBuy = trade.side === 'BUY';
+            const badge = document.getElementById('hud_side_badge');
+            const entryText = document.getElementById('hud_entry_price');
+            const marginText = document.getElementById('hud_margin_price');
+            const pnlText = document.getElementById('hud_pnl_val');
+
+            if (badge) {
+                badge.className = `pos-badge ${isBuy ? 'pos-badge-buy' : 'pos-badge-sell'}`;
+                badge.innerText = `${trade.side} ${trade.leverage}x`;
+            }
+            if (entryText) {
+                entryText.innerText = `$${Number(trade.entry_price).toLocaleString('en-US', {minimumFractionDigits:2})}`;
+            }
+            if (marginText) {
+                marginText.innerText = `$${Number(trade.margin_used).toFixed(2)}`;
+            }
+
+            const pnl = isBuy ? (price - trade.entry_price) * trade.qty : (trade.entry_price - price) * trade.qty;
+            const roi = trade.margin_used > 0 ? (pnl / trade.margin_used) * 100 : 0;
+            const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
+            const sign = pnl >= 0 ? '+' : '';
+
+            if (pnlText) {
+                pnlText.style.color = pnlColor;
+                pnlText.innerText = `${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(2)}%)`;
+            }
+        }
+
+        function updateLivePriceDisplays() {
+            const formatted = currentLivePrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const pDisp = document.getElementById('price_display');
+            const qSell = document.getElementById('quick_sell_price');
+            const qBuy = document.getElementById('quick_buy_price');
+            if (pDisp) pDisp.innerText = `$${formatted}`;
+            if (qSell) qSell.innerText = formatted;
+            if (qBuy) qBuy.innerText = formatted;
+
+            if (localActivePosition) {
+                renderPositionHUD(localActivePosition, currentLivePrice);
             }
         }
 
@@ -894,106 +876,62 @@
         });
 
         // =========================================================================
-        // 6. WebSocket Live Price & Position Updates
+        // 6. WebSocket Live Price Connection (Delta & Binance Feeds)
         // =========================================================================
-        function updateLivePriceDisplays() {
-            const formatted = currentLivePrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            const pDisp = document.getElementById('price_display');
-            const qSell = document.getElementById('quick_sell_price');
-            const qBuy = document.getElementById('quick_buy_price');
-            if (pDisp) pDisp.innerText = `$${formatted}`;
-            if (qSell) qSell.innerText = formatted;
-            if (qBuy) qBuy.innerText = formatted;
-
-            // Update on-chart HUD position if open
-            if (activePositionData) {
-                renderPositionHUD(activePositionData, currentLivePrice);
-            }
-        }
-
-        function renderPositionHUD(trade, price) {
-            const hud = document.getElementById('chart_pos_hud');
-            if (!hud) return;
-
-            if (!trade) {
-                hud.style.display = 'none';
-                return;
-            }
-
-            hud.style.display = 'flex';
-            const isBuy = trade.side === 'BUY';
-            const badge = document.getElementById('hud_side_badge');
-            const entryText = document.getElementById('hud_entry_price');
-            const pnlText = document.getElementById('hud_pnl_val');
-
-            if (badge) {
-                badge.className = `pos-badge ${isBuy ? 'pos-badge-buy' : 'pos-badge-sell'}`;
-                badge.innerText = `${trade.side} ${trade.leverage}x`;
-            }
-            if (entryText) {
-                entryText.innerText = `$${Number(trade.entry_price).toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            }
-
-            const pnl = isBuy ? (price - trade.entry_price) * trade.remaining_qty : (trade.entry_price - price) * trade.remaining_qty;
-            const roi = trade.margin_used > 0 ? (pnl / trade.margin_used) * 100 : 0;
-            const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
-            const sign = pnl >= 0 ? '+' : '';
-
-            if (pnlText) {
-                pnlText.style.color = pnlColor;
-                pnlText.innerText = `${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(2)}%)`;
-            }
-        }
-
         function connectWebSocket() {
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
-            let ws = new WebSocket(wsUrl);
+            
+            try {
+                let ws = new WebSocket(wsUrl);
+                ws.onmessage = (event) => {
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.current_price && data.current_price > 0) {
+                            currentLivePrice = data.current_price;
+                            updateLivePriceDisplays();
+                        }
+                    } catch (e) {}
+                };
+                ws.onclose = () => {
+                    setTimeout(connectWebSocket, 3000);
+                };
+            } catch (e) {
+                // Fallback direct Binance public ticker
+                connectBinancePublicTicker();
+            }
+        }
 
-            ws.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    
-                    if (data.current_price && data.current_price > 0 && !isReplayMode) {
-                        currentLivePrice = data.current_price;
-                        updateLivePriceDisplays();
-                    }
-
-                    if (data.portfolio) {
-                        accountState.balance = data.portfolio.current_balance || 10000.0;
-                        const balElem = document.getElementById('hdr_balance');
-                        if (balElem) balElem.innerText = `$${Number(accountState.balance).toLocaleString('en-US', {minimumFractionDigits:2})}`;
-                    }
-
-                    activePositionData = data.active_trade;
-                    renderPositionHUD(activePositionData, currentLivePrice);
-
-                    if (data.closed_trades) {
-                        closedTradesList = data.closed_trades;
-                    }
-                } catch (e) {
-                    console.error("WS parse error:", e);
-                }
-            };
-
-            ws.onclose = () => {
-                setTimeout(connectWebSocket, 3000);
-            };
+        // Public Binance Fallback Ticker for zero-lag live updates
+        function connectBinancePublicTicker() {
+            try {
+                const bWs = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
+                bWs.onmessage = (e) => {
+                    try {
+                        const tick = JSON.parse(e.data);
+                        if (tick && tick.c) {
+                            currentLivePrice = parseFloat(tick.c);
+                            updateLivePriceDisplays();
+                        }
+                    } catch (err) {}
+                };
+            } catch (err) {}
         }
 
         // =========================================================================
-        // 7. History Modal & Toast Helpers
+        // 7. Closed Trade History Modal & Toasts
         // =========================================================================
         function openHistoryModal() {
             const modal = document.getElementById('historyModal');
             const body = document.getElementById('history_body');
             if (!modal || !body) return;
 
-            if (!closedTradesList || closedTradesList.length === 0) {
+            const trades = localClosedTrades;
+            if (!trades || trades.length === 0) {
                 body.innerHTML = '<div style="text-align:center; color:#8b949e; padding:20px;">Abhi tak koi closed trade nahi hai.</div>';
             } else {
                 let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
-                closedTradesList.slice().reverse().forEach(tr => {
+                trades.slice().reverse().forEach(tr => {
                     const isWin = tr.realized_pnl >= 0;
                     const pnlColor = isWin ? '#2ea043' : '#f85149';
                     const sign = isWin ? '+' : '';
@@ -1002,6 +940,7 @@
                             <div>
                                 <span style="font-weight:800; color:${tr.side==='BUY'?'#2ea043':'#f85149'};">${tr.side} ${tr.leverage}x</span>
                                 <span style="color:#8b949e; margin-left:8px;">Entry: $${Number(tr.entry_price).toLocaleString()}</span>
+                                <span style="color:#8b949e; margin-left:8px;">Exit: $${Number(tr.exit_price || 0).toLocaleString()}</span>
                                 <div style="font-size:10.5px; color:#8b949e; margin-top:4px;">${tr.exit_reason || 'Closed'} • ${tr.exit_time || ''}</div>
                             </div>
                             <div style="text-align:right;">
@@ -1037,8 +976,14 @@
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
             loadTradingViewChart('1');
+            updateHeaderBalance();
             updateLivePriceDisplays();
             connectWebSocket();
+            connectBinancePublicTicker();
+
+            if (localActivePosition) {
+                renderPositionHUD(localActivePosition, currentLivePrice);
+            }
         });
     </script>
 </body>
