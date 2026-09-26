@@ -17,7 +17,8 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from pydantic import BaseModel
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -28,17 +29,20 @@ from confidence_engine import ConfidenceEngine
 from strategy_engine import StrategyEngine
 from paper_trader import PaperTrader
 
-app = FastAPI(title="Delta BTC Algo Terminal")
+app = FastAPI(title="Delta BTC Algo & Pro Terminal")
 
 # Core singletons
 client = DeltaClient()
 level_detector = MultiTimeframeLevelDetector()
 conf_engine = ConfidenceEngine()
 strategy = StrategyEngine(level_detector=level_detector, confidence_engine=conf_engine)
-trader = PaperTrader()
+trader = PaperTrader(initial_balance=10000.0)
 
 # Active WebSocket connections
 connected_clients: Set[WebSocket] = set()
+
+# Strategy Auto-Bot Toggle (False by default so user can manual trade without interference)
+auto_bot_enabled = False
 
 # State storage
 latest_state = {
@@ -50,7 +54,8 @@ latest_state = {
     "levels": [],
     "active_trade": None,
     "portfolio": {},
-    "logs": ["Terminal backend started. Connecting to Delta Exchange feed..."]
+    "auto_bot_enabled": False,
+    "logs": ["Exchange Pro Terminal started. Live feed connected."]
 }
 
 def log_message(msg: str):
@@ -60,6 +65,25 @@ def log_message(msg: str):
     latest_state["logs"].append(entry)
     if len(latest_state["logs"]) > 100:
         latest_state["logs"].pop(0)
+
+class OpenTradeRequest(BaseModel):
+    side: str  # 'BUY' or 'SELL'
+    margin_amount: float
+    leverage: int = 25
+    entry_price: Optional[float] = None
+    sl_price: Optional[float] = None
+    tp_price: Optional[float] = None
+    symbol: str = "BTCUSD"
+
+class CloseTradeRequest(BaseModel):
+    trade_id: Optional[str] = None
+    reason: str = "Manual Market Exit"
+
+class ResetAccountRequest(BaseModel):
+    initial_balance: float = 10000.0
+
+class ToggleBotRequest(BaseModel):
+    enabled: bool
 
 @app.get("/", response_class=HTMLResponse)
 async def get_dashboard():
@@ -79,17 +103,71 @@ async def get_pine_script():
     with open(pine_path, "r", encoding="utf-8") as f:
         return {"code": f.read()}
 
+@app.post("/api/trade/open")
+async def open_manual_trade(req: OpenTradeRequest):
+    """Execute manual paper trade from user trading dock."""
+    price = req.entry_price or latest_state.get("current_price", 0.0)
+    if price <= 0:
+        raise HTTPException(status_code=400, detail="Live market price not ready yet.")
+        
+    success, msg, trade = trader.execute_manual_trade(
+        side=req.side.upper(),
+        margin_amount=req.margin_amount,
+        leverage=req.leverage,
+        entry_price=price,
+        sl_price=req.sl_price,
+        tp_price=req.tp_price,
+        symbol=req.symbol
+    )
+    if not success:
+        raise HTTPException(status_code=400, detail=msg)
+        
+    log_message(f"⚡ [MANUAL ORDER] {req.side} opened at ${price:,.2f} | Leverage: {req.leverage}x | Margin: ${req.margin_amount:.2f}")
+    await broadcast_state()
+    return {"success": True, "message": msg, "trade_id": trade.trade_id}
+
+@app.post("/api/trade/close")
+async def close_manual_trade(req: CloseTradeRequest):
+    """Manually close active position at market price."""
+    price = latest_state.get("current_price", 0.0)
+    if price <= 0:
+        raise HTTPException(status_code=400, detail="Live market price unavailable.")
+        
+    success, msg, event = trader.manual_close_trade(current_price=price, trade_id=req.trade_id, reason=req.reason)
+    if not success:
+        raise HTTPException(status_code=400, detail=msg)
+        
+    log_message(f"🏁 [MANUAL CLOSE] Position closed at ${price:,.2f} | Net PnL: ${event['pnl']:,.2f}")
+    await broadcast_state()
+    return {"success": True, "message": msg, "pnl": event['pnl']}
+
+@app.post("/api/trade/reset")
+async def reset_paper_account(req: ResetAccountRequest):
+    """Reset virtual balance to specified amount."""
+    trader.reset_account(new_balance=req.initial_balance)
+    log_message(f"🔄 [ACCOUNT RESET] Paper balance reset to ${req.initial_balance:,.2f}")
+    await broadcast_state()
+    return {"success": True, "balance": trader.balance}
+
+@app.post("/api/bot/toggle")
+async def toggle_auto_bot(req: ToggleBotRequest):
+    """Enable or disable background automatic strategy bot."""
+    global auto_bot_enabled
+    auto_bot_enabled = req.enabled
+    latest_state["auto_bot_enabled"] = auto_bot_enabled
+    status_str = "ENABLED (Auto Trading Active)" if auto_bot_enabled else "PAUSED (Manual Mode Only)"
+    log_message(f"🤖 [BOT MODE] Auto-Strategy Bot is now {status_str}")
+    await broadcast_state()
+    return {"success": True, "auto_bot_enabled": auto_bot_enabled}
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-
     await websocket.accept()
     connected_clients.add(websocket)
     try:
-        # Send initial state immediately upon connection
         if latest_state["candles"]:
             await websocket.send_text(json.dumps(latest_state))
         while True:
-            # Keep-alive receive
             await websocket.receive_text()
     except (WebSocketDisconnect, Exception):
         connected_clients.discard(websocket)
@@ -107,7 +185,7 @@ async def broadcast_state():
 
 async def market_worker():
     """Continuous background loop running market data feed & strategy engine."""
-    log_message("🚀 Background Algo Engine started. Initializing HTF S/R levels...")
+    log_message("🚀 Background Market Feed started.")
     last_htf_update = 0
     
     while True:
@@ -176,13 +254,13 @@ async def market_worker():
                 elif event['event'] == 'TRADE_CLOSED':
                     log_message(f"🏁 [TRADE CLOSED] {event['reason']} | Net PnL: ${event['pnl']:,.2f}")
 
-            # 4. Check for New Setup Signals if no active trade
-            if len(trader.active_trades) == 0 and len(df_1m) >= 10:
+            # 4. Check for New Setup Signals if auto-bot is enabled and no active trade
+            if auto_bot_enabled and len(trader.active_trades) == 0 and len(df_1m) >= 10:
                 signal = strategy.analyze_1m_candles(df_1m, current_price=current_price)
                 if signal:
                     trade = trader.execute_signal(signal)
                     if trade:
-                        log_message(f"⚡ [TRADE EXECUTED #{trader.daily_trades_count}] {trade.side} at ${trade.entry_price:,.2f} with {trade.leverage}x leverage (Margin: ${trade.margin_used:.2f} | Risk: ${trade.risk_amount:.2f}). SL: ${trade.current_sl:,.2f}")
+                        log_message(f"⚡ [AUTO-BOT EXECUTED #{trader.daily_trades_count}] {trade.side} at ${trade.entry_price:,.2f} with {trade.leverage}x leverage (Margin: ${trade.margin_used:.2f} | Risk: ${trade.risk_amount:.2f}). SL: ${trade.current_sl:,.2f}")
 
             # 5. Format Active Trade for UI
             if len(trader.active_trades) > 0:

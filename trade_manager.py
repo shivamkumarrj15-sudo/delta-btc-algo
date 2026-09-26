@@ -308,6 +308,33 @@ class ActiveTrade:
 
         return None
 
+    def manual_close(self, current_price: float, reason: str = "Manual Market Exit") -> Dict[str, Any]:
+        """Manually close the active trade at the current market price."""
+        if self.is_closed:
+            return None
+            
+        now_str = pd.Timestamp.now().strftime('%H:%M:%S')
+        if self.side == 'BUY':
+            pnl_per_unit = current_price - self.entry_price
+        else:
+            pnl_per_unit = self.entry_price - current_price
+            
+        exit_pnl = pnl_per_unit * self.remaining_qty
+        self.realized_pnl += exit_pnl
+        self.remaining_qty = 0
+        self.is_closed = True
+        self.exit_time = pd.Timestamp.now()
+        self.exit_reason = reason
+        self.history_logs.append(f"[{now_str}] Position manually closed at ${current_price:,.2f} | Net Realized PnL: ${self.realized_pnl:,.2f}")
+        return {
+            'event': 'TRADE_CLOSED',
+            'trade': self,
+            'pnl': self.realized_pnl,
+            'reason': reason,
+            'exit_price': current_price,
+            'stage': self.stage
+        }
+
     def get_unrealized_pnl(self, current_price: float) -> float:
         """Calculate live unrealized PnL on remaining open quantity."""
         if self.is_closed or self.remaining_qty <= 0:

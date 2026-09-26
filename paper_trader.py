@@ -290,3 +290,117 @@ class PaperTrader:
             'max_daily_trades': Config.MAX_DAILY_TRADES,
             'cooldown_remaining_sec': cooldown_sec
         }
+
+    def execute_manual_trade(self, side: str, margin_amount: float, leverage: int = 25, 
+                             entry_price: float = None, sl_price: float = None, tp_price: float = None,
+                             symbol: str = "BTCUSD") -> tuple[bool, str, Optional[ActiveTrade]]:
+        """Manually execute a paper trade from the user trading dock."""
+        if len(self.active_trades) >= 1:
+            return False, "An active trade is already open. Close it first or wait for target.", None
+            
+        if self.balance < margin_amount or margin_amount <= 0:
+            return False, f"Insufficient margin balance. Available: ${self.balance:.2f}", None
+            
+        if not entry_price or entry_price <= 0:
+            return False, "Invalid entry price.", None
+            
+        leverage = max(1, min(100, int(leverage)))
+        position_value = margin_amount * leverage
+        qty = round(position_value / entry_price, 5)
+        
+        # Default 1% SL distance if not specified
+        if not sl_price or sl_price <= 0:
+            if side == 'BUY':
+                sl_price = round(entry_price * 0.99, 2)
+            else:
+                sl_price = round(entry_price * 1.01, 2)
+                
+        risk_per_unit = max(1.0, abs(entry_price - sl_price))
+        risk_amount = qty * risk_per_unit
+        
+        # Targets calculation
+        if side == 'BUY':
+            stage_1_tp = round(entry_price + (risk_per_unit * 2.0), 2)
+            stage_2_tp = tp_price if tp_price and tp_price > entry_price else round(entry_price + (risk_per_unit * 5.0), 2)
+            stage_3_tp = round(entry_price + (risk_per_unit * 7.0), 2)
+            stage_4_tp = round(entry_price + (risk_per_unit * 10.0), 2)
+            stage_5_tp = round(entry_price + (risk_per_unit * 20.0), 2)
+            stage_6_tp = round(entry_price + (risk_per_unit * 25.0), 2)
+            sl_1_2_price = round(entry_price + (risk_per_unit * 2.0), 2)
+            sl_1_5_price = round(entry_price + (risk_per_unit * 5.0), 2)
+            sl_1_7_price = round(entry_price + (risk_per_unit * 7.0), 2)
+            sl_1_15_price = round(entry_price + (risk_per_unit * 15.0), 2)
+            sl_1_20_price = round(entry_price + (risk_per_unit * 20.0), 2)
+        else:
+            stage_1_tp = round(entry_price - (risk_per_unit * 2.0), 2)
+            stage_2_tp = tp_price if tp_price and tp_price < entry_price else round(entry_price - (risk_per_unit * 5.0), 2)
+            stage_3_tp = round(entry_price - (risk_per_unit * 7.0), 2)
+            stage_4_tp = round(entry_price - (risk_per_unit * 10.0), 2)
+            stage_5_tp = round(entry_price - (risk_per_unit * 20.0), 2)
+            stage_6_tp = round(entry_price - (risk_per_unit * 25.0), 2)
+            sl_1_2_price = round(entry_price - (risk_per_unit * 2.0), 2)
+            sl_1_5_price = round(entry_price - (risk_per_unit * 5.0), 2)
+            sl_1_7_price = round(entry_price - (risk_per_unit * 7.0), 2)
+            sl_1_15_price = round(entry_price - (risk_per_unit * 15.0), 2)
+            sl_1_20_price = round(entry_price - (risk_per_unit * 20.0), 2)
+            
+        signal = {
+            'symbol': symbol,
+            'side': side,
+            'entry_price': entry_price,
+            'sl_price': sl_price,
+            'risk_per_unit': risk_per_unit,
+            'stage_1_tp': stage_1_tp,
+            'stage_2_tp': stage_2_tp,
+            'stage_3_tp': stage_3_tp,
+            'stage_4_tp': stage_4_tp,
+            'stage_5_tp': stage_5_tp,
+            'stage_6_tp': stage_6_tp,
+            'sl_1_2_price': sl_1_2_price,
+            'sl_1_5_price': sl_1_5_price,
+            'sl_1_7_price': sl_1_7_price,
+            'sl_1_15_price': sl_1_15_price,
+            'sl_1_20_price': sl_1_20_price,
+            'leverage': leverage,
+            'confidence_score': 1.0,
+            'confidence_reasons': ['👤 Manual User Order'],
+            'level_info': 'Manual Execution'
+        }
+        
+        trade = ActiveTrade(signal, initial_qty=qty, margin_used=margin_amount, risk_amount=risk_amount)
+        self.active_trades.append(trade)
+        self.daily_trades_count += 1
+        self._save_state()
+        return True, "Trade executed successfully", trade
+
+    def manual_close_trade(self, current_price: float, trade_id: str = None, reason: str = "Manual Market Exit") -> tuple[bool, str, Optional[Dict[str, Any]]]:
+        """Manually close the active trade at market price."""
+        if not self.active_trades:
+            return False, "No active position to close.", None
+            
+        trade = self.active_trades[0]
+        if trade_id and trade.trade_id != trade_id:
+            return False, f"Trade ID {trade_id} not found.", None
+            
+        event = trade.manual_close(current_price, reason=reason)
+        self.balance += trade.realized_pnl
+        self.daily_realized_pnl += trade.realized_pnl
+        self.last_trade_closed_time = time.time()
+        self._record_closed_trade(trade)
+        self.active_trades = []
+        self._save_state()
+        return True, f"Closed position with Net PnL: ${trade.realized_pnl:,.2f}", event
+
+    def reset_account(self, new_balance: float = 10000.0):
+        """Reset virtual paper trading balance and trade history."""
+        self.initial_balance = new_balance
+        self.balance = new_balance
+        self.active_trades = []
+        self.closed_trades = []
+        self.daily_starting_balance = new_balance
+        self.daily_realized_pnl = 0.0
+        self.daily_trades_count = 0
+        self.last_trade_closed_time = 0.0
+        self.peak_balance = new_balance
+        self.max_drawdown = 0.0
+        self._save_state()
