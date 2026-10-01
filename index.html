@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Exchange BTC - Pro Trading Terminal & Paper Trading</title>
+    <title>Delta Exchange BTC - Pro Trading & Virtual Option Trading Terminal</title>
     <!-- TradingView Advanced Charting Library Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
             background-color: #0b0e14;
             color: #c9d1d9;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
             height: 100vh;
             width: 100vw;
             display: flex;
@@ -21,7 +21,7 @@
             user-select: none;
         }
 
-        /* Top Navigation Header (TradingView / Exchange Style) */
+        /* Top Navigation Header */
         header {
             background: #121721;
             border-bottom: 1px solid #202736;
@@ -29,7 +29,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 46px;
+            height: 48px;
             flex-shrink: 0;
             z-index: 100;
         }
@@ -59,6 +59,39 @@
             display: flex;
             align-items: center;
             gap: 4px;
+        }
+
+        /* Mode Switcher Tabs (Futures vs Virtual Options) */
+        .mode-nav-tabs {
+            display: flex;
+            background: #0b0e14;
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid #2d384e;
+            margin-left: 8px;
+        }
+        .mode-nav-btn {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .mode-nav-btn.active {
+            background: #1f6feb;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
+        }
+        .mode-nav-btn:hover:not(.active) {
+            color: #f0f6fc;
+            background: #161c28;
         }
 
         /* Timeframe Dropdown Button */
@@ -98,9 +131,7 @@
             z-index: 500;
             padding: 6px 0;
         }
-        .tf-menu.active {
-            display: block;
-        }
+        .tf-menu.active { display: block; }
         .tf-group-title {
             font-size: 10px;
             font-weight: 800;
@@ -120,14 +151,8 @@
             justify-content: space-between;
             transition: background 0.15s;
         }
-        .tf-item:hover {
-            background: #1f6feb;
-            color: #ffffff;
-        }
-        .tf-item.selected {
-            color: #58a6ff;
-            font-weight: 800;
-        }
+        .tf-item:hover { background: #1f6feb; color: #ffffff; }
+        .tf-item.selected { color: #58a6ff; font-weight: 800; }
 
         /* Header Right Controls */
         .header-right {
@@ -154,6 +179,16 @@
             border-color: #58a6ff;
             color: #ffffff;
         }
+        .btn-guide {
+            background: #e3b34122;
+            border-color: #d29922;
+            color: #e3b341;
+            font-weight: 700;
+        }
+        .btn-guide:hover {
+            background: #d29922;
+            color: #ffffff;
+        }
         .btn-fs {
             background: #1f6feb22;
             border-color: #1f6feb;
@@ -165,20 +200,29 @@
             color: #ffffff;
         }
 
-        /* Main Workspace: 100% Full Chart Container */
-        .main-container {
+        /* Main Workspace Views */
+        .main-workspace {
             flex: 1;
             position: relative;
             width: 100%;
-            height: calc(100vh - 46px);
+            height: calc(100vh - 48px);
             background: #0b0e14;
+        }
+
+        /* -------------------------------------------------------------
+           VIEW 1: FUTURES / PERPETUAL TRADING (PURE CHART + ON-CHART BUY/SELL)
+           ------------------------------------------------------------- */
+        #view_futures {
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
         #tradingview_chart_element {
             width: 100%;
             height: 100%;
         }
 
-        /* ON-CHART TRADING DOCK (Positioned Below Chart Top Toolbar to prevent overlap) */
+        /* ON-CHART TRADING DOCK (Top Left Overlay) */
         .chart-trading-overlay {
             position: absolute;
             top: 56px;
@@ -194,7 +238,6 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.65);
             gap: 6px;
         }
-        
         .onchart-btn {
             border: none;
             padding: 7px 14px;
@@ -211,28 +254,11 @@
             transition: all 0.15s;
             color: #ffffff;
         }
-        .onchart-btn-sell {
-            background: #f85149;
-            box-shadow: 0 2px 8px rgba(248, 81, 73, 0.4);
-        }
-        .onchart-btn-sell:hover {
-            background: #ff6b63;
-            transform: translateY(-1px);
-        }
-        .onchart-btn-buy {
-            background: #2ea043;
-            box-shadow: 0 2px 8px rgba(46, 160, 67, 0.4);
-        }
-        .onchart-btn-buy:hover {
-            background: #3fb950;
-            transform: translateY(-1px);
-        }
-        .btn-sub-label {
-            font-size: 9.5px;
-            opacity: 0.9;
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-        }
+        .onchart-btn-sell { background: #f85149; box-shadow: 0 2px 8px rgba(248, 81, 73, 0.4); }
+        .onchart-btn-sell:hover { background: #ff6b63; transform: translateY(-1px); }
+        .onchart-btn-buy { background: #2ea043; box-shadow: 0 2px 8px rgba(46, 160, 67, 0.4); }
+        .onchart-btn-buy:hover { background: #3fb950; transform: translateY(-1px); }
+        .btn-sub-label { font-size: 9.5px; opacity: 0.9; font-family: 'Inter', sans-serif; font-weight: 700; }
 
         .onchart-center-config {
             display: flex;
@@ -267,11 +293,11 @@
             cursor: pointer;
         }
 
-        /* ON-CHART ACTIVE POSITION FLOATING HUD (Top Left, right next to or below order box) */
+        /* ON-CHART ACTIVE POSITION FLOATING HUD */
         .chart-position-hud {
             display: none;
             position: absolute;
-            top: 110px;
+            top: 112px;
             left: 56px;
             z-index: 40;
             background: rgba(18, 23, 33, 0.95);
@@ -285,19 +311,10 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
         }
-        .pos-badge {
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: 800;
-            font-size: 11px;
-        }
+        .pos-badge { padding: 3px 8px; border-radius: 4px; font-weight: 800; font-size: 11px; }
         .pos-badge-buy { background: #2ea04322; color: #2ea043; border: 1px solid #2ea043; }
         .pos-badge-sell { background: #f8514922; color: #f85149; border: 1px solid #f85149; }
-        
-        .pos-pnl-val {
-            font-weight: 800;
-            font-size: 13px;
-        }
+        .pos-pnl-val { font-weight: 800; font-size: 13px; }
         .btn-hud-close {
             background: #f8514922;
             border: 1px solid #f85149;
@@ -309,10 +326,7 @@
             cursor: pointer;
             transition: all 0.15s;
         }
-        .btn-hud-close:hover {
-            background: #f85149;
-            color: #ffffff;
-        }
+        .btn-hud-close:hover { background: #f85149; color: #ffffff; }
 
         /* Floating Fullscreen Trigger Button */
         .btn-floating-fs {
@@ -331,20 +345,288 @@
             box-shadow: 0 4px 14px rgba(0,0,0,0.5);
             transition: all 0.2s;
         }
-        .btn-floating-fs:hover {
+        .btn-floating-fs:hover { background: #1f6feb; color: #ffffff; }
+
+        /* -------------------------------------------------------------
+           VIEW 2: VIRTUAL OPTIONS TRADING TERMINAL (OPTION CHAIN)
+           ------------------------------------------------------------- */
+        #view_options {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            overflow-y: auto;
+            background: #0b0e14;
+            padding: 14px 16px;
+            gap: 14px;
+        }
+
+        /* Option Chain Header Controls */
+        .options-ctrl-bar {
+            background: #121721;
+            border: 1px solid #202736;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .opt-metric-pill {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .opt-metric-label { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; }
+        .opt-metric-val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: #f0f6fc; }
+
+        .expiry-selector-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0b0e14;
+            padding: 3px;
+            border-radius: 6px;
+            border: 1px solid #2d384e;
+        }
+        .expiry-chip {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .expiry-chip.active {
             background: #1f6feb;
             color: #ffffff;
         }
+        .expiry-chip:hover:not(.active) { background: #161c28; color: #f0f6fc; }
 
-        /* Fullscreen Class */
-        body.fullscreen-mode header {
-            display: none;
+        /* Option Chain Table Container */
+        .option-chain-card {
+            background: #121721;
+            border: 1px solid #202736;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        body.fullscreen-mode .main-container {
-            height: 100vh;
+        .chain-table-header {
+            display: grid;
+            grid-template-columns: 1fr 140px 1fr;
+            background: #0d1117;
+            border-bottom: 1px solid #202736;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 8px 0;
+        }
+        .call-side-title { color: #2ea043; letter-spacing: 0.5px; }
+        .strike-center-title { color: #e3b341; }
+        .put-side-title { color: #f85149; letter-spacing: 0.5px; }
+
+        .chain-table-grid {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .chain-table-grid th {
+            background: #10151f;
+            color: #8b949e;
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 6px 8px;
+            border-bottom: 1px solid #202736;
+        }
+        .chain-table-grid td {
+            padding: 7px 8px;
+            border-bottom: 1px solid #161c28;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .strike-cell {
+            background: #151a24;
+            color: #f0f6fc;
+            font-weight: 800;
+            border-left: 1px solid #202736;
+            border-right: 1px solid #202736;
+        }
+        .strike-cell.atm {
+            background: #382c0b;
+            color: #e3b341;
+            border-color: #d29922;
+        }
+        .itm-call { background: rgba(46, 160, 67, 0.05); }
+        .itm-put { background: rgba(248, 81, 73, 0.05); }
+
+        .btn-opt-action {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .btn-buy-call { background: #2ea043; color: #fff; }
+        .btn-buy-call:hover { background: #3fb950; }
+        .btn-sell-call { background: #2ea04322; color: #2ea043; border: 1px solid #2ea043; }
+        .btn-sell-call:hover { background: #2ea043; color: #fff; }
+
+        .btn-buy-put { background: #f85149; color: #fff; }
+        .btn-buy-put:hover { background: #ff6b63; }
+        .btn-sell-put { background: #f8514922; color: #f85149; border: 1px solid #f85149; }
+        .btn-sell-put:hover { background: #f85149; color: #fff; }
+
+        /* Active Option Positions Section */
+        .opt-positions-section {
+            background: #121721;
+            border: 1px solid #202736;
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .opt-pos-head {
+            font-size: 13px;
+            font-weight: 800;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .opt-pos-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .opt-pos-table th {
+            color: #8b949e;
+            font-size: 10.5px;
+            text-align: left;
+            padding: 6px 8px;
+            border-bottom: 1px solid #202736;
+        }
+        .opt-pos-table td {
+            padding: 8px;
+            border-bottom: 1px solid #18202d;
         }
 
-        /* Account Performance Overview Modal */
+        /* Option Order Placement Modal */
+        .opt-order-modal-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 460px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        .opt-order-header {
+            padding: 14px 18px;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #f0f6fc;
+        }
+        .opt-order-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .opt-side-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .opt-side-btn {
+            padding: 8px 0;
+            font-weight: 800;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            cursor: pointer;
+            background: #0d1117;
+            color: #8b949e;
+            transition: all 0.2s;
+        }
+        .opt-side-btn.active.buy { background: #2ea043; color: #fff; border-color: #2ea043; }
+        .opt-side-btn.active.sell { background: #f85149; color: #fff; border-color: #f85149; }
+
+        .opt-input-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .opt-input-box {
+            display: flex;
+            align-items: center;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0 10px;
+        }
+        .opt-input-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #f0f6fc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 0;
+            outline: none;
+        }
+
+        .opt-summary-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 11.5px;
+        }
+        .opt-sum-row {
+            display: flex;
+            justify-content: space-between;
+            color: #8b949e;
+        }
+        .opt-sum-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #f0f6fc; }
+
+        .btn-submit-opt {
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .btn-submit-opt.buy { background: #2ea043; }
+        .btn-submit-opt.buy:hover { background: #3fb950; }
+        .btn-submit-opt.sell { background: #f85149; }
+        .btn-submit-opt.sell:hover { background: #ff6b63; }
+
+        /* General Modals (Guide & History) */
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -361,7 +643,7 @@
             border: 1px solid #30363d;
             border-radius: 12px;
             width: 90%;
-            max-width: 540px;
+            max-width: 600px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.8);
             overflow: hidden;
         }
@@ -386,7 +668,7 @@
         .modal-close-btn:hover { color: #f85149; }
         .modal-body {
             padding: 16px 18px;
-            max-height: 420px;
+            max-height: 480px;
             overflow-y: auto;
         }
 
@@ -425,18 +707,27 @@
     <!-- Top Navigation Header -->
     <header id="main_header">
         <div class="header-left">
-            <div class="symbol-title" onclick="showToast('Delta Exchange BTC/USD Perpetual (Pure Paper Trading)', 'info')">
+            <div class="symbol-title" onclick="showToast('Delta Exchange BTC/USD Terminal', 'info')">
                 <span style="color:#58a6ff; font-size:16px;">⚡</span>
-                <span>BTCUSD</span>
-                <span style="color:#8b949e; font-size:11px; font-weight:600;">Paper Terminal</span>
+                <span>BTC/USD</span>
             </div>
 
             <div class="live-price-box" id="header_live_price">
                 <span id="price_display">$84,150.00</span>
             </div>
 
-            <!-- Timeframe Dropdown -->
-            <div class="tf-dropdown-container">
+            <!-- Mode Switcher: Futures vs Virtual Options -->
+            <div class="mode-nav-tabs">
+                <button class="mode-nav-btn active" id="btn_tab_futures" onclick="switchTerminalView('FUTURES')">
+                    📈 Futures / Perp
+                </button>
+                <button class="mode-nav-btn" id="btn_tab_options" onclick="switchTerminalView('OPTIONS')">
+                    🎯 Virtual Options Trading
+                </button>
+            </div>
+
+            <!-- Timeframe Dropdown (Only active in Futures mode) -->
+            <div class="tf-dropdown-container" id="futures_tf_dropdown">
                 <button class="tf-dropdown-btn" onclick="toggleTfMenu()">
                     <span id="current_tf_label">1 minute</span> ▾
                 </button>
@@ -466,10 +757,14 @@
         </div>
 
         <div class="header-right">
-            <!-- Balance Pill -->
+            <!-- Balance Display -->
             <div style="font-family:'JetBrains Mono'; font-size:11.5px; background:#1c2433; padding:4px 10px; border-radius:6px; border:1px solid #2d384e;">
                 <span style="color:#8b949e;">Balance:</span> <b style="color:#58a6ff;" id="hdr_balance">$10,000.00</b>
             </div>
+            <!-- Options Hindi Guide Button -->
+            <button class="btn-hdr btn-guide" onclick="openOptionGuideModal()" title="Options Trading Kaise Karte Hain? (Hindi Guide)">
+                📚 Option Guide
+            </button>
             <!-- Reset Virtual Capital -->
             <button class="btn-hdr" onclick="resetPaperAccount()" title="Reset Paper Balance to $10,000">
                 🔄 Reset ($10K)
@@ -486,57 +781,269 @@
     </header>
 
     <!-- Main Workspace Container -->
-    <div class="main-container" id="main_workspace">
+    <div class="main-workspace">
         
-        <!-- ON-CHART TRADING DOCK (Cleanly placed below top toolbar) -->
-        <div class="chart-trading-overlay" id="chart_trading_dock">
-            <!-- SELL / SHORT BUTTON -->
-            <button class="onchart-btn onchart-btn-sell" onclick="executeQuickTrade('SELL')">
-                <span id="quick_sell_price">84,150.00</span>
-                <span class="btn-sub-label">SELL / SHORT</span>
+        <!-- =========================================================
+             VIEW 1: FUTURES TRADING VIEW (Pure Chart + On-Chart Buy/Sell)
+             ========================================================= -->
+        <div id="view_futures">
+            <!-- ON-CHART TRADING DOCK (Positioned cleanly below top toolbar) -->
+            <div class="chart-trading-overlay" id="chart_trading_dock">
+                <!-- SELL / SHORT BUTTON -->
+                <button class="onchart-btn onchart-btn-sell" onclick="executeQuickTrade('SELL')">
+                    <span id="quick_sell_price">84,150.00</span>
+                    <span class="btn-sub-label">SELL / SHORT</span>
+                </button>
+
+                <!-- Center Margin & Leverage Configuration -->
+                <div class="onchart-center-config">
+                    <input type="number" class="onchart-margin-input" id="quick_margin_amt" value="100" min="1" step="10" title="Margin Amount in USDT">
+                    <select class="onchart-lev-select" id="quick_leverage_select" title="Leverage">
+                        <option value="5">5x</option>
+                        <option value="10">10x</option>
+                        <option value="25" selected>25x</option>
+                        <option value="50">50x</option>
+                        <option value="100">100x</option>
+                    </select>
+                </div>
+
+                <!-- BUY / LONG BUTTON -->
+                <button class="onchart-btn onchart-btn-buy" onclick="executeQuickTrade('BUY')">
+                    <span id="quick_buy_price">84,150.00</span>
+                    <span class="btn-sub-label">BUY / LONG</span>
+                </button>
+            </div>
+
+            <!-- Floating Fullscreen Shortcut -->
+            <button class="btn-floating-fs" onclick="toggleFullScreen()" title="Full Screen View">
+                ⛶ Full Screen
             </button>
 
-            <!-- Center Margin & Leverage Configuration -->
-            <div class="onchart-center-config">
-                <input type="number" class="onchart-margin-input" id="quick_margin_amt" value="100" min="1" step="10" title="Margin Amount in USDT">
-                <select class="onchart-lev-select" id="quick_leverage_select" title="Leverage">
-                    <option value="5">5x</option>
-                    <option value="10">10x</option>
-                    <option value="25" selected>25x</option>
-                    <option value="50">50x</option>
-                    <option value="100">100x</option>
-                </select>
-            </div>
+            <!-- Pure Candlestick TradingView Pro Chart Container -->
+            <div id="tradingview_chart_element"></div>
 
-            <!-- BUY / LONG BUTTON -->
-            <button class="onchart-btn onchart-btn-buy" onclick="executeQuickTrade('BUY')">
-                <span id="quick_buy_price">84,150.00</span>
-                <span class="btn-sub-label">BUY / LONG</span>
-            </button>
+            <!-- ON-CHART ACTIVE POSITION FLOATING HUD -->
+            <div class="chart-position-hud" id="chart_pos_hud">
+                <div>
+                    <span class="pos-badge pos-badge-buy" id="hud_side_badge">BUY 25x</span>
+                    <span style="color:#8b949e; margin-left:6px;">Entry: <b style="color:#f0f6fc;" id="hud_entry_price">$84,150.00</b></span>
+                    <span style="color:#8b949e; margin-left:6px;">Margin: <b style="color:#f0f6fc;" id="hud_margin_price">$100.00</b></span>
+                </div>
+                <div>
+                    <span style="color:#8b949e;">PnL:</span> 
+                    <span class="pos-pnl-val" style="color:#2ea043;" id="hud_pnl_val">+$0.00 (+0.0%)</span>
+                </div>
+                <button class="btn-hud-close" onclick="closeActivePosition()">✕ Market Close</button>
+            </div>
         </div>
 
-        <!-- Floating Fullscreen Shortcut -->
-        <button class="btn-floating-fs" onclick="toggleFullScreen()" title="Full Screen View">
-            ⛶ Full Screen
-        </button>
+        <!-- =========================================================
+             VIEW 2: VIRTUAL OPTIONS TRADING VIEW (DELTA OPTION CHAIN)
+             ========================================================= -->
+        <div id="view_options">
+            
+            <!-- Option Controls & Expiry Bar -->
+            <div class="options-ctrl-bar">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <div class="opt-metric-pill">
+                        <span class="opt-metric-label">BTC Spot Price</span>
+                        <span class="opt-metric-val" id="opt_spot_price" style="color:#2ea043;">$84,150.00</span>
+                    </div>
+                    <div class="opt-metric-pill">
+                        <span class="opt-metric-label">ATM Strike</span>
+                        <span class="opt-metric-val" id="opt_atm_strike" style="color:#e3b341;">84,000</span>
+                    </div>
+                    <div class="opt-metric-pill">
+                        <span class="opt-metric-label">Avg IV</span>
+                        <span class="opt-metric-val" style="color:#58a6ff;">52.5%</span>
+                    </div>
+                </div>
 
-        <!-- Pure Candlestick TradingView Pro Chart Container (Clean, Zero Auto-Indicators) -->
-        <div id="tradingview_chart_element"></div>
+                <!-- Expiry Date Selector -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:11px; color:#8b949e; font-weight:700;">EXPIRY:</span>
+                    <div class="expiry-selector-group">
+                        <button class="expiry-chip active" onclick="selectExpiry('TODAY', 0.003)">Today (Daily)</button>
+                        <button class="expiry-chip" onclick="selectExpiry('TOMORROW', 0.0055)">Tomorrow</button>
+                        <button class="expiry-chip" onclick="selectExpiry('WEEKLY', 0.0164)">This Friday</button>
+                        <button class="expiry-chip" onclick="selectExpiry('MONTHLY', 0.082)">Monthly</button>
+                    </div>
+                </div>
+            </div>
 
-        <!-- ON-CHART ACTIVE POSITION FLOATING HUD -->
-        <div class="chart-position-hud" id="chart_pos_hud">
-            <div>
-                <span class="pos-badge pos-badge-buy" id="hud_side_badge">BUY 25x</span>
-                <span style="color:#8b949e; margin-left:6px;">Entry: <b style="color:#f0f6fc;" id="hud_entry_price">$84,150.00</b></span>
-                <span style="color:#8b949e; margin-left:6px;">Margin: <b style="color:#f0f6fc;" id="hud_margin_price">$100.00</b></span>
+            <!-- Active Options Positions Table -->
+            <div class="opt-positions-section" id="opt_positions_container">
+                <div class="opt-pos-head">
+                    <span>⚡ Active Option Positions (<span id="opt_pos_count">0</span>)</span>
+                    <span style="font-size:11px; color:#8b949e;">Virtual Options Paper Trading</span>
+                </div>
+                <div id="no_opt_pos_msg" style="text-align:center; color:#8b949e; padding:12px; font-size:12px;">
+                    📌 Koi active option position nahi hai. Niche Option Chain me se **BUY CE (Call)** ya **BUY PE (Put)** par click karke trade lein!
+                </div>
+                <table class="opt-pos-table" id="opt_pos_table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>Option Contract</th>
+                            <th>Side</th>
+                            <th>Contracts (BTC)</th>
+                            <th>Entry Premium</th>
+                            <th>Current Premium</th>
+                            <th>Invested ($)</th>
+                            <th>Current Value ($)</th>
+                            <th>Unrealized PnL</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="opt_pos_table_body">
+                        <!-- Dynamic Open Option Positions -->
+                    </tbody>
+                </table>
             </div>
-            <div>
-                <span style="color:#8b949e;">PnL:</span> 
-                <span class="pos-pnl-val" style="color:#2ea043;" id="hud_pnl_val">+$0.00 (+0.0%)</span>
+
+            <!-- Delta Exchange Option Chain Card -->
+            <div class="option-chain-card">
+                <div class="chain-table-header">
+                    <div class="call-side-title">🟢 CALLS (CE - Teji / Bullish)</div>
+                    <div class="strike-center-title">⚡ STRIKE PRICE</div>
+                    <div class="put-side-title">🔴 PUTS (PE - Mandi / Bearish)</div>
+                </div>
+                
+                <table class="chain-table-grid">
+                    <thead>
+                        <tr>
+                            <!-- CALLS (CE) -->
+                            <th>Action</th>
+                            <th>LTP ($)</th>
+                            <th>Delta</th>
+                            <th>Theta/Day</th>
+                            <!-- STRIKE -->
+                            <th style="background:#151a24; color:#e3b341;">STRIKE</th>
+                            <!-- PUTS (PE) -->
+                            <th>Theta/Day</th>
+                            <th>Delta</th>
+                            <th>LTP ($)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="option_chain_tbody">
+                        <!-- Dynamically Calculated Option Chain Rows -->
+                    </tbody>
+                </table>
             </div>
-            <button class="btn-hud-close" onclick="closeActivePosition()">✕ Market Close</button>
+
         </div>
 
+    </div>
+
+    <!-- =========================================================
+         OPTION ORDER PLACEMENT MODAL
+         ========================================================= -->
+    <div class="modal-backdrop" id="optOrderModal" onclick="if(event.target.id==='optOrderModal') closeOptOrderModal()">
+        <div class="opt-order-modal-card">
+            <div class="opt-order-header">
+                <span id="opt_modal_title">BTC-84000-CE</span>
+                <button class="modal-close-btn" onclick="closeOptOrderModal()">✕</button>
+            </div>
+            <div class="opt-order-body">
+                <!-- Action: BUY vs SELL -->
+                <div class="opt-side-selector">
+                    <button class="opt-side-btn active buy" id="opt_btn_buy" onclick="selectOptOrderSide('BUY')">🟢 BUY (Long Option)</button>
+                    <button class="opt-side-btn sell" id="opt_btn_sell" onclick="selectOptOrderSide('SELL')">🔴 SELL (Write Option)</button>
+                </div>
+
+                <!-- Contracts / Lot Size Input -->
+                <div class="opt-input-row">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#8b949e; font-weight:700;">
+                        <span>Quantity (Contracts in BTC)</span>
+                        <span>Available: <b style="color:#58a6ff;" id="opt_avail_bal">$10,000.00</b></span>
+                    </div>
+                    <div class="opt-input-box">
+                        <input type="number" id="opt_order_qty" value="0.10" min="0.01" step="0.05" oninput="calculateOptOrderSummary()">
+                        <span style="font-size:11px; font-weight:800; color:#8b949e;">BTC</span>
+                    </div>
+                </div>
+
+                <!-- Quick Contract Chips -->
+                <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;">
+                    <button class="btn-hdr" onclick="setOptContractQty(0.05)">0.05 BTC</button>
+                    <button class="btn-hdr" onclick="setOptContractQty(0.10)">0.10 BTC</button>
+                    <button class="btn-hdr" onclick="setOptContractQty(0.25)">0.25 BTC</button>
+                    <button class="btn-hdr" onclick="setOptContractQty(0.50)">0.50 BTC</button>
+                </div>
+
+                <!-- Option Order Summary Breakdown -->
+                <div class="opt-summary-box">
+                    <div class="opt-sum-row">
+                        <span>Premium Per BTC:</span>
+                        <span class="opt-sum-val" id="opt_sum_prem">$1,240.00</span>
+                    </div>
+                    <div class="opt-sum-row">
+                        <span>Total Premium Required:</span>
+                        <span class="opt-sum-val" style="color:#58a6ff;" id="opt_sum_total_cost">$124.00</span>
+                    </div>
+                    <div class="opt-sum-row">
+                        <span>Breakeven BTC Price:</span>
+                        <span class="opt-sum-val" id="opt_sum_be">$85,240.00</span>
+                    </div>
+                    <div class="opt-sum-row">
+                        <span>Max Profit / Max Loss:</span>
+                        <span class="opt-sum-val" id="opt_sum_risk" style="color:#2ea043;">Unlimited / Limited to $124.00</span>
+                    </div>
+                </div>
+
+                <!-- Execute Button -->
+                <button class="btn-submit-opt buy" id="btn_submit_opt" onclick="submitOptionOrder()">
+                    ⚡ EXECUTE OPTION PAPER TRADE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         OPTION TRADING EDUCATIONAL GUIDE MODAL (HINDI)
+         ========================================================= -->
+    <div class="modal-backdrop" id="optGuideModal" onclick="if(event.target.id==='optGuideModal') closeOptionGuideModal()">
+        <div class="modal-card">
+            <div class="modal-head">
+                <span>📚 Crypto Options Trading Kaise Kaam Karta Hai? (Guide)</span>
+                <button class="modal-close-btn" onclick="closeOptionGuideModal()">✕</button>
+            </div>
+            <div class="modal-body" style="font-size:12.5px; line-height:1.6; color:#c9d1d9; display:flex; flex-direction:column; gap:14px;">
+                
+                <div style="background:#0d1117; padding:12px; border-radius:8px; border-left:4px solid #58a6ff;">
+                    <b style="color:#58a6ff; font-size:13.5px;">1. Options Trading Kya Hai?</b><br>
+                    Options ek aisa contract hai jisme aap kam paise (Premium) dekar Bitcoin ke upar ya niche jane par trade kar sakte hain.
+                </div>
+
+                <div style="background:#0d1117; padding:12px; border-radius:8px; border-left:4px solid #2ea043;">
+                    <b style="color:#2ea043; font-size:13.5px;">2. CALL Option (CE) - Teji / Bullish</b><br>
+                    • **Kab Buy Karein?** Jab aapko lagta hai BTC ka price <b>upar jayega</b>.<br>
+                    • **Risk:** Sirf utna jitna aapne Premium pay kiya (Limited Risk).<br>
+                    • **Profit:** BTC jitna upar jayega, utna bada Unlimited Profit 🚀
+                </div>
+
+                <div style="background:#0d1117; padding:12px; border-radius:8px; border-left:4px solid #f85149;">
+                    <b style="color:#f85149; font-size:13.5px;">3. PUT Option (PE) - Mandi / Bearish</b><br>
+                    • **Kab Buy Karein?** Jab aapko lagta hai BTC ka price <b>niche girega</b>.<br>
+                    • **Risk:** Limited to Premium paid.<br>
+                    • **Profit:** BTC jitna niche girega, utna bada Profit!
+                </div>
+
+                <div style="background:#0d1117; padding:12px; border-radius:8px; border-left:4px solid #e3b341;">
+                    <b style="color:#e3b341; font-size:13.5px;">4. ATM, ITM, OTM Strike Price Kya Hai?</b><br>
+                    • <b>ATM (At The Money):</b> Current BTC price ke sabse paas wala strike (e.g. BTC $84,150 par hai toh $84,000 ATM hai).<br>
+                    • <b>ITM (In The Money):</b> Jisme intrinsic value pehle se hoti hai (Surakshit option, Delta high).<br>
+                    • <b>OTM (Out of The Money):</b> Saste options. BTC tezi se bhaga toh 5x-10x return, par expiry par zero bhi ho sakte hain.
+                </div>
+
+                <div style="background:#0d1117; padding:12px; border-radius:8px; border-left:4px solid #bc8cff;">
+                    <b style="color:#bc8cff; font-size:13.5px;">5. Option Greeks (Delta & Theta)</b><br>
+                    • <b>Delta:</b> BTC $1,000 move karega toh option kitna dollar badhega (e.g. 0.50 Delta = $500 profit).<br>
+                    • <b>Theta Decay:</b> Roz time bitne par option ka premium thoda ghisata hai (Time Value).
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <!-- Closed Trade Performance History Modal -->
@@ -557,19 +1064,394 @@
 
     <script>
         // =========================================================================
-        // Pure Client-Side & Server-Synced Paper Trading State (100% Offline & Local)
-        // (Zero requests sent to real Delta broker accounts)
+        // Global Application State (Futures & Options Paper Trading)
         // =========================================================================
+        let currentTerminalMode = 'FUTURES'; // 'FUTURES' or 'OPTIONS'
         let currentInterval = '1';
         let currentLivePrice = 84150.00;
+        let selectedExpiryT = 0.003; // Time in years (1 day = 0.003)
+        let selectedExpiryLabel = 'Today';
         
         // Persistent LocalStorage Paper State
         let localPaperBalance = parseFloat(localStorage.getItem('delta_paper_balance')) || 10000.0;
-        let localActivePosition = JSON.parse(localStorage.getItem('delta_paper_active_position')) || null;
+        let localActiveFuturesPosition = JSON.parse(localStorage.getItem('delta_paper_active_position')) || null;
+        let localActiveOptionPositions = JSON.parse(localStorage.getItem('delta_paper_active_options')) || [];
         let localClosedTrades = JSON.parse(localStorage.getItem('delta_paper_history')) || [];
 
+        // Currently configured option in modal
+        let activeModalOption = null;
+
         // =========================================================================
-        // 1. Pure TradingView Pro Chart Initialization (NO AUTO-INDICATORS)
+        // 1. Black-Scholes Mathematical Engine for Crypto Options & Greeks
+        // =========================================================================
+        function normCDF(x) {
+            let t = 1 / (1 + 0.2316419 * Math.abs(x));
+            let d = 0.3989423 * Math.exp(-x * x / 2);
+            let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            return x > 0 ? 1 - prob : prob;
+        }
+
+        function calculateBlackScholes(S, K, T, r = 0.05, sigma = 0.52) {
+            if (T <= 0.0001) T = 0.0001;
+            let d1 = (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
+            let d2 = d1 - sigma * Math.sqrt(T);
+
+            let callPrice = S * normCDF(d1) - K * Math.exp(-r * T) * normCDF(d2);
+            let putPrice = K * Math.exp(-r * T) * normCDF(-d2) - S * normCDF(-d1);
+
+            let callDelta = normCDF(d1);
+            let putDelta = callDelta - 1;
+
+            let pdfD1 = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * d1 * d1);
+            let thetaCallPerDay = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) - r * K * Math.exp(-r * T) * normCDF(d2)) / 365;
+            let thetaPutPerDay = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) + r * K * Math.exp(-r * T) * normCDF(-d2)) / 365;
+
+            return {
+                callPrice: Math.max(1.0, callPrice),
+                putPrice: Math.max(1.0, putPrice),
+                callDelta: parseFloat(callDelta.toFixed(2)),
+                putDelta: parseFloat(putDelta.toFixed(2)),
+                callTheta: parseFloat(thetaCallPerDay.toFixed(1)),
+                putTheta: parseFloat(thetaPutPerDay.toFixed(1))
+            };
+        }
+
+        // =========================================================================
+        // 2. View Switcher (Futures vs Virtual Options)
+        // =========================================================================
+        function switchTerminalView(mode) {
+            currentTerminalMode = mode;
+            const btnFut = document.getElementById('btn_tab_futures');
+            const btnOpt = document.getElementById('btn_tab_options');
+            const viewFut = document.getElementById('view_futures');
+            const viewOpt = document.getElementById('view_options');
+            const tfDropdown = document.getElementById('futures_tf_dropdown');
+
+            if (mode === 'FUTURES') {
+                btnFut.classList.add('active');
+                btnOpt.classList.remove('active');
+                viewFut.style.display = 'block';
+                viewOpt.style.display = 'none';
+                tfDropdown.style.display = 'block';
+            } else {
+                btnOpt.classList.add('active');
+                btnFut.classList.remove('active');
+                viewFut.style.display = 'none';
+                viewOpt.style.display = 'flex';
+                tfDropdown.style.display = 'none';
+                renderOptionChain();
+                renderOptionPositions();
+            }
+        }
+
+        // =========================================================================
+        // 3. Option Chain Generator & Renderer
+        // =========================================================================
+        function selectExpiry(label, tVal) {
+            selectedExpiryLabel = label;
+            selectedExpiryT = tVal;
+            document.querySelectorAll('.expiry-chip').forEach(c => {
+                c.classList.toggle('active', c.innerText.includes(label) || (label === 'TODAY' && c.innerText.includes('Today')));
+            });
+            renderOptionChain();
+        }
+
+        function renderOptionChain() {
+            const tbody = document.getElementById('option_chain_tbody');
+            if (!tbody) return;
+
+            const S = currentLivePrice;
+            const atmStrike = Math.round(S / 500) * 500;
+            document.getElementById('opt_spot_price').innerText = `$${S.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+            document.getElementById('opt_atm_strike').innerText = atmStrike.toLocaleString();
+
+            let strikes = [];
+            for (let k = atmStrike - 4000; k <= atmStrike + 4000; k += 500) {
+                strikes.push(k);
+            }
+
+            let html = '';
+            strikes.forEach(K => {
+                const bs = calculateBlackScholes(S, K, selectedExpiryT);
+                const isATM = K === atmStrike;
+                const isITMCall = S > K;
+                const isITMPut = S < K;
+
+                html += `
+                    <tr>
+                        <!-- CALLS (CE) -->
+                        <td class="${isITMCall ? 'itm-call' : ''}">
+                            <div style="display:flex; gap:4px; justify-content:center;">
+                                <button class="btn-opt-action btn-buy-call" onclick="openOptOrderModal('${K}', 'CE', 'BUY', ${bs.callPrice}, ${bs.callDelta})">BUY CE</button>
+                                <button class="btn-opt-action btn-sell-call" onclick="openOptOrderModal('${K}', 'CE', 'SELL', ${bs.callPrice}, ${bs.callDelta})">SELL</button>
+                            </div>
+                        </td>
+                        <td class="${isITMCall ? 'itm-call' : ''}" style="color:#2ea043; font-weight:800;">$${bs.callPrice.toFixed(1)}</td>
+                        <td class="${isITMCall ? 'itm-call' : ''}" style="color:#8b949e;">${bs.callDelta > 0 ? '+' : ''}${bs.callDelta}</td>
+                        <td class="${isITMCall ? 'itm-call' : ''}" style="color:#f85149;">${bs.callTheta}</td>
+
+                        <!-- STRIKE PRICE -->
+                        <td class="strike-cell ${isATM ? 'atm' : ''}">
+                            ${K.toLocaleString()} ${isATM ? '<span style="font-size:9px; background:#e3b341; color:#000; padding:1px 3px; border-radius:3px; margin-left:4px;">ATM</span>' : ''}
+                        </td>
+
+                        <!-- PUTS (PE) -->
+                        <td class="${isITMPut ? 'itm-put' : ''}" style="color:#f85149;">${bs.putTheta}</td>
+                        <td class="${isITMPut ? 'itm-put' : ''}" style="color:#8b949e;">${bs.putDelta}</td>
+                        <td class="${isITMPut ? 'itm-put' : ''}" style="color:#f85149; font-weight:800;">$${bs.putPrice.toFixed(1)}</td>
+                        <td class="${isITMPut ? 'itm-put' : ''}">
+                            <div style="display:flex; gap:4px; justify-content:center;">
+                                <button class="btn-opt-action btn-buy-put" onclick="openOptOrderModal('${K}', 'PE', 'BUY', ${bs.putPrice}, ${bs.putDelta})">BUY PE</button>
+                                <button class="btn-opt-action btn-sell-put" onclick="openOptOrderModal('${K}', 'PE', 'SELL', ${bs.putPrice}, ${bs.putDelta})">SELL</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // =========================================================================
+        // 4. Option Order Placement Modal & Execution
+        // =========================================================================
+        function openOptOrderModal(strike, optType, side, currentPremium, delta) {
+            activeModalOption = {
+                strike: parseFloat(strike),
+                optType: optType, // 'CE' or 'PE'
+                side: side, // 'BUY' or 'SELL'
+                premium: currentPremium,
+                delta: delta,
+                expiry: selectedExpiryLabel,
+                expiryT: selectedExpiryT
+            };
+
+            const title = `BTC-${strike}-${optType} (${selectedExpiryLabel} Expiry)`;
+            document.getElementById('opt_modal_title').innerText = title;
+            document.getElementById('opt_avail_bal').innerText = `$${localPaperBalance.toFixed(2)}`;
+            selectOptOrderSide(side);
+            calculateOptOrderSummary();
+
+            document.getElementById('optOrderModal').classList.add('active');
+        }
+
+        function closeOptOrderModal() {
+            document.getElementById('optOrderModal').classList.remove('active');
+        }
+
+        function selectOptOrderSide(side) {
+            if (!activeModalOption) return;
+            activeModalOption.side = side;
+            const btnBuy = document.getElementById('opt_btn_buy');
+            const btnSell = document.getElementById('opt_btn_sell');
+            const btnSub = document.getElementById('btn_submit_opt');
+
+            if (side === 'BUY') {
+                btnBuy.classList.add('active');
+                btnSell.classList.remove('active');
+                btnSub.className = 'btn-submit-opt buy';
+                btnSub.innerText = `⚡ BUY ${activeModalOption.optType === 'CE' ? 'CALL (CE)' : 'PUT (PE)'} PAPER TRADE`;
+            } else {
+                btnSell.classList.add('active');
+                btnBuy.classList.remove('active');
+                btnSub.className = 'btn-submit-opt sell';
+                btnSub.innerText = `⚡ SELL/WRITE ${activeModalOption.optType === 'CE' ? 'CALL (CE)' : 'PUT (PE)'} PAPER TRADE`;
+            }
+            calculateOptOrderSummary();
+        }
+
+        function setOptContractQty(qty) {
+            document.getElementById('opt_order_qty').value = qty;
+            calculateOptOrderSummary();
+        }
+
+        function calculateOptOrderSummary() {
+            if (!activeModalOption) return;
+            const qty = parseFloat(document.getElementById('opt_order_qty').value) || 0.10;
+            const prem = activeModalOption.premium;
+            const totalCost = qty * prem;
+            const K = activeModalOption.strike;
+
+            document.getElementById('opt_sum_prem').innerText = `$${prem.toFixed(2)}`;
+            document.getElementById('opt_sum_total_cost').innerText = `$${totalCost.toFixed(2)}`;
+
+            // Breakeven calculation
+            let bePrice = 0;
+            if (activeModalOption.optType === 'CE') {
+                bePrice = K + prem;
+            } else {
+                bePrice = Math.max(0, K - prem);
+            }
+            document.getElementById('opt_sum_be').innerText = `$${bePrice.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+
+            if (activeModalOption.side === 'BUY') {
+                document.getElementById('opt_sum_risk').innerHTML = `<span style="color:#2ea043;">Unlimited</span> / <span style="color:#f85149;">Limited to $${totalCost.toFixed(2)}</span>`;
+            } else {
+                document.getElementById('opt_sum_risk').innerHTML = `<span style="color:#2ea043;">+$${totalCost.toFixed(2)} Premium</span> / <span style="color:#f85149;">High Margin Risk</span>`;
+            }
+        }
+
+        function submitOptionOrder() {
+            if (!activeModalOption) return;
+            const qty = parseFloat(document.getElementById('opt_order_qty').value) || 0.10;
+            const prem = activeModalOption.premium;
+            const totalCost = qty * prem;
+
+            if (activeModalOption.side === 'BUY' && totalCost > localPaperBalance) {
+                showToast(`❌ Insufficient Balance! (Required: $${totalCost.toFixed(2)} | Available: $${localPaperBalance.toFixed(2)})`, "error");
+                return;
+            }
+
+            const nowTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            const newOptionPosition = {
+                id: 'opt_' + Date.now(),
+                symbol: `BTC-${activeModalOption.strike}-${activeModalOption.optType}`,
+                strike: activeModalOption.strike,
+                optType: activeModalOption.optType,
+                side: activeModalOption.side,
+                qty: qty,
+                entryPremium: prem,
+                currentPremium: prem,
+                totalInvested: totalCost,
+                expiry: activeModalOption.expiry,
+                expiryT: activeModalOption.expiryT,
+                entrySpot: currentLivePrice,
+                entryTime: nowTime
+            };
+
+            // Deduct premium from balance if BUY
+            if (activeModalOption.side === 'BUY') {
+                localPaperBalance -= totalCost;
+            } else {
+                localPaperBalance += totalCost; // Received premium
+            }
+            localStorage.setItem('delta_paper_balance', localPaperBalance.toString());
+
+            localActiveOptionPositions.push(newOptionPosition);
+            localStorage.setItem('delta_paper_active_options', JSON.stringify(localActiveOptionPositions));
+
+            updateHeaderBalance();
+            closeOptOrderModal();
+            renderOptionPositions();
+            showToast(`⚡ ${newOptionPosition.symbol} ${activeModalOption.side} Order Executed! Premium: $${prem.toFixed(2)}`, "success");
+        }
+
+        function closeOptionPosition(id) {
+            const index = localActiveOptionPositions.findIndex(p => p.id === id);
+            if (index === -1) return;
+
+            const pos = localActiveOptionPositions[index];
+            const currentBs = calculateBlackScholes(currentLivePrice, pos.strike, pos.expiryT);
+            const livePrem = pos.optType === 'CE' ? currentBs.callPrice : currentBs.putPrice;
+            
+            let pnl = 0;
+            if (pos.side === 'BUY') {
+                pnl = (livePrem - pos.entryPremium) * pos.qty;
+                localPaperBalance += (pos.qty * livePrem); // Return remaining/gained value
+            } else {
+                pnl = (pos.entryPremium - livePrem) * pos.qty;
+                localPaperBalance -= (pos.qty * livePrem); // Buy back to close
+            }
+
+            localStorage.setItem('delta_paper_balance', localPaperBalance.toString());
+
+            // Add to Closed Trades History
+            const exitTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const record = {
+                trade_id: pos.id,
+                symbol: `${pos.symbol} (${pos.side})`,
+                side: pos.side,
+                entry_price: pos.entryPremium,
+                exit_price: livePrem,
+                margin_used: pos.totalInvested,
+                leverage: 1,
+                realized_pnl: pnl,
+                pnl_percent: (pnl / pos.totalInvested) * 100,
+                entry_time: pos.entryTime,
+                exit_time: exitTime,
+                exit_reason: "Option Square Off"
+            };
+            localClosedTrades.push(record);
+            localStorage.setItem('delta_paper_history', JSON.stringify(localClosedTrades));
+
+            localActiveOptionPositions.splice(index, 1);
+            localStorage.setItem('delta_paper_active_options', JSON.stringify(localActiveOptionPositions));
+
+            updateHeaderBalance();
+            renderOptionPositions();
+
+            const sign = pnl >= 0 ? '+' : '';
+            showToast(`✅ Option Closed! Net PnL: ${sign}$${pnl.toFixed(2)}`, pnl >= 0 ? "success" : "error");
+        }
+
+        function renderOptionPositions() {
+            const container = document.getElementById('opt_positions_container');
+            const noMsg = document.getElementById('no_opt_pos_msg');
+            const table = document.getElementById('opt_pos_table');
+            const tbody = document.getElementById('opt_pos_table_body');
+            const countElem = document.getElementById('opt_pos_count');
+
+            if (!tbody) return;
+
+            if (!localActiveOptionPositions || localActiveOptionPositions.length === 0) {
+                noMsg.style.display = 'block';
+                table.style.display = 'none';
+                countElem.innerText = '0';
+                return;
+            }
+
+            noMsg.style.display = 'none';
+            table.style.display = 'table';
+            countElem.innerText = localActiveOptionPositions.length.toString();
+
+            let html = '';
+            localActiveOptionPositions.forEach(pos => {
+                const bs = calculateBlackScholes(currentLivePrice, pos.strike, pos.expiryT);
+                const livePrem = pos.optType === 'CE' ? bs.callPrice : bs.putPrice;
+                
+                let pnl = 0;
+                if (pos.side === 'BUY') {
+                    pnl = (livePrem - pos.entryPremium) * pos.qty;
+                } else {
+                    pnl = (pos.entryPremium - livePrem) * pos.qty;
+                }
+                const roi = pos.totalInvested > 0 ? (pnl / pos.totalInvested) * 100 : 0;
+                const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
+                const sign = pnl >= 0 ? '+' : '';
+                const currentVal = pos.qty * livePrem;
+
+                html += `
+                    <tr>
+                        <td><b>${pos.symbol}</b> <span style="font-size:10.5px; color:#8b949e;">(${pos.expiry})</span></td>
+                        <td><span class="pos-badge ${pos.side === 'BUY' ? 'pos-badge-buy' : 'pos-badge-sell'}">${pos.side}</span></td>
+                        <td>${pos.qty} BTC</td>
+                        <td>$${pos.entryPremium.toFixed(2)}</td>
+                        <td style="color:#58a6ff; font-weight:800;">$${livePrem.toFixed(2)}</td>
+                        <td>$${pos.totalInvested.toFixed(2)}</td>
+                        <td>$${currentVal.toFixed(2)}</td>
+                        <td style="color:${pnlColor}; font-weight:800; font-size:13px;">${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(1)}%)</td>
+                        <td>
+                            <button class="btn-hud-close" onclick="closeOptionPosition('${pos.id}')">✕ Square Off</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // =========================================================================
+        // 5. Option Guide Modal Controls
+        // =========================================================================
+        function openOptionGuideModal() {
+            document.getElementById('optGuideModal').classList.add('active');
+        }
+        function closeOptionGuideModal() {
+            document.getElementById('optGuideModal').classList.remove('active');
+        }
+
+        // =========================================================================
+        // 6. Pure TradingView Pro Chart Initialization (Futures Mode)
         // =========================================================================
         let tvWidgetInstance = null;
 
@@ -629,7 +1511,7 @@
         }
 
         // =========================================================================
-        // 2. Timeframe Dropdown Controller
+        // 7. Timeframe Dropdown Controller
         // =========================================================================
         function toggleTfMenu() {
             const menu = document.getElementById('tf_menu_list');
@@ -658,10 +1540,10 @@
         }
 
         // =========================================================================
-        // 3. Instant In-App Paper Trade Execution (Zero Broker API requests)
+        // 8. Futures In-App Paper Trade Execution
         // =========================================================================
         function executeQuickTrade(side) {
-            if (localActivePosition) {
+            if (localActiveFuturesPosition) {
                 showToast("⚠️ Ek active position already open hai! Pehle use close karein.", "error");
                 return;
             }
@@ -680,8 +1562,7 @@
             const qty = posValue / currentLivePrice;
             const nowTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            // Create Paper Position
-            localActivePosition = {
+            localActiveFuturesPosition = {
                 trade_id: 'pos_' + Date.now(),
                 symbol: 'BTCUSD',
                 side: side,
@@ -693,93 +1574,66 @@
                 entry_time: nowTime
             };
 
-            // Save in localStorage
-            localStorage.setItem('delta_paper_active_position', JSON.stringify(localActivePosition));
+            localStorage.setItem('delta_paper_active_position', JSON.stringify(localActiveFuturesPosition));
 
-            // Sync with backend if available
-            fetch('/api/trade/open', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    side: side,
-                    margin_amount: margin,
-                    leverage: leverage,
-                    entry_price: currentLivePrice,
-                    symbol: "BTCUSD"
-                })
-            }).catch(() => {});
-
-            renderPositionHUD(localActivePosition, currentLivePrice);
+            renderPositionHUD(localActiveFuturesPosition, currentLivePrice);
             showToast(`⚡ ${side} Position Opened at Entry Price: $${currentLivePrice.toLocaleString('en-US', {minimumFractionDigits:2})}!`, "success");
         }
 
         function closeActivePosition() {
-            if (!localActivePosition) return;
+            if (!localActiveFuturesPosition) return;
 
-            const isBuy = localActivePosition.side === 'BUY';
+            const isBuy = localActiveFuturesPosition.side === 'BUY';
             const exitPrice = currentLivePrice;
-            const pnl = isBuy ? (exitPrice - localActivePosition.entry_price) * localActivePosition.qty : (localActivePosition.entry_price - exitPrice) * localActivePosition.qty;
-            const roi = localActivePosition.margin_used > 0 ? (pnl / localActivePosition.margin_used) * 100 : 0;
+            const pnl = isBuy ? (exitPrice - localActiveFuturesPosition.entry_price) * localActiveFuturesPosition.qty : (localActiveFuturesPosition.entry_price - exitPrice) * localActiveFuturesPosition.qty;
+            const roi = localActiveFuturesPosition.margin_used > 0 ? (pnl / localActiveFuturesPosition.margin_used) * 100 : 0;
             const exitTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            // Update balance
             localPaperBalance += pnl;
             localStorage.setItem('delta_paper_balance', localPaperBalance.toString());
 
-            // Add to Closed History
             const record = {
-                trade_id: localActivePosition.trade_id,
-                symbol: localActivePosition.symbol,
-                side: localActivePosition.side,
-                entry_price: localActivePosition.entry_price,
+                trade_id: localActiveFuturesPosition.trade_id,
+                symbol: localActiveFuturesPosition.symbol,
+                side: localActiveFuturesPosition.side,
+                entry_price: localActiveFuturesPosition.entry_price,
                 exit_price: exitPrice,
-                margin_used: localActivePosition.margin_used,
-                leverage: localActivePosition.leverage,
+                margin_used: localActiveFuturesPosition.margin_used,
+                leverage: localActiveFuturesPosition.leverage,
                 realized_pnl: pnl,
                 pnl_percent: roi,
-                entry_time: localActivePosition.entry_time,
+                entry_time: localActiveFuturesPosition.entry_time,
                 exit_time: exitTime,
                 exit_reason: "Manual Market Close"
             };
             localClosedTrades.push(record);
             localStorage.setItem('delta_paper_history', JSON.stringify(localClosedTrades));
 
-            // Clear Active Position
-            localActivePosition = null;
+            localActiveFuturesPosition = null;
             localStorage.removeItem('delta_paper_active_position');
-
-            // Sync with backend if available
-            fetch('/api/trade/close', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reason: "Manual Market Close" })
-            }).catch(() => {});
 
             updateHeaderBalance();
             renderPositionHUD(null, currentLivePrice);
             
             const sign = pnl >= 0 ? '+' : '';
-            showToast(`✅ Position Closed at $${exitPrice.toLocaleString()} | PnL: ${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(2)}%)`, pnl >= 0 ? "success" : "error");
+            showToast(`✅ Futures Position Closed at $${exitPrice.toLocaleString()} | PnL: ${sign}$${pnl.toFixed(2)} (${sign}${roi.toFixed(2)}%)`, pnl >= 0 ? "success" : "error");
         }
 
         function resetPaperAccount() {
             if (!confirm("Kya aap balance ko wapas $10,000.00 par reset karna chahte hain?")) return;
 
             localPaperBalance = 10000.0;
-            localActivePosition = null;
+            localActiveFuturesPosition = null;
+            localActiveOptionPositions = [];
             localClosedTrades = [];
             localStorage.setItem('delta_paper_balance', '10000');
             localStorage.removeItem('delta_paper_active_position');
+            localStorage.setItem('delta_paper_active_options', '[]');
             localStorage.setItem('delta_paper_history', '[]');
-
-            fetch('/api/trade/reset', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ initial_balance: 10000.0 })
-            }).catch(() => {});
 
             updateHeaderBalance();
             renderPositionHUD(null, currentLivePrice);
+            renderOptionPositions();
             showToast("🔄 Account Balance Reset to $10,000.00", "success");
         }
 
@@ -788,9 +1642,6 @@
             if (balElem) balElem.innerText = `$${Number(localPaperBalance).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
         }
 
-        // =========================================================================
-        // 4. Live Position HUD Renderer
-        // =========================================================================
         function renderPositionHUD(trade, price) {
             const hud = document.getElementById('chart_pos_hud');
             if (!hud) return;
@@ -811,12 +1662,8 @@
                 badge.className = `pos-badge ${isBuy ? 'pos-badge-buy' : 'pos-badge-sell'}`;
                 badge.innerText = `${trade.side} ${trade.leverage}x`;
             }
-            if (entryText) {
-                entryText.innerText = `$${Number(trade.entry_price).toLocaleString('en-US', {minimumFractionDigits:2})}`;
-            }
-            if (marginText) {
-                marginText.innerText = `$${Number(trade.margin_used).toFixed(2)}`;
-            }
+            if (entryText) entryText.innerText = `$${Number(trade.entry_price).toLocaleString('en-US', {minimumFractionDigits:2})}`;
+            if (marginText) marginText.innerText = `$${Number(trade.margin_used).toFixed(2)}`;
 
             const pnl = isBuy ? (price - trade.entry_price) * trade.qty : (trade.entry_price - price) * trade.qty;
             const roi = trade.margin_used > 0 ? (pnl / trade.margin_used) * 100 : 0;
@@ -838,13 +1685,17 @@
             if (qSell) qSell.innerText = formatted;
             if (qBuy) qBuy.innerText = formatted;
 
-            if (localActivePosition) {
-                renderPositionHUD(localActivePosition, currentLivePrice);
+            if (localActiveFuturesPosition) {
+                renderPositionHUD(localActiveFuturesPosition, currentLivePrice);
+            }
+            if (currentTerminalMode === 'OPTIONS') {
+                renderOptionChain();
+                renderOptionPositions();
             }
         }
 
         // =========================================================================
-        // 5. Fullscreen Toggle Controller
+        // 9. Fullscreen Toggle Controller
         // =========================================================================
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
@@ -876,7 +1727,7 @@
         });
 
         // =========================================================================
-        // 6. WebSocket Live Price Connection (Delta & Binance Feeds)
+        // 10. WebSocket Live Price Connection
         // =========================================================================
         function connectWebSocket() {
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -893,16 +1744,12 @@
                         }
                     } catch (e) {}
                 };
-                ws.onclose = () => {
-                    setTimeout(connectWebSocket, 3000);
-                };
+                ws.onclose = () => { setTimeout(connectWebSocket, 3000); };
             } catch (e) {
-                // Fallback direct Binance public ticker
                 connectBinancePublicTicker();
             }
         }
 
-        // Public Binance Fallback Ticker for zero-lag live updates
         function connectBinancePublicTicker() {
             try {
                 const bWs = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@ticker');
@@ -919,7 +1766,7 @@
         }
 
         // =========================================================================
-        // 7. Closed Trade History Modal & Toasts
+        // 11. History Modal & Toast Helpers
         // =========================================================================
         function openHistoryModal() {
             const modal = document.getElementById('historyModal');
@@ -938,7 +1785,7 @@
                     html += `
                         <div style="background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:12px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
                             <div>
-                                <span style="font-weight:800; color:${tr.side==='BUY'?'#2ea043':'#f85149'};">${tr.side} ${tr.leverage}x</span>
+                                <span style="font-weight:800; color:${tr.side==='BUY'?'#2ea043':'#f85149'};">${tr.symbol}</span>
                                 <span style="color:#8b949e; margin-left:8px;">Entry: $${Number(tr.entry_price).toLocaleString()}</span>
                                 <span style="color:#8b949e; margin-left:8px;">Exit: $${Number(tr.exit_price || 0).toLocaleString()}</span>
                                 <div style="font-size:10.5px; color:#8b949e; margin-top:4px;">${tr.exit_reason || 'Closed'} • ${tr.exit_time || ''}</div>
@@ -972,7 +1819,7 @@
         }
 
         // =========================================================================
-        // 8. Page Init
+        // 12. Page Init
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
             loadTradingViewChart('1');
@@ -981,8 +1828,8 @@
             connectWebSocket();
             connectBinancePublicTicker();
 
-            if (localActivePosition) {
-                renderPositionHUD(localActivePosition, currentLivePrice);
+            if (localActiveFuturesPosition) {
+                renderPositionHUD(localActiveFuturesPosition, currentLivePrice);
             }
         });
     </script>
