@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Exchange - Crypto Options & Futures Trading Terminal</title>
+    <title>Delta Exchange - Crypto Options (ITM/ATM/OTM, Greeks & PNL Calculator) & Futures</title>
     <!-- TradingView Advanced Charting Library Script -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -59,7 +59,7 @@
             color: #2ea043;
         }
 
-        /* Mode & Navigation Tabs */
+        /* Main Nav Switcher */
         .main-nav-tabs {
             display: flex;
             gap: 6px;
@@ -120,7 +120,7 @@
         }
         .btn-hdr:hover { background: #263248; border-color: #58a6ff; color: #ffffff; }
 
-        /* Main Workspace Container */
+        /* Workspace Container */
         .app-container {
             flex: 1;
             height: calc(100vh - 50px);
@@ -131,7 +131,7 @@
         }
 
         /* -------------------------------------------------------------
-           1. OPTIONS VIEW (Chain / Trade / Positions / Orders)
+           OPTIONS VIEW
            ------------------------------------------------------------- */
         #options_screen {
             display: flex;
@@ -142,7 +142,7 @@
             overflow-y: auto;
         }
 
-        /* Options Sub Navigation (Chain, Trade, Positions, Orders) */
+        /* Sub Navigation */
         .opt-sub-nav {
             background: #121721;
             border-bottom: 1px solid #202736;
@@ -150,7 +150,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 42px;
+            height: 44px;
             flex-shrink: 0;
         }
         .opt-nav-links {
@@ -182,6 +182,30 @@
             height: 2.5px;
             background: #58a6ff;
             border-radius: 2px 2px 0 0;
+        }
+
+        /* Option Chain Filter Views Toolbar */
+        .chain-view-filters {
+            display: flex;
+            gap: 6px;
+            background: #0b0e14;
+            padding: 2px;
+            border-radius: 6px;
+            border: 1px solid #2d384e;
+        }
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: #8b949e;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background: #1f6feb;
+            color: #ffffff;
         }
 
         /* Expiry Pills Bar */
@@ -230,23 +254,38 @@
         .chain-table th {
             background: #121721;
             color: #8b949e;
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
-            padding: 8px 6px;
+            padding: 8px 4px;
             border-bottom: 1px solid #202736;
             position: sticky;
             top: 0;
             z-index: 10;
         }
         .chain-table td {
-            padding: 8px 6px;
+            padding: 7px 4px;
             border-bottom: 1px solid #161c28;
             vertical-align: middle;
             cursor: pointer;
         }
-        .chain-table tr:hover {
-            background: #141a24;
+        .chain-table tr:hover { background: #141a24; }
+
+        /* Moneyness Badges & Row Highlights */
+        .row-itm-call { background: rgba(46, 160, 67, 0.06); }
+        .row-itm-put { background: rgba(248, 81, 73, 0.06); }
+
+        .moneyness-tag {
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
+        .tag-itm-call { background: #2ea04333; color: #2ea043; border: 1px solid #2ea04366; }
+        .tag-itm-put { background: #f8514933; color: #f85149; border: 1px solid #f8514966; }
+        .tag-otm { background: #21262d; color: #8b949e; border: 1px solid #30363d; }
+        .tag-atm { background: #e3b341; color: #000000; font-weight: 900; }
 
         .strike-pill {
             background: #151a24;
@@ -259,22 +298,16 @@
         .strike-pill.atm {
             background: #000000;
             color: #ffffff;
-            border: 1px solid #30363d;
-            box-shadow: 0 0 8px rgba(0,0,0,0.8);
+            border: 1px solid #e3b341;
+            box-shadow: 0 0 8px rgba(227, 179, 65, 0.4);
         }
-        .call-price-up { color: #2ea043; font-weight: 800; }
-        .call-price-down { color: #f85149; font-weight: 800; }
-        .put-price-up { color: #2ea043; font-weight: 800; }
-        .put-price-down { color: #f85149; font-weight: 800; }
 
-        /* -------------------------------------------------------------
-           2. TRADE TAB (Order Book + Form + Interactive PNL Calculator)
-           ------------------------------------------------------------- */
+        /* TRADE & PNL CALCULATOR TAB */
         .trade-view-container {
             display: none;
             padding: 16px;
             gap: 16px;
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             width: 100%;
             overflow-y: auto;
@@ -290,27 +323,23 @@
             gap: 14px;
         }
 
-        /* Order Book & Order Form Grid */
         .order-exec-grid {
             display: grid;
-            grid-template-columns: 180px 1fr;
+            grid-template-columns: 200px 1fr;
             gap: 16px;
         }
         .mini-orderbook {
             background: #0b0e14;
             border: 1px solid #202736;
             border-radius: 8px;
-            padding: 8px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11.5px;
             gap: 4px;
         }
-        .ob-row {
-            display: flex;
-            justify-content: space-between;
-        }
+        .ob-row { display: flex; justify-content: space-between; }
         .ob-ask { color: #f85149; }
         .ob-bid { color: #2ea043; }
 
@@ -385,7 +414,22 @@
         .btn-submit-main-opt.sell { background: #f85149; }
         .btn-submit-main-opt.sell:hover { background: #ff6b63; }
 
-        /* PNL CALCULATOR & SIMULATOR CARD (Exact Match to Screenshot 2) */
+        /* Greek Badges Card */
+        .greeks-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: #0b0e14;
+            border: 1px solid #202736;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .greek-box-label { font-size: 10px; color: #8b949e; font-weight: 700; }
+        .greek-box-val { font-size: 13px; font-weight: 800; margin-top: 2px; }
+
+        /* PNL CALCULATOR & SIMULATOR */
         .calculator-card {
             background: #121721;
             border: 1px solid #202736;
@@ -395,26 +439,6 @@
             flex-direction: column;
             gap: 16px;
         }
-        .calc-header-pills {
-            display: flex;
-            gap: 8px;
-        }
-        .calc-pill {
-            background: #1c2433;
-            border: 1px solid #2d384e;
-            color: #8b949e;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .calc-pill.active {
-            background: #1f6feb22;
-            border-color: #1f6feb;
-            color: #58a6ff;
-        }
-
         .calc-metrics-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -422,10 +446,10 @@
             background: #0b0e14;
             border: 1px solid #202736;
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
         }
         .calc-m-label { font-size: 10.5px; color: #8b949e; font-weight: 600; margin-bottom: 2px; }
-        .calc-m-val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: #f0f6fc; }
+        .calc-m-val { font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 800; color: #f0f6fc; }
 
         .slider-group {
             display: flex;
@@ -455,21 +479,17 @@
             cursor: pointer;
         }
 
-        /* -------------------------------------------------------------
-           3. POSITIONS TAB
-           ------------------------------------------------------------- */
+        /* POSITIONS TAB */
         .positions-view-container {
             display: none;
             padding: 16px;
-            max-width: 1000px;
+            max-width: 1050px;
             margin: 0 auto;
             width: 100%;
             overflow-y: auto;
         }
 
-        /* -------------------------------------------------------------
-           4. FUTURES SCREEN (Pure Chart + On-Chart Buy/Sell)
-           ------------------------------------------------------------- */
+        /* FUTURES SCREEN */
         #futures_screen {
             display: none;
             width: 100%;
@@ -510,10 +530,10 @@
 </head>
 <body>
 
-    <!-- Top Navigation Header -->
+    <!-- Top Header -->
     <header id="main_header">
         <div class="header-left">
-            <!-- Symbol Selector (BTC vs ETH) -->
+            <!-- Symbol Selector -->
             <div class="symbol-selector-box" onclick="toggleSymbol()">
                 <span>🪙</span>
                 <span id="selected_symbol_label">BTC • USDT</span>
@@ -522,7 +542,7 @@
 
             <div class="live-price-tag" id="spot_price_tag">$84,150.00</div>
 
-            <!-- Main Mode Switcher: Options vs Futures -->
+            <!-- Mode Switcher -->
             <div class="main-nav-tabs">
                 <button class="main-tab-btn active" id="tab_btn_options" onclick="switchAppMode('OPTIONS')">
                     🎯 Options
@@ -552,21 +572,25 @@
              ========================================================= -->
         <div id="options_screen">
             
-            <!-- Sub Navigation Tabs: Chain | Trade | Positions | Orders -->
+            <!-- Sub Navigation Tabs -->
             <div class="opt-sub-nav">
                 <div class="opt-nav-links">
                     <div class="opt-nav-item active" id="sub_nav_chain" onclick="switchOptSubTab('CHAIN')">Chain</div>
-                    <div class="opt-nav-item" id="sub_nav_trade" onclick="switchOptSubTab('TRADE')">Trade</div>
+                    <div class="opt-nav-item" id="sub_nav_trade" onclick="switchOptSubTab('TRADE')">Trade & Calculator</div>
                     <div class="opt-nav-item" id="sub_nav_pos" onclick="switchOptSubTab('POS')">Positions (<span id="opt_pos_count">0</span>)</div>
                     <div class="opt-nav-item" id="sub_nav_orders" onclick="switchOptSubTab('ORDERS')">Orders</div>
                 </div>
 
-                <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:#8b949e;">
-                    <span>ATM: <b style="color:#e3b341;" id="atm_strike_label">84,000</b></span>
+                <!-- Option Chain View Mode Selector -->
+                <div class="chain-view-filters" id="chain_filters_box">
+                    <button class="filter-btn active" id="fbtn_all" onclick="setChainViewMode('ALL')">All & Greeks</button>
+                    <button class="filter-btn" id="fbtn_price" onclick="setChainViewMode('PRICE')">Price & Bid/Ask</button>
+                    <button class="filter-btn" id="fbtn_oi" onclick="setChainViewMode('OI')">OI & Volume</button>
+                    <button class="filter-btn" id="fbtn_greeks" onclick="setChainViewMode('GREEKS')">Greeks (Δ, Γ, Θ, ν)</button>
                 </div>
             </div>
 
-            <!-- Expiry Pills Bar with Countdown (Exact Match to Screenshot 1 & 5) -->
+            <!-- Expiry Pills Bar with Countdown -->
             <div class="expiry-bar" id="expiry_pills_container">
                 <div class="expiry-pill active" onclick="selectExpiryPill(0, '02 Oct (13h 1m)', 0.003)">02 Oct (13h 1m)</div>
                 <div class="expiry-pill" onclick="selectExpiryPill(1, '03 Oct', 0.0055)">03 Oct</div>
@@ -576,19 +600,12 @@
                 <div class="expiry-pill" onclick="selectExpiryPill(5, '30 Oct', 0.164)">30 Oct</div>
             </div>
 
-            <!-- SUB-VIEW A: OPTION CHAIN TABLE (Exact Image 1 & 5) -->
+            <!-- SUB-VIEW A: OPTION CHAIN TABLE WITH ITM/ATM/OTM & GREEKS -->
             <div class="chain-view-container" id="opt_chain_view">
                 <table class="chain-table">
                     <thead>
-                        <tr>
-                            <!-- CALLS (C) -->
-                            <th style="color:#2ea043; text-align:right;">Bid / Ask</th>
-                            <th style="color:#2ea043; text-align:left; padding-left:12px;">Mark price [C]</th>
-                            <!-- STRIKE -->
-                            <th style="color:#e3b341; background:#0d1117;">Strike</th>
-                            <!-- PUTS (P) -->
-                            <th style="color:#f85149; text-align:right; padding-right:12px;">[P] Mark price</th>
-                            <th style="color:#f85149; text-align:left;">Bid / Ask</th>
+                        <tr id="chain_thead_row">
+                            <!-- Injected dynamically based on view mode -->
                         </tr>
                     </thead>
                     <tbody id="chain_tbody">
@@ -597,16 +614,36 @@
                 </table>
             </div>
 
-            <!-- SUB-VIEW B: TRADE & PNL CALCULATOR (Exact Image 2 & 3) -->
+            <!-- SUB-VIEW B: TRADE & PNL CALCULATOR WITH GREEKS BREAKDOWN -->
             <div class="trade-view-container" id="opt_trade_view">
                 
                 <!-- Active Contract Banner -->
                 <div style="display:flex; justify-content:space-between; align-items:center; background:#121721; padding:12px 16px; border-radius:8px; border:1px solid #202736;">
                     <div>
                         <span style="font-size:15px; font-weight:800; color:#f0f6fc;" id="active_contract_title">BTC-2OCT26-85000-C</span>
-                        <span style="font-size:11px; color:#8b949e; margin-left:8px;">(Call Option)</span>
+                        <span class="moneyness-tag tag-otm" id="active_contract_moneyness" style="margin-left:8px;">OTM</span>
                     </div>
                     <div style="font-family:'JetBrains Mono'; font-size:14px; font-weight:800; color:#58a6ff;" id="active_contract_mark">$1,240.00</div>
+                </div>
+
+                <!-- Greeks Breakdown Card -->
+                <div class="greeks-summary-grid">
+                    <div>
+                        <div class="greek-box-label">Delta (Δ)</div>
+                        <div class="greek-box-val" style="color:#58a6ff;" id="trade_greek_delta">+0.48</div>
+                    </div>
+                    <div>
+                        <div class="greek-box-label">Theta (Θ) / Day</div>
+                        <div class="greek-box-val" style="color:#f85149;" id="trade_greek_theta">-$16.50</div>
+                    </div>
+                    <div>
+                        <div class="greek-box-label">Gamma (Γ)</div>
+                        <div class="greek-box-val" style="color:#e3b341;" id="trade_greek_gamma">0.00012</div>
+                    </div>
+                    <div>
+                        <div class="greek-box-label">Vega (ν) / 1% IV</div>
+                        <div class="greek-box-val" style="color:#bc8cff;" id="trade_greek_vega">$18.20</div>
+                    </div>
                 </div>
 
                 <!-- Order Placement Card -->
@@ -651,7 +688,7 @@
                                 </div>
                             </div>
 
-                            <!-- Margin & Fee Summary -->
+                            <!-- Margin Summary -->
                             <div style="display:flex; justify-content:space-between; font-size:11px; color:#8b949e;">
                                 <span>Est. Margin Required: <b style="color:#58a6ff;" id="trade_est_margin">$124.00</b></span>
                                 <span>Fees: <b style="color:#2ea043;">0.00% (Free)</b></span>
@@ -664,11 +701,10 @@
                     </div>
                 </div>
 
-                <!-- PNL CALCULATOR & PAYOFF SIMULATOR (Exact Match to Screenshot 2) -->
+                <!-- PNL CALCULATOR & PAYOFF SIMULATOR -->
                 <div class="calculator-card">
-                    <div class="calc-header-pills">
-                        <div class="calc-pill active">📊 PNL Calculator</div>
-                        <div class="calc-pill" onclick="showToast('Payoff Graph Mode Active', 'info')">📈 PNL Chart</div>
+                    <div style="font-size:13px; font-weight:800; color:#f0f6fc;">
+                        📊 PNL Calculator & Greeks Simulator
                     </div>
 
                     <div class="calc-metrics-row">
@@ -701,7 +737,7 @@
                         </div>
                     </div>
 
-                    <!-- Slider 2: Time to Expiry Simulation (Theta Decay) -->
+                    <!-- Slider 2: Time to Expiry Simulation -->
                     <div class="slider-group">
                         <div class="slider-label-row">
                             <span>Time (<span id="calc_time_offset" style="color:#e3b341;">13 hrs to expiry</span>)</span>
@@ -749,11 +785,13 @@
                         <thead>
                             <tr>
                                 <th>Contract</th>
+                                <th>Type</th>
                                 <th>Side</th>
                                 <th>Lots</th>
+                                <th>Delta (Δ)</th>
+                                <th>Theta (Θ)</th>
                                 <th>Entry Price</th>
                                 <th>Mark Price</th>
-                                <th>Invested</th>
                                 <th>PnL ($)</th>
                                 <th>Action</th>
                             </tr>
@@ -777,7 +815,7 @@
         </div>
 
         <!-- =========================================================
-             2. FUTURES MODULE (Pure TradingView Chart + On-Chart Buy/Sell)
+             2. FUTURES MODULE
              ========================================================= -->
         <div id="futures_screen">
             <div id="tradingview_chart_element"></div>
@@ -792,9 +830,10 @@
         // =========================================================================
         // State & Data
         // =========================================================================
-        let currentSymbol = 'BTC'; // 'BTC' or 'ETH'
-        let currentCurrency = 'USDT'; // 'USDT' or 'INR'
+        let currentSymbol = 'BTC';
+        let currentCurrency = 'USDT';
         let inrRate = 84.0;
+        let chainViewMode = 'ALL'; // 'ALL', 'PRICE', 'OI', 'GREEKS'
         
         let spotPrices = { 'BTC': 84150.0, 'ETH': 2700.50 };
         let activeExpiryIndex = 0;
@@ -803,7 +842,7 @@
 
         let activeOptionTrade = {
             strike: 84000,
-            optType: 'C', // 'C' or 'P'
+            optType: 'C',
             side: 'BUY',
             entryPrice: 1240.0,
             lots: 0.10
@@ -815,7 +854,7 @@
         let closedOptionTrades = JSON.parse(localStorage.getItem('delta_opt_history')) || [];
 
         // =========================================================================
-        // 1. Black-Scholes Math for Option Pricing
+        // 1. Comprehensive Black-Scholes Formula with All 4 Greeks
         // =========================================================================
         function normCDF(x) {
             let t = 1 / (1 + 0.2316419 * Math.abs(x));
@@ -824,17 +863,38 @@
             return x > 0 ? 1 - prob : prob;
         }
 
-        function calculateOptionPrice(S, K, T, sigma = 0.35, r = 0.05) {
+        function calculateOptionGreeks(S, K, T, sigma = 0.35, r = 0.05) {
             if (T <= 0.0001) T = 0.0001;
             let d1 = (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
             let d2 = d1 - sigma * Math.sqrt(T);
 
-            let call = S * normCDF(d1) - K * Math.exp(-r * T) * normCDF(d2);
-            let put = K * Math.exp(-r * T) * normCDF(-d2) - S * normCDF(-d1);
+            let callPrice = S * normCDF(d1) - K * Math.exp(-r * T) * normCDF(d2);
+            let putPrice = K * Math.exp(-r * T) * normCDF(-d2) - S * normCDF(-d1);
+
+            // Delta
+            let callDelta = normCDF(d1);
+            let putDelta = callDelta - 1;
+
+            // Gamma
+            let pdfD1 = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * d1 * d1);
+            let gamma = pdfD1 / (S * sigma * Math.sqrt(T));
+
+            // Vega (per 1% IV)
+            let vega = (S * Math.sqrt(T) * pdfD1) / 100;
+
+            // Theta (per day)
+            let thetaCall = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) - r * K * Math.exp(-r * T) * normCDF(d2)) / 365;
+            let thetaPut = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) + r * K * Math.exp(-r * T) * normCDF(-d2)) / 365;
 
             return {
-                call: Math.max(0.1, call),
-                put: Math.max(0.1, put)
+                call: Math.max(0.1, callPrice),
+                put: Math.max(0.1, putPrice),
+                callDelta: parseFloat(callDelta.toFixed(2)),
+                putDelta: parseFloat(putDelta.toFixed(2)),
+                gamma: parseFloat(gamma.toFixed(5)),
+                vega: parseFloat(vega.toFixed(2)),
+                callTheta: parseFloat(thetaCall.toFixed(2)),
+                putTheta: parseFloat(thetaPut.toFixed(2))
             };
         }
 
@@ -877,12 +937,20 @@
             if (tab === 'ORDERS') renderOrdersTab();
         }
 
+        function setChainViewMode(mode) {
+            chainViewMode = mode;
+            ['all', 'price', 'oi', 'greeks'].forEach(m => {
+                document.getElementById(`fbtn_${m}`).classList.remove('active');
+            });
+            document.getElementById(`fbtn_${mode.toLowerCase()}`).classList.add('active');
+            renderOptionChain();
+        }
+
         function toggleSymbol() {
             currentSymbol = currentSymbol === 'BTC' ? 'ETH' : 'BTC';
             document.getElementById('selected_symbol_label').innerText = `${currentSymbol} • USDT`;
             updateSpotPrice();
             
-            // Re-center sliders & active trade
             const S = spotPrices[currentSymbol];
             activeOptionTrade.strike = Math.round(S / (currentSymbol === 'BTC' ? 500 : 20)) * (currentSymbol === 'BTC' ? 500 : 20);
             
@@ -914,8 +982,6 @@
         function updateSpotPrice() {
             const S = spotPrices[currentSymbol];
             document.getElementById('spot_price_tag').innerText = formatPrice(S);
-            const atm = Math.round(S / (currentSymbol === 'BTC' ? 500 : 20)) * (currentSymbol === 'BTC' ? 500 : 20);
-            document.getElementById('atm_strike_label').innerText = atm.toLocaleString();
         }
 
         function updateBalanceDisplay() {
@@ -937,7 +1003,7 @@
         }
 
         // =========================================================================
-        // 3. Option Chain Engine (Exact Image 1 & 5)
+        // 3. Option Chain with ITM/ATM/OTM, Volume, OI & Greeks
         // =========================================================================
         function selectExpiryPill(idx, label, tVal) {
             activeExpiryIndex = idx;
@@ -950,12 +1016,71 @@
         }
 
         function renderOptionChain() {
+            const thead = document.getElementById('chain_thead_row');
             const tbody = document.getElementById('chain_tbody');
-            if (!tbody) return;
+            if (!thead || !tbody) return;
 
             const S = spotPrices[currentSymbol];
             const step = currentSymbol === 'BTC' ? 500 : 20;
             const atm = Math.round(S / step) * step;
+
+            // Render Table Headers based on Filter View
+            if (chainViewMode === 'ALL') {
+                thead.innerHTML = `
+                    <th style="color:#2ea043;">Type</th>
+                    <th style="color:#2ea043;">OI (Qty)</th>
+                    <th style="color:#2ea043;">Delta (Δ)</th>
+                    <th style="color:#2ea043;">Theta (Θ)</th>
+                    <th style="color:#2ea043;">Bid / Ask</th>
+                    <th style="color:#2ea043;">Mark price [C]</th>
+                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
+                    <th style="color:#f85149;">[P] Mark price</th>
+                    <th style="color:#f85149;">Bid / Ask</th>
+                    <th style="color:#f85149;">Theta (Θ)</th>
+                    <th style="color:#f85149;">Delta (Δ)</th>
+                    <th style="color:#f85149;">OI (Qty)</th>
+                    <th style="color:#f85149;">Type</th>
+                `;
+            } else if (chainViewMode === 'GREEKS') {
+                thead.innerHTML = `
+                    <th style="color:#2ea043;">Type</th>
+                    <th style="color:#2ea043;">Delta (Δ)</th>
+                    <th style="color:#2ea043;">Gamma (Γ)</th>
+                    <th style="color:#2ea043;">Theta (Θ)</th>
+                    <th style="color:#2ea043;">Vega (ν)</th>
+                    <th style="color:#2ea043;">Mark price [C]</th>
+                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
+                    <th style="color:#f85149;">[P] Mark price</th>
+                    <th style="color:#f85149;">Vega (ν)</th>
+                    <th style="color:#f85149;">Theta (Θ)</th>
+                    <th style="color:#f85149;">Gamma (Γ)</th>
+                    <th style="color:#f85149;">Delta (Δ)</th>
+                    <th style="color:#f85149;">Type</th>
+                `;
+            } else if (chainViewMode === 'OI') {
+                thead.innerHTML = `
+                    <th style="color:#2ea043;">Type</th>
+                    <th style="color:#2ea043;">24h Vol</th>
+                    <th style="color:#2ea043;">OI (Qty) [C]</th>
+                    <th style="color:#2ea043;">Mark [C]</th>
+                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
+                    <th style="color:#f85149;">Mark [P]</th>
+                    <th style="color:#f85149;">[P] OI (Qty)</th>
+                    <th style="color:#f85149;">24h Vol</th>
+                    <th style="color:#f85149;">Type</th>
+                `;
+            } else {
+                // PRICE VIEW
+                thead.innerHTML = `
+                    <th style="color:#2ea043;">Type</th>
+                    <th style="color:#2ea043; text-align:right;">Bid / Ask</th>
+                    <th style="color:#2ea043; text-align:left; padding-left:12px;">Mark price [C]</th>
+                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
+                    <th style="color:#f85149; text-align:right; padding-right:12px;">[P] Mark price</th>
+                    <th style="color:#f85149; text-align:left;">Bid / Ask</th>
+                    <th style="color:#f85149;">Type</th>
+                `;
+            }
 
             let strikes = [];
             for (let k = atm - (step * 7); k <= atm + (step * 7); k += step) {
@@ -964,69 +1089,150 @@
 
             let html = '';
             strikes.forEach(K => {
-                const opt = calculateOptionPrice(S, K, activeExpiryT);
+                const g = calculateOptionGreeks(S, K, activeExpiryT);
                 const isATM = K === atm;
+                const isITMCall = S > K;
+                const isITMPut = S < K;
 
-                const callPrice = opt.call;
-                const putPrice = opt.put;
-
+                const callPrice = g.call;
+                const putPrice = g.put;
                 const callBid = (callPrice * 0.98).toFixed(1);
                 const callAsk = (callPrice * 1.02).toFixed(1);
                 const putBid = (putPrice * 0.98).toFixed(1);
                 const putAsk = (putPrice * 1.02).toFixed(1);
 
-                const callChg = S > K ? "+24.5%" : "-15.2%";
-                const putChg = S < K ? "+18.4%" : "-28.1%";
+                const callMoneynessTag = isATM ? '<span class="moneyness-tag tag-atm">ATM</span>' : (isITMCall ? '<span class="moneyness-tag tag-itm-call">ITM</span>' : '<span class="moneyness-tag tag-otm">OTM</span>');
+                const putMoneynessTag = isATM ? '<span class="moneyness-tag tag-atm">ATM</span>' : (isITMPut ? '<span class="moneyness-tag tag-itm-put">ITM</span>' : '<span class="moneyness-tag tag-otm">OTM</span>');
 
-                html += `
-                    <tr>
-                        <!-- CALL BID / ASK -->
-                        <td onclick="openTradeForContract(${K}, 'C')" style="text-align:right; color:#8b949e;">
-                            ${callBid} / ${callAsk}
-                        </td>
-                        <!-- CALL MARK PRICE -->
-                        <td onclick="openTradeForContract(${K}, 'C')" style="text-align:left; padding-left:12px;">
-                            <div class="call-price-up">${callPrice.toFixed(2)}</div>
-                            <div style="font-size:10px; color:${S > K ? '#2ea043' : '#f85149'};">${callChg}</div>
-                        </td>
+                // Simulated OI & Volume
+                const dist = Math.abs(K - atm) / step;
+                const oiCall = (Math.max(0.1, 4.5 - dist * 0.5)).toFixed(2) + 'K';
+                const oiPut = (Math.max(0.1, 3.8 - dist * 0.4)).toFixed(2) + 'K';
+                const volCall = (Math.max(1.2, 24.5 - dist * 2.5)).toFixed(1) + 'M';
+                const volPut = (Math.max(0.8, 18.2 - dist * 1.8)).toFixed(1) + 'M';
 
-                        <!-- STRIKE PRICE (Center) -->
-                        <td onclick="openTradeForContract(${K}, 'C')">
-                            <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
-                        </td>
+                if (chainViewMode === 'ALL') {
+                    html += `
+                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
+                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')">${oiCall}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#58a6ff;">+${g.callDelta}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#f85149;">${g.callTheta}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#8b949e;">${callBid}/${callAsk}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
 
-                        <!-- PUT MARK PRICE -->
-                        <td onclick="openTradeForContract(${K}, 'P')" style="text-align:right; padding-right:12px;">
-                            <div class="put-price-up">${putPrice.toFixed(2)}</div>
-                            <div style="font-size:10px; color:${S < K ? '#2ea043' : '#f85149'};">${putChg}</div>
-                        </td>
-                        <!-- PUT BID / ASK -->
-                        <td onclick="openTradeForContract(${K}, 'P')" style="text-align:left; color:#8b949e;">
-                            ${putBid} / ${putAsk}
-                        </td>
-                    </tr>
-                `;
+                            <td onclick="openTradeForContract(${K}, 'C')">
+                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                            </td>
+
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#8b949e;">${putBid}/${putAsk}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149;">${g.putTheta}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#58a6ff;">${g.putDelta}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${oiPut}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                        </tr>
+                    `;
+                } else if (chainViewMode === 'GREEKS') {
+                    html += `
+                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
+                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#58a6ff;">+${g.callDelta}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#e3b341;">${g.gamma}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#f85149;">${g.callTheta}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#bc8cff;">${g.vega}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
+
+                            <td onclick="openTradeForContract(${K}, 'C')">
+                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                            </td>
+
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#bc8cff;">${g.vega}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149;">${g.putTheta}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#e3b341;">${g.gamma}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#58a6ff;">${g.putDelta}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                        </tr>
+                    `;
+                } else if (chainViewMode === 'OI') {
+                    html += `
+                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
+                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')">${volCall}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${oiCall}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')">${callPrice.toFixed(2)}</td>
+
+                            <td onclick="openTradeForContract(${K}, 'C')">
+                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                            </td>
+
+                            <td onclick="openTradeForContract(${K}, 'P')">${putPrice.toFixed(2)}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${oiPut}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${volPut}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                        </tr>
+                    `;
+                } else {
+                    // PRICE VIEW
+                    html += `
+                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
+                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="text-align:right; color:#8b949e;">${callBid} / ${callAsk}</td>
+                            <td onclick="openTradeForContract(${K}, 'C')" style="text-align:left; padding-left:12px; color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
+
+                            <td onclick="openTradeForContract(${K}, 'C')">
+                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                            </td>
+
+                            <td onclick="openTradeForContract(${K}, 'P')" style="text-align:right; padding-right:12px; color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')" style="text-align:left; color:#8b949e;">${putBid} / ${putAsk}</td>
+                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                        </tr>
+                    `;
+                }
             });
 
             tbody.innerHTML = html;
         }
 
         // =========================================================================
-        // 4. Trade Tab & Interactive PNL Calculator (Exact Image 2 & 3)
+        // 4. Trade Tab & Calculator with Live Greeks
         // =========================================================================
         function openTradeForContract(strike, optType) {
             activeOptionTrade.strike = strike;
             activeOptionTrade.optType = optType;
             
             const S = spotPrices[currentSymbol];
-            const opt = calculateOptionPrice(S, strike, activeExpiryT);
-            const prem = optType === 'C' ? opt.call : opt.put;
+            const g = calculateOptionGreeks(S, strike, activeExpiryT);
+            const prem = optType === 'C' ? g.call : g.put;
             activeOptionTrade.entryPrice = prem;
+
+            const isATM = Math.abs(strike - S) < (currentSymbol === 'BTC' ? 250 : 10);
+            const isITM = (optType === 'C' && S > strike) || (optType === 'P' && S < strike);
+            
+            const moneynessTagElem = document.getElementById('active_contract_moneyness');
+            if (isATM) {
+                moneynessTagElem.className = 'moneyness-tag tag-atm';
+                moneynessTagElem.innerText = 'ATM (At The Money)';
+            } else if (isITM) {
+                moneynessTagElem.className = optType === 'C' ? 'moneyness-tag tag-itm-call' : 'moneyness-tag tag-itm-put';
+                moneynessTagElem.innerText = 'ITM (In The Money)';
+            } else {
+                moneynessTagElem.className = 'moneyness-tag tag-otm';
+                moneynessTagElem.innerText = 'OTM (Out of The Money)';
+            }
 
             const title = `${currentSymbol}-${activeExpiryLabel.toUpperCase().replace(/\s+/g,'')}-${strike}-${optType}`;
             document.getElementById('active_contract_title').innerText = title;
             document.getElementById('active_contract_mark').innerText = formatPrice(prem);
             document.getElementById('trade_price_input').value = prem.toFixed(1);
+
+            // Update Greeks display
+            document.getElementById('trade_greek_delta').innerText = optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
+            document.getElementById('trade_greek_theta').innerText = `${optType === 'C' ? g.callTheta : g.putTheta}$/day`;
+            document.getElementById('trade_greek_gamma').innerText = `${g.gamma}`;
+            document.getElementById('trade_greek_vega').innerText = `$${g.vega}`;
 
             // Update mini orderbook
             document.getElementById('ob_ask_1').innerText = (prem * 1.01).toFixed(1);
@@ -1097,12 +1303,24 @@
             else userBalance += margin;
             localStorage.setItem('delta_paper_balance', userBalance.toString());
 
+            const S = spotPrices[currentSymbol];
+            const g = calculateOptionGreeks(S, activeOptionTrade.strike, activeExpiryT);
+            const deltaVal = activeOptionTrade.optType === 'C' ? g.callDelta : g.putDelta;
+            const thetaVal = activeOptionTrade.optType === 'C' ? g.callTheta : g.putTheta;
+
+            const isATM = Math.abs(activeOptionTrade.strike - S) < (currentSymbol === 'BTC' ? 250 : 10);
+            const isITM = (activeOptionTrade.optType === 'C' && S > activeOptionTrade.strike) || (activeOptionTrade.optType === 'P' && S < activeOptionTrade.strike);
+            const moneyness = isATM ? 'ATM' : (isITM ? 'ITM' : 'OTM');
+
             const newPos = {
                 id: 'opt_' + Date.now(),
                 contract: `${currentSymbol}-${activeOptionTrade.strike}-${activeOptionTrade.optType}`,
                 optType: activeOptionTrade.optType,
                 side: activeOptionTrade.side,
+                moneyness: moneyness,
                 lots: lots,
+                delta: deltaVal,
+                theta: thetaVal,
                 entryPrice: price,
                 expiryT: activeExpiryT,
                 strike: activeOptionTrade.strike
@@ -1117,7 +1335,7 @@
         }
 
         // =========================================================================
-        // PNL Calculator Sliders Engine (Exact Image 2)
+        // PNL Calculator Sliders Engine
         // =========================================================================
         function onCalcSliderChange() {
             const simSpot = parseFloat(document.getElementById('slider_btc_price').value);
@@ -1137,10 +1355,10 @@
             document.getElementById('calc_iv_display').innerText = `${(simIV * 100).toFixed(0)}%`;
             document.getElementById('calc_iv_offset').innerText = `Current ${(simIV * 100).toFixed(0)}%`;
 
-            // Calculate simulated option price using Black-Scholes
+            // Calculate simulated option price
             const simT = Math.max(0.0001, simHours / (365 * 24));
-            const simOpt = calculateOptionPrice(simSpot, activeOptionTrade.strike, simT, simIV);
-            const simPrem = activeOptionTrade.optType === 'C' ? simOpt.call : simOpt.put;
+            const simGreeks = calculateOptionGreeks(simSpot, activeOptionTrade.strike, simT, simIV);
+            const simPrem = activeOptionTrade.optType === 'C' ? simGreeks.call : simGreeks.put;
 
             const entry = parseFloat(document.getElementById('trade_price_input').value) || activeOptionTrade.entryPrice;
             const lots = parseFloat(document.getElementById('trade_lots_input').value) || 0.10;
@@ -1211,20 +1429,24 @@
             const S = spotPrices[currentSymbol];
             let html = '';
             activeOptionPositions.forEach((pos, idx) => {
-                const opt = calculateOptionPrice(S, pos.strike, pos.expiryT);
-                const mark = pos.optType === 'C' ? opt.call : opt.put;
+                const g = calculateOptionGreeks(S, pos.strike, pos.expiryT);
+                const mark = pos.optType === 'C' ? g.call : g.put;
                 const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
                 const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
                 const sign = pnl >= 0 ? '+' : '';
 
+                const tagClass = pos.moneyness === 'ATM' ? 'tag-atm' : (pos.moneyness === 'ITM' ? (pos.optType === 'C' ? 'tag-itm-call' : 'tag-itm-put') : 'tag-otm');
+
                 html += `
                     <tr>
                         <td><b>${pos.contract}</b></td>
+                        <td><span class="moneyness-tag ${tagClass}">${pos.moneyness || 'OTM'}</span></td>
                         <td style="color:${pos.side === 'BUY' ? '#2ea043' : '#f85149'}; font-weight:800;">${pos.side}</td>
                         <td>${pos.lots}</td>
+                        <td style="color:#58a6ff;">${pos.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`}</td>
+                        <td style="color:#f85149;">${pos.optType === 'C' ? g.callTheta : g.putTheta}$</td>
                         <td>${formatPrice(pos.entryPrice)}</td>
                         <td style="color:#58a6ff; font-weight:800;">${formatPrice(mark)}</td>
-                        <td>${formatPrice(pos.entryPrice * pos.lots)}</td>
                         <td style="color:${pnlColor}; font-weight:800;">${sign}${formatPrice(pnl)}</td>
                         <td>
                             <button class="btn-hdr" style="color:#f85149; border-color:#f85149;" onclick="closePositionIdx(${idx})">✕ Square Off</button>
@@ -1238,8 +1460,8 @@
         function closePositionIdx(idx) {
             const pos = activeOptionPositions[idx];
             const S = spotPrices[currentSymbol];
-            const opt = calculateOptionPrice(S, pos.strike, pos.expiryT);
-            const mark = pos.optType === 'C' ? opt.call : opt.put;
+            const g = calculateOptionGreeks(S, pos.strike, pos.expiryT);
+            const mark = pos.optType === 'C' ? g.call : g.put;
             const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
 
             userBalance += (pos.lots * mark);
