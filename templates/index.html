@@ -1079,6 +1079,100 @@
         }
 
         /* =============================================================
+           LIVE CHART FLOATING POSITION & PnL HUD (FUTURES & OPTIONS)
+           ============================================================= */
+        .chart-floating-pnl-hud {
+            position: absolute;
+            top: 52px;
+            left: 12px;
+            right: 12px;
+            z-index: 30;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .chart-pos-pill {
+            background: rgba(14, 20, 32, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        [data-theme="light"] .chart-pos-pill {
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .chart-pos-pill.win {
+            border-left: 4px solid var(--cdx-green);
+        }
+        .chart-pos-pill.loss {
+            border-left: 4px solid var(--cdx-red);
+        }
+        .chart-pos-pill.empty {
+            border-left: 4px solid var(--border-ui);
+            font-size: 11.5px;
+            color: var(--text-muted);
+            justify-content: center;
+            padding: 6px 12px;
+        }
+        .chart-pos-pnl-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chart-pos-pnl-val.win {
+            background: var(--cdx-green-bg);
+            color: var(--cdx-green);
+            border: 1px solid var(--cdx-green-border);
+        }
+        .chart-pos-pnl-val.loss {
+            background: var(--cdx-red-bg);
+            color: var(--cdx-red);
+            border: 1px solid var(--cdx-red-border);
+        }
+        .hud-close-btn {
+            background: transparent;
+            border: 1px solid var(--cdx-red);
+            color: var(--cdx-red);
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .hud-close-btn:hover {
+            background: var(--cdx-red);
+            color: #FFFFFF;
+        }
+
+        /* Options Pro Trade Live Open Positions Bar */
+        .opt-trade-positions-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* =============================================================
            POSITIONS & ORDERS VIEWS
            ============================================================= */
         .module-tab-view {
@@ -1307,6 +1401,9 @@
             <!-- VIEW 2: PRO TRADE & COCKPIT ORDER FORM WITH EMBEDDED P&L CALCULATOR (SIMPLE & CHART) -->
             <div class="pro-trade-container" id="view_trade">
                 
+                <!-- LIVE OPEN OPTION POSITIONS & REAL-TIME P&L HUD -->
+                <div class="opt-trade-positions-bar" id="opt_trade_live_pnl_container" style="display:none;"></div>
+
                 <!-- 1. Active Contract Banner & Live Greeks Strip -->
                 <div class="contract-banner-card">
                     <div class="contract-banner-top">
@@ -1656,8 +1753,8 @@
         <div id="screen_futures">
             <div class="futures-cockpit-layout">
                 
-                <!-- Left: TradingView Chart -->
-                <div style="height:100%; width:100%; display:flex; flex-direction:column; overflow:hidden;">
+                <!-- Left: TradingView Chart with Floating Live PnL HUD -->
+                <div style="height:100%; width:100%; display:flex; flex-direction:column; overflow:hidden; position:relative;">
                     <div class="futures-header-toolbar">
                         <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:6px;">
                             <span id="tv_symbol_text">BINANCE:BTCUSDT.P</span>
@@ -1667,6 +1764,10 @@
                             <button class="btn-ui-action" onclick="toggleUnderlyingSymbol()">🔄 Switch BTC/ETH</button>
                         </div>
                     </div>
+
+                    <!-- FLOATING LIVE POSITIONS & PnL HUD OVERLAY ON CHART -->
+                    <div class="chart-floating-pnl-hud" id="fut_chart_live_pnl_container"></div>
+
                     <div id="tradingview_embed_box" style="flex:1; width:100%; height:calc(100% - 48px);"></div>
                 </div>
 
@@ -2011,6 +2112,135 @@
                     }
                 }
             });
+
+            // 3. Update Chart Overlays (TradingView Futures Chart HUD & Options Trade HUD)
+            renderFuturesChartPnlHUD();
+            renderOptionsTradePnlHUD();
+            if (currentCalcMode === 'CHART' && document.getElementById('calc_chart_view_box') && document.getElementById('calc_chart_view_box').style.display === 'flex') {
+                drawPayoffChart();
+            }
+        }
+
+        // =========================================================================
+        // Live Real-Time P&L HUD on Charts (Futures Chart HUD & Options Trade HUD)
+        // =========================================================================
+        function renderFuturesChartPnlHUD() {
+            const container = document.getElementById('fut_chart_live_pnl_container');
+            if (!container) return;
+
+            if (futuresPositions.length === 0) {
+                container.innerHTML = `
+                    <div class="chart-pos-pill empty">
+                        <span>⚡ <b>No Active Futures Position</b> | Open a Long or Short trade on the right to track your live P&L on this chart</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            futuresPositions.forEach((fpos, idx) => {
+                const sym = fpos.symbol || 'BTC';
+                const S = spotPrices[sym];
+                let pnl = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+                const isWin = pnl >= 0;
+                const sign = pnl >= 0 ? '+' : '';
+                const roe = ((pnl / fpos.margin) * 100).toFixed(1);
+
+                html += `
+                    <div class="chart-pos-pill ${isWin ? 'win' : 'loss'}">
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span class="moneyness-chip" style="background:${fpos.side === 'LONG' ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)'}; color:${fpos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-size:11px; font-weight:900; padding:3px 8px; border-radius:4px;">
+                                ${fpos.side === 'LONG' ? '🟢 LONG' : '🔴 SHORT'} ${fpos.leverage}x
+                            </span>
+                            <div>
+                                <b style="font-size:13px;">${fpos.contract}</b>
+                                <span style="color:var(--text-muted); font-size:11.5px; margin-left:6px;">Qty: ${fpos.lots} ${sym}</span>
+                            </div>
+                            <div style="font-family:'JetBrains Mono'; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                                <span>Entry: <b style="color:var(--text-main);">$${fpos.entryPrice.toLocaleString()}</b></span>
+                                <span>•</span>
+                                <span>Live: <b style="color:var(--text-main);">$${S.toLocaleString()}</b></span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="chart-pos-pnl-val ${isWin ? 'win' : 'loss'}">
+                                <span style="font-size:10px; opacity:0.85;">LIVE P&L:</span>
+                                <span>${sign}${formatCurrency(pnl)} (${sign}${roe}%)</span>
+                            </div>
+                            <button class="hud-close-btn" onclick="closeFuturesPositionByIdx(${idx})" title="Square off this position immediately">
+                                ✕ Close Position
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderOptionsTradePnlHUD() {
+            const container = document.getElementById('opt_trade_live_pnl_container');
+            if (!container) return;
+
+            if (activePositions.length === 0) {
+                container.style.display = 'none';
+                container.innerHTML = '';
+                return;
+            }
+
+            container.style.display = 'flex';
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800;">
+                    <span style="display:flex; align-items:center; gap:6px; color:var(--cdx-green);">
+                        <span style="width:7px; height:7px; background:var(--cdx-green); border-radius:50%; display:inline-block;"></span>
+                        Active Open Options (${activePositions.length}) — Live Real-Time P&L
+                    </span>
+                    <span style="font-size:10.5px; color:var(--text-muted); cursor:pointer;" onclick="switchSubTab('POSITIONS')">View Full Portfolio ➔</span>
+                </div>
+            `;
+
+            activePositions.forEach((pos, idx) => {
+                const sym = pos.symbol || 'BTC';
+                const S = spotPrices[sym];
+                const g = calculateGreeks(S, pos.strike, pos.expiryT);
+                const mark = pos.optType === 'C' ? g.call : g.put;
+                const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
+                const isWin = pnl >= 0;
+                const sign = pnl >= 0 ? '+' : '';
+                const roe = (((mark - pos.entryPrice) / pos.entryPrice) * (pos.side === 'BUY' ? 100 : -100)).toFixed(1);
+
+                html += `
+                    <div class="chart-pos-pill ${isWin ? 'win' : 'loss'}" style="margin-top:2px;">
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span class="moneyness-chip" style="background:${pos.side === 'BUY' ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)'}; color:${pos.side === 'BUY' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-size:11px; font-weight:900; padding:3px 8px; border-radius:4px;">
+                                ${pos.side === 'BUY' ? '🟢 BUY' : '🔴 SELL'} ${pos.optType === 'C' ? 'CALL (CE)' : 'PUT (PE)'}
+                            </span>
+                            <div>
+                                <b style="font-size:13px;">${pos.contract}</b>
+                                <span style="color:var(--text-muted); font-size:11.5px; margin-left:6px;">Lots: ${pos.lots}</span>
+                            </div>
+                            <div style="font-family:'JetBrains Mono'; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                                <span>Entry: <b style="color:var(--text-main);">$${pos.entryPrice.toFixed(1)}</b></span>
+                                <span>•</span>
+                                <span>Mark: <b style="color:var(--text-main);">$${mark.toFixed(1)}</b></span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="chart-pos-pnl-val ${isWin ? 'win' : 'loss'}">
+                                <span style="font-size:10px; opacity:0.85;">LIVE P&L:</span>
+                                <span>${sign}${formatCurrency(pnl)} (${sign}${roe}%)</span>
+                            </div>
+                            <button class="hud-close-btn" onclick="closeOptionPositionByIdx(${idx})" title="Square off this option position">
+                                ✕ Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         // =========================================================================
@@ -2045,6 +2275,7 @@
                 document.getElementById('tv_symbol_text').innerText = `BINANCE:${currentSymbol}USDT.P`;
                 document.getElementById('fut_price_input').value = spotPrices[currentSymbol];
                 onFuturesFormChange();
+                renderFuturesChartPnlHUD();
                 loadTradingViewChart();
             }
         }
@@ -2061,6 +2292,10 @@
             document.getElementById('view_positions').style.display = tab === 'POSITIONS' ? 'block' : 'none';
             document.getElementById('view_orders').style.display = tab === 'ORDERS' ? 'block' : 'none';
 
+            if (tab === 'TRADE') {
+                renderOptionsTradePnlHUD();
+                if (currentCalcMode === 'CHART') drawPayoffChart();
+            }
             if (tab === 'POSITIONS') renderPositionsView();
             if (tab === 'ORDERS') renderOrdersView();
         }
@@ -2173,6 +2408,9 @@
             updateWalletDisplay();
             renderPositionsView();
             renderOrdersView();
+            renderFuturesChartPnlHUD();
+            renderOptionsTradePnlHUD();
+            if (currentCalcMode === 'CHART') drawPayoffChart();
             showCoinDCXToast("Virtual Account Reset Successful!");
         }
 
@@ -2620,11 +2858,14 @@
             const isITM = (activeContract.optType === 'C' && S > activeContract.strike) || (activeContract.optType === 'P' && S < activeContract.strike);
             const m = isATM ? 'ATM' : (isITM ? 'ITM' : 'OTM');
 
+            const cleanExpiry = activeExpiryLabel.split(' ')[0].toUpperCase();
+            const contractName = `${currentSymbol}-${cleanExpiry}26-${activeContract.strike}-${activeContract.optType === 'C' ? 'CE' : 'PE'}`;
+
             const newPos = {
                 id: 'opt_' + Date.now(),
                 type: 'OPTION',
                 symbol: currentSymbol,
-                contract: `${currentSymbol}-${activeContract.strike}-${activeContract.optType === 'C' ? 'CE' : 'PE'}`,
+                contract: contractName,
                 optType: activeContract.optType,
                 side: activeContract.side,
                 lots: lots,
@@ -2640,8 +2881,10 @@
             localStorage.setItem('delta_opt_positions', JSON.stringify(activePositions));
 
             updateWalletDisplay();
-            showCoinDCXToast(`✅ Order Executed: ${activeContract.side} ${newPos.contract}`);
-            switchSubTab('POSITIONS');
+            renderPositionsView();
+            renderOptionsTradePnlHUD();
+            if (currentCalcMode === 'CHART') drawPayoffChart();
+            showCoinDCXToast(`✅ Executed: ${activeContract.side} ${newPos.contract} | Live PnL active on screen!`);
         }
 
         // =========================================================================
@@ -2850,6 +3093,30 @@
                 ctx.fill();
                 ctx.fillText(`BE $${bePrice.toFixed(0)}`, beX - 25, zeroY - 8);
             }
+
+            // Draw current active position dot & live P&L marker on curve
+            const matchingPos = activePositions.find(p => p.symbol === currentSymbol && p.strike === K && p.optType === activeContract.optType);
+            if (matchingPos) {
+                const gNow = calculateGreeks(S, matchingPos.strike, matchingPos.expiryT);
+                const markNow = matchingPos.optType === 'C' ? gNow.call : gNow.put;
+                const posPnl = matchingPos.side === 'BUY' ? (markNow - matchingPos.entryPrice) * matchingPos.lots : (matchingPos.entryPrice - markNow) * matchingPos.lots;
+                const isPosWin = posPnl >= 0;
+                const pColor = isPosWin ? '#00C288' : '#F6465D';
+                const pSign = isPosWin ? '+' : '';
+
+                const curY = Math.max(15, Math.min(H - 15, scalePnlToY(posPnl)));
+                ctx.fillStyle = pColor;
+                ctx.beginPath();
+                ctx.arc(spotX, curY, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.font = 'bold 11px JetBrains Mono';
+                ctx.fillStyle = pColor;
+                ctx.fillText(`Your Pos PnL: ${pSign}$${posPnl.toFixed(2)}`, Math.min(W - 160, spotX + 8), curY - 6);
+            }
         }
 
         // =========================================================================
@@ -2945,8 +3212,8 @@
 
             updateWalletDisplay();
             renderPositionsView();
-            showCoinDCXToast(`✅ ${activeFuturesTrade.side} ${newFutPos.contract} Executed!`);
-            switchSubTab('POSITIONS');
+            renderFuturesChartPnlHUD();
+            showCoinDCXToast(`✅ ${activeFuturesTrade.side} ${newFutPos.contract} Executed! Live PnL is active on chart!`);
         }
 
         // =========================================================================
@@ -3055,6 +3322,7 @@
 
             updateWalletDisplay();
             renderPositionsView();
+            renderFuturesChartPnlHUD();
             showCoinDCXToast(`✅ Squared Off ${fpos.contract} | PnL: ${formatCurrency(pnl)}`);
         }
 
@@ -3085,6 +3353,8 @@
 
             updateWalletDisplay();
             renderPositionsView();
+            renderOptionsTradePnlHUD();
+            if (currentCalcMode === 'CHART') drawPayoffChart();
             showCoinDCXToast(`✅ Closed ${pos.contract} | PnL: ${formatCurrency(pnl)}`);
         }
 
@@ -3167,6 +3437,8 @@
             renderCoinDCXOptionChain();
             selectOptionContract(84000, 'C', true);
             renderPositionsView();
+            renderFuturesChartPnlHUD();
+            renderOptionsTradePnlHUD();
 
             // Connect WebSocket stream
             startCoinDCXPriceStream();
