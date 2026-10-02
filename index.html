@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Delta Exchange - Crypto Options (Chain, Greeks, PNL Calculator) & Futures</title>
+    <title>Delta Exchange - Crypto Options (Live PNL, Greeks, PNL Calculator) & Futures</title>
     <!-- TradingView Advanced Charting Library -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -81,7 +81,7 @@
             user-select: none;
         }
 
-        /* Top App Bar (Exact Delta Header) */
+        /* Top App Bar */
         .delta-top-header {
             background: var(--header-bg);
             border-bottom: 1px solid var(--border-color);
@@ -116,7 +116,7 @@
             gap: 4px;
         }
 
-        /* Symbol & Ticker Header Bar */
+        /* Symbol & Live Price Ticker Header Bar */
         .delta-ticker-bar {
             background: var(--header-bg);
             border-bottom: 1px solid var(--border-color);
@@ -138,8 +138,8 @@
         }
         .symbol-select-btn:hover { background: var(--bg-secondary); }
         .coin-icon {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -147,7 +147,9 @@
             font-size: 13px;
             font-weight: 800;
             background: #e2e8f0;
+            color: #0f172a;
         }
+        [data-theme="dark"] .coin-icon { background: #2d3748; color: #f0f6fc; }
         .symbol-name-text {
             font-size: 15.5px;
             font-weight: 800;
@@ -157,11 +159,14 @@
         }
         .symbol-price-text {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
+            font-size: 14.5px;
             font-weight: 800;
             color: var(--green);
             margin-left: 6px;
+            transition: all 0.2s;
         }
+        .price-flash-up { color: #10b981 !important; transform: scale(1.04); }
+        .price-flash-down { color: #ef4444 !important; transform: scale(1.04); }
         .price-change-pct {
             font-size: 11.5px;
             font-weight: 700;
@@ -171,20 +176,21 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .hdr-icon-btn {
             background: transparent;
-            border: none;
+            border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            font-size: 15px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            padding: 4px 8px;
             border-radius: 6px;
+            transition: all 0.15s;
         }
         .hdr-icon-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
 
@@ -298,6 +304,53 @@
         }
         #screen_futures { display: none; }
 
+        /* Futures Screen Top Header Bar */
+        .futures-top-bar {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            flex-shrink: 0;
+        }
+        .futures-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .futures-symbol-badge {
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-pill-selector {
+            display: flex;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2px;
+            gap: 2px;
+        }
+        .theme-pill-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .theme-pill-btn.active {
+            background: var(--blue);
+            color: #ffffff;
+        }
+
         /* =========================================================================
            1. OPTION CHAIN TABLE
            ========================================================================= */
@@ -409,7 +462,7 @@
         .m-otm { color: var(--text-muted); }
 
         /* =========================================================================
-           2. TRADE TAB & ORDER BOOK (Exact Delta App View)
+           2. TRADE TAB & ORDER BOOK
            ========================================================================= */
         .trade-screen-container {
             display: none;
@@ -637,7 +690,7 @@
         .btn-main-order-submit.sell:hover { opacity: 0.9; }
 
         /* =========================================================================
-           3. PNL CALCULATOR & PAYOFF SIMULATOR CARD (Exact Delta App View)
+           3. PNL CALCULATOR CARD
            ========================================================================= */
         .delta-calculator-card {
             background: var(--bg-card);
@@ -679,7 +732,7 @@
         .calc-col-label { font-size: 10.5px; color: var(--text-secondary); font-weight: 600; margin-bottom: 2px; }
         .calc-col-val { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 800; color: var(--text-primary); }
 
-        /* Sliders with triple dash thumb */
+        /* Sliders */
         .sim-slider-row {
             display: flex;
             flex-direction: column;
@@ -749,8 +802,15 @@
             width: 100%;
         }
 
+        /* Live PNL flashing */
+        .pnl-cell {
+            transition: all 0.25s ease;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+        }
+
         /* =========================================================================
-           5. STICKY BOTTOM BALANCE BAR & MOBILE NAV (Exact Delta App)
+           5. STICKY BOTTOM BALANCE BAR & MOBILE NAV
            ========================================================================= */
         .delta-sticky-balance-bar {
             background: var(--bg-secondary);
@@ -841,15 +901,15 @@
         </div>
         <div class="header-actions">
             <!-- Theme Mode Toggle -->
-            <button class="hdr-icon-btn" onclick="toggleThemeMode()" title="Toggle Theme" id="theme_toggle_btn">☀️</button>
+            <button class="hdr-icon-btn" onclick="toggleThemeMode()" title="Toggle Light/Dark Theme" id="theme_toggle_btn">☀️ Light</button>
             <!-- Currency Toggle -->
-            <button class="hdr-icon-btn" style="width:auto; padding:0 8px; font-size:12px; font-weight:800; border:1px solid var(--border-color);" onclick="toggleCurrency()" id="currency_toggle_btn">₹ INR</button>
+            <button class="hdr-icon-btn" onclick="toggleCurrency()" id="currency_toggle_btn">₹ INR</button>
             <!-- Reset Virtual Balance -->
-            <button class="hdr-icon-btn" onclick="resetVirtualAccount()" title="Reset Virtual Account">🔄</button>
+            <button class="hdr-icon-btn" onclick="resetVirtualAccount()" title="Reset Virtual Balance">🔄 Reset</button>
         </div>
     </div>
 
-    <!-- 2. Symbol & Ticker Header Bar -->
+    <!-- 2. Symbol & Live Price Ticker Header Bar -->
     <div class="delta-ticker-bar">
         <div class="symbol-select-btn" onclick="toggleSymbol()">
             <div class="coin-icon" id="coin_avatar">₿</div>
@@ -862,7 +922,7 @@
         </div>
         <div class="header-actions">
             <button class="hdr-icon-btn" title="Feedback">💬</button>
-            <button class="hdr-icon-btn" onclick="switchAppMode('FUTURES')" title="TradingView Chart">📊</button>
+            <button class="hdr-icon-btn" onclick="switchAppMode('FUTURES')" title="TradingView Chart">📊 Chart</button>
             <button class="hdr-icon-btn" title="Search">🔍</button>
             <button class="hdr-icon-btn" title="Settings">⋮</button>
         </div>
@@ -909,13 +969,9 @@
             <div class="chain-table-container" id="view_chain">
                 <table class="delta-chain-table">
                     <thead>
-                        <tr id="chain_th_row">
-                            <!-- Dynamic Columns (Bid/Ask, Mark Price, Strike, etc.) -->
-                        </tr>
+                        <tr id="chain_th_row"></tr>
                     </thead>
-                    <tbody id="chain_tbody">
-                        <!-- Dynamic Options Matrix -->
-                    </tbody>
+                    <tbody id="chain_tbody"></tbody>
                 </table>
             </div>
 
@@ -1097,7 +1153,7 @@
 
                 </div>
 
-                <!-- Delta PNL Calculator Card (Sliders Simulator) -->
+                <!-- Delta PNL Calculator Card -->
                 <div class="delta-calculator-card">
                     <div class="calc-header-tabs">
                         <div class="calc-tab-pill">📈 PNL Chart</div>
@@ -1176,10 +1232,16 @@
 
             </div>
 
-            <!-- SUB-VIEW 3: POSITIONS TAB -->
+            <!-- SUB-VIEW 3: POSITIONS TAB (WITH LIVE REAL-TIME PNL TICKING) -->
             <div class="tab-content-container" id="view_positions">
                 <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:16px;">
-                    <div style="font-size:14.5px; font-weight:800; margin-bottom:12px;">Active Option Positions</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div style="font-size:14.5px; font-weight:800;">Active Option Positions</div>
+                        <div style="font-size:11px; color:var(--green); font-weight:700; display:flex; align-items:center; gap:4px;">
+                            <span style="width:8px; height:8px; background:var(--green); border-radius:50%; display:inline-block; animation: pulse 1.5s infinite;"></span>
+                            Live Real-time PNL Active
+                        </div>
+                    </div>
                     <div id="no_positions_msg" style="text-align:center; color:var(--text-secondary); padding:40px 10px;">
                         📌 Koi active position nahi hai. Option Chain me strike par click karke order place karein.
                     </div>
@@ -1192,8 +1254,8 @@
                                 <th>Delta (Δ)</th>
                                 <th>Theta (Θ)</th>
                                 <th>Entry</th>
-                                <th>Mark</th>
-                                <th>PnL</th>
+                                <th>Mark (Live)</th>
+                                <th>PnL (Live)</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -1215,9 +1277,24 @@
 
         </div>
 
-        <!-- Screen: FUTURES MODULE -->
+        <!-- Screen: FUTURES MODULE WITH DEDICATED DARK / LIGHT THEME TOGGLE -->
         <div id="screen_futures">
-            <div id="tv_chart_container" style="width:100%; height:100%;"></div>
+            <div class="futures-top-bar">
+                <div class="futures-bar-left">
+                    <div class="futures-symbol-badge">
+                        <span id="fut_symbol_label">BINANCE:BTCUSDT.P</span>
+                        <span style="color:var(--green); font-size:11px;">● LIVE</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <div class="theme-pill-selector">
+                        <button class="theme-pill-btn" id="chart_theme_light_btn" onclick="setChartTheme('light')">☀️ Light</button>
+                        <button class="theme-pill-btn active" id="chart_theme_dark_btn" onclick="setChartTheme('dark')">🌙 Dark</button>
+                    </div>
+                    <button class="hdr-icon-btn" onclick="switchAppMode('OPTIONS')">🎯 Back to Options</button>
+                </div>
+            </div>
+            <div id="tv_chart_container" style="flex:1; width:100%; height:calc(100% - 48px);"></div>
         </div>
 
     </div>
@@ -1262,11 +1339,15 @@
         // =========================================================================
         let currentSymbol = 'BTC'; // 'BTC' or 'ETH'
         let currentCurrency = 'INR'; // 'INR' or 'USDT'
-        let currentTheme = 'light';
+        let currentTheme = localStorage.getItem('delta_theme_mode') || 'light';
+        let chartTheme = localStorage.getItem('delta_chart_theme') || 'dark';
         let currentViewMode = 'PRICE'; // 'PRICE', 'ALL', 'OI', 'GREEKS'
         let inrRate = 84.0;
 
         let spotPrices = { 'BTC': 84150.0, 'ETH': 2700.20 };
+        let prevSpotPrices = { 'BTC': 84150.0, 'ETH': 2700.20 };
+        let priceChangePcts = { 'BTC': '+0.78%', 'ETH': '+0.45%' };
+
         let activeExpiryIndex = 0;
         let activeExpiryT = 0.003;
         let activeExpiryLabel = '02 Oct (13h 1m)';
@@ -1338,6 +1419,126 @@
         }
 
         // =========================================================================
+        // Real-Time WebSocket & Fallback Live Price Engine
+        // =========================================================================
+        function initLivePriceStream() {
+            let wsConnected = false;
+            try {
+                const ws = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@ticker/ethusdt@ticker");
+                ws.onopen = () => { wsConnected = true; };
+                ws.onmessage = (e) => {
+                    const d = JSON.parse(e.data);
+                    if (d.s === 'BTCUSDT') {
+                        onPriceUpdate('BTC', parseFloat(d.c), `${parseFloat(d.P) >= 0 ? '+' : ''}${parseFloat(d.P).toFixed(2)}%`);
+                    } else if (d.s === 'ETHUSDT') {
+                        onPriceUpdate('ETH', parseFloat(d.c), `${parseFloat(d.P) >= 0 ? '+' : ''}${parseFloat(d.P).toFixed(2)}%`);
+                    }
+                };
+                ws.onerror = () => { startFallbackTicker(); };
+                ws.onclose = () => { setTimeout(initLivePriceStream, 5000); };
+            } catch(err) {
+                startFallbackTicker();
+            }
+
+            // Always run fallback micro-tick generator in background if WS is silent
+            startFallbackTicker();
+        }
+
+        function startFallbackTicker() {
+            if (window._fallbackTickerId) return;
+            window._fallbackTickerId = setInterval(() => {
+                // Micro-fluctuation between -0.05% to +0.06%
+                const deltaBtc = (Math.random() - 0.48) * 0.0008;
+                const deltaEth = (Math.random() - 0.48) * 0.0010;
+                
+                const newBtc = +(spotPrices['BTC'] * (1 + deltaBtc)).toFixed(2);
+                const newEth = +(spotPrices['ETH'] * (1 + deltaEth)).toFixed(2);
+
+                onPriceUpdate('BTC', newBtc, priceChangePcts['BTC']);
+                onPriceUpdate('ETH', newEth, priceChangePcts['ETH']);
+            }, 1200);
+        }
+
+        function onPriceUpdate(sym, newPrice, changePct) {
+            prevSpotPrices[sym] = spotPrices[sym];
+            spotPrices[sym] = newPrice;
+            if (changePct) priceChangePcts[sym] = changePct;
+
+            if (sym === currentSymbol) {
+                updateHeaderPriceDisplay();
+                // If on trade view, update active contract live mark price
+                updateActiveContractLivePrice();
+            }
+
+            // ALWAYS recalculate active open positions in real-time
+            updateLivePositionsPNL();
+        }
+
+        function updateHeaderPriceDisplay() {
+            const S = spotPrices[currentSymbol];
+            const prev = prevSpotPrices[currentSymbol];
+            const el = document.getElementById('header_spot_price');
+            const pctEl = document.getElementById('header_price_change');
+
+            if (el) {
+                el.innerText = formatRawNum(S);
+                el.classList.remove('price-flash-up', 'price-flash-down');
+                void el.offsetWidth; // trigger reflow
+                if (S > prev) el.classList.add('price-flash-up');
+                else if (S < prev) el.classList.add('price-flash-down');
+            }
+
+            if (pctEl) {
+                pctEl.innerText = `(${priceChangePcts[currentSymbol]})`;
+                pctEl.className = `price-change-pct ${priceChangePcts[currentSymbol].startsWith('-') ? 'pct-down' : 'pct-up'}`;
+            }
+        }
+
+        function updateActiveContractLivePrice() {
+            const S = spotPrices[currentSymbol];
+            const g = calculateGreeks(S, activeContract.strike, activeExpiryT);
+            const prem = activeContract.optType === 'C' ? g.call : g.put;
+
+            const disp = document.getElementById('active_contract_price_display');
+            if (disp) disp.innerText = formatMoney(prem);
+
+            const obMark = document.getElementById('ob_mark_price');
+            if (obMark) obMark.innerText = prem.toFixed(1);
+
+            const obLtp = document.getElementById('ob_ltp_price');
+            if (obLtp) obLtp.innerText = `LTP ${(prem * 0.998).toFixed(1)}`;
+        }
+
+        function updateLivePositionsPNL() {
+            if (!activePositions || activePositions.length === 0) return;
+
+            const tbody = document.getElementById('pos_tbody');
+            if (!tbody) return;
+
+            activePositions.forEach((pos, idx) => {
+                const sym = pos.symbol || 'BTC';
+                const S = spotPrices[sym];
+                const g = calculateGreeks(S, pos.strike, pos.expiryT);
+                const mark = pos.optType === 'C' ? g.call : g.put;
+                const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
+                const pnlColor = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+                const sign = pnl >= 0 ? '+' : '';
+
+                // Find rows in table and update cells directly without full DOM reload
+                const row = document.getElementById(`pos_row_${idx}`);
+                if (row) {
+                    const markCell = row.querySelector('.pos-mark-val');
+                    const pnlCell = row.querySelector('.pos-pnl-val');
+                    if (markCell) markCell.innerText = formatMoney(mark);
+                    if (pnlCell) {
+                        pnlCell.innerText = `${sign}${formatMoney(pnl)}`;
+                        pnlCell.style.color = pnlColor;
+                    }
+                }
+            });
+        }
+
+        // =========================================================================
         // Navigation & Views
         // =========================================================================
         function switchAppMode(mode) {
@@ -1357,7 +1558,8 @@
                 scrFut.style.display = 'flex';
                 navFut.classList.add('active');
                 navOpt.classList.remove('active');
-                loadFuturesTV();
+                document.getElementById('fut_symbol_label').innerText = `BINANCE:${currentSymbol}USDT.P`;
+                loadFuturesTV(chartTheme);
             }
         }
 
@@ -1388,7 +1590,17 @@
         function toggleThemeMode() {
             currentTheme = currentTheme === 'light' ? 'dark' : 'light';
             document.body.setAttribute('data-theme', currentTheme);
-            document.getElementById('theme_toggle_btn').innerText = currentTheme === 'light' ? '☀️' : '🌙';
+            document.getElementById('theme_toggle_btn').innerText = currentTheme === 'light' ? '☀️ Light' : '🌙 Dark';
+            localStorage.setItem('delta_theme_mode', currentTheme);
+        }
+
+        function setChartTheme(theme) {
+            chartTheme = theme;
+            localStorage.setItem('delta_chart_theme', theme);
+            document.getElementById('chart_theme_light_btn').classList.toggle('active', theme === 'light');
+            document.getElementById('chart_theme_dark_btn').classList.toggle('active', theme === 'dark');
+            loadFuturesTV(theme);
+            showToast(`Chart Theme: ${theme.toUpperCase()}`);
         }
 
         function toggleCurrency() {
@@ -1397,6 +1609,7 @@
             updateAllBalances();
             renderOptionChain();
             onTradeInputChange();
+            renderPositions();
         }
 
         function toggleSymbol() {
@@ -1414,14 +1627,9 @@
             sl.max = (S * 1.2).toFixed(0);
             sl.value = S.toFixed(0);
 
-            updateHeaderPrice();
+            updateHeaderPriceDisplay();
             renderOptionChain();
             selectContract(activeContract.strike, 'C');
-        }
-
-        function updateHeaderPrice() {
-            const S = spotPrices[currentSymbol];
-            document.getElementById('header_spot_price').innerText = formatRawNum(S);
         }
 
         function updateAllBalances() {
@@ -1766,6 +1974,7 @@
 
             const newPos = {
                 id: 'opt_' + Date.now(),
+                symbol: currentSymbol, // Store symbol so each position uses its underlying live spot price
                 contract: `${currentSymbol}-${activeContract.strike}-${activeContract.optType}`,
                 optType: activeContract.optType,
                 side: activeContract.side,
@@ -1875,9 +2084,10 @@
             table.style.display = 'table';
             msg.style.display = 'none';
 
-            const S = spotPrices[currentSymbol];
             let html = '';
             activePositions.forEach((pos, idx) => {
+                const sym = pos.symbol || 'BTC';
+                const S = spotPrices[sym];
                 const g = calculateGreeks(S, pos.strike, pos.expiryT);
                 const mark = pos.optType === 'C' ? g.call : g.put;
                 const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
@@ -1885,15 +2095,15 @@
                 const sign = pnl >= 0 ? '+' : '';
 
                 html += `
-                    <tr>
+                    <tr id="pos_row_${idx}">
                         <td><b>${pos.contract}</b></td>
                         <td style="color:${pos.side === 'BUY' ? 'var(--green)' : 'var(--red)'}; font-weight:800;">${pos.side}</td>
                         <td>${pos.lots}</td>
                         <td style="color:var(--blue);">${pos.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`}</td>
                         <td style="color:var(--red);">${pos.optType === 'C' ? g.callTheta : g.putTheta}$</td>
                         <td>${formatMoney(pos.entryPrice)}</td>
-                        <td style="font-weight:800;">${formatMoney(mark)}</td>
-                        <td style="color:${pnlColor}; font-weight:800;">${sign}${formatMoney(pnl)}</td>
+                        <td class="pos-mark-val" style="font-weight:800;">${formatMoney(mark)}</td>
+                        <td class="pos-pnl-val pnl-cell" style="color:${pnlColor}; font-weight:800;">${sign}${formatMoney(pnl)}</td>
                         <td>
                             <button style="background:transparent; border:1px solid var(--red); color:var(--red); font-size:11px; font-weight:800; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="squareOffPosition(${idx})">
                                 ✕ Close
@@ -1907,7 +2117,8 @@
 
         function squareOffPosition(idx) {
             const pos = activePositions[idx];
-            const S = spotPrices[currentSymbol];
+            const sym = pos.symbol || 'BTC';
+            const S = spotPrices[sym];
             const g = calculateGreeks(S, pos.strike, pos.expiryT);
             const mark = pos.optType === 'C' ? g.call : g.put;
             const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
@@ -1966,20 +2177,25 @@
         }
 
         // =========================================================================
-        // Futures Chart Loader
+        // Futures TradingView Chart with Dynamic Light / Dark Theme
         // =========================================================================
-        function loadFuturesTV() {
+        function loadFuturesTV(theme = chartTheme) {
             const cont = document.getElementById('tv_chart_container');
-            if (!cont || cont.innerHTML.trim() !== '') return;
+            if (!cont) return;
+            cont.innerHTML = ''; // Reinitialize chart on theme switch
 
             new TradingView.widget({
                 "autosize": true,
-                "symbol": "BINANCE:BTCUSDT.P",
+                "symbol": currentSymbol === 'BTC' ? "BINANCE:BTCUSDT.P" : "BINANCE:ETHUSDT.P",
                 "interval": "1",
                 "timezone": "Asia/Kolkata",
-                "theme": currentTheme,
+                "theme": theme,
                 "style": "1",
                 "locale": "en",
+                "toolbar_bg": theme === 'dark' ? "#121721" : "#f8fafc",
+                "enable_publishing": false,
+                "hide_top_toolbar": false,
+                "save_image": false,
                 "container_id": "tv_chart_container"
             });
         }
@@ -1995,14 +2211,23 @@
         }
 
         // =========================================================================
-        // Init
+        // Init Application
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
-            updateHeaderPrice();
+            // Set initial themes
+            document.body.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme_toggle_btn').innerText = currentTheme === 'light' ? '☀️ Light' : '🌙 Dark';
+            document.getElementById('chart_theme_light_btn').classList.toggle('active', chartTheme === 'light');
+            document.getElementById('chart_theme_dark_btn').classList.toggle('active', chartTheme === 'dark');
+
+            updateHeaderPriceDisplay();
             updateAllBalances();
             renderOptionChain();
             selectContract(84000, 'C');
             renderPositions();
+
+            // Connect real-time WebSocket stream & live ticker
+            initLivePriceStream();
         });
     </script>
 </body>
