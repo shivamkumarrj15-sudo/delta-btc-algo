@@ -2,16 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Exchange - Crypto Options (ITM/ATM/OTM, Greeks & PNL Calculator) & Futures</title>
-    <!-- TradingView Advanced Charting Library Script -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Delta Exchange - Crypto Options (Chain, Greeks, PNL Calculator) & Futures</title>
+    <!-- TradingView Advanced Charting Library -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --border-subtle: #edf2f7;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --green: #10b981;
+            --green-bg: #ecfdf5;
+            --green-border: #a7f3d0;
+            --red: #ef4444;
+            --red-bg: #fef2f2;
+            --red-border: #fecaca;
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --gold: #f59e0b;
+            --gold-bg: #fffbeb;
+            --gold-border: #fde68a;
+            --atm-black: #1e293b;
+            --itm-call-bg: #f0fdf4;
+            --itm-put-bg: #fef2f2;
+            --header-bg: #ffffff;
+            --bottom-nav-bg: #ffffff;
+            --slider-bg: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0b0e14;
+            --bg-secondary: #121721;
+            --bg-tertiary: #1a2232;
+            --bg-card: #121721;
+            --border-color: #202736;
+            --border-subtle: #1c2433;
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #484f58;
+            --green: #2ea043;
+            --green-bg: rgba(46, 160, 67, 0.12);
+            --green-border: rgba(46, 160, 67, 0.3);
+            --red: #f85149;
+            --red-bg: rgba(248, 81, 73, 0.12);
+            --red-border: rgba(248, 81, 73, 0.3);
+            --blue: #388bfd;
+            --blue-light: rgba(56, 139, 253, 0.15);
+            --blue-border: rgba(56, 139, 253, 0.35);
+            --gold: #e3b341;
+            --gold-bg: rgba(227, 179, 65, 0.15);
+            --gold-border: rgba(227, 179, 65, 0.35);
+            --atm-black: #000000;
+            --itm-call-bg: rgba(46, 160, 67, 0.06);
+            --itm-put-bg: rgba(248, 81, 73, 0.06);
+            --header-bg: #121721;
+            --bottom-nav-bg: #121721;
+            --slider-bg: #2d3748;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
-            background-color: #0b0e14;
-            color: #c9d1d9;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             overflow-x: hidden;
             height: 100vh;
@@ -21,131 +81,117 @@
             user-select: none;
         }
 
-        /* Top Header */
-        header {
-            background: #121721;
-            border-bottom: 1px solid #202736;
-            padding: 0 16px;
+        /* Top App Bar (Exact Delta Header) */
+        .delta-top-header {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 50px;
+            height: 52px;
             flex-shrink: 0;
             z-index: 100;
         }
-        .header-left {
+        .header-title-box {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
-        .symbol-selector-box {
+        .header-main-title {
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+        .gold-vip-badge {
+            background: var(--gold-bg);
+            color: var(--gold);
+            border: 1px solid var(--gold-border);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Symbol & Ticker Header Bar */
+        .delta-ticker-bar {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            flex-shrink: 0;
+        }
+        .symbol-select-btn {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #1c2433;
-            border: 1px solid #2d384e;
-            padding: 4px 10px;
-            border-radius: 6px;
             cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .symbol-select-btn:hover { background: var(--bg-secondary); }
+        .coin-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 13px;
             font-weight: 800;
-            color: #f0f6fc;
+            background: #e2e8f0;
         }
-        .symbol-selector-box:hover { border-color: #58a6ff; }
-        .live-price-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13.5px;
+        .symbol-name-text {
+            font-size: 15.5px;
             font-weight: 800;
-            color: #2ea043;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .symbol-price-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--green);
+            margin-left: 6px;
+        }
+        .price-change-pct {
+            font-size: 11.5px;
+            font-weight: 700;
+            margin-left: 4px;
         }
 
-        /* Main Nav Switcher */
-        .main-nav-tabs {
+        .header-actions {
             display: flex;
-            gap: 6px;
-            background: #0b0e14;
-            padding: 3px;
-            border-radius: 8px;
-            border: 1px solid #2d384e;
+            align-items: center;
+            gap: 12px;
         }
-        .main-tab-btn {
+        .hdr-icon-btn {
             background: transparent;
             border: none;
-            color: #8b949e;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-        .main-tab-btn.active {
-            background: #1f6feb;
-            color: #ffffff;
-            box-shadow: 0 2px 8px rgba(31, 111, 235, 0.4);
-        }
-        .main-tab-btn:hover:not(.active) {
-            background: #161c28;
-            color: #f0f6fc;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .currency-toggle {
-            background: #1c2433;
-            border: 1px solid #2d384e;
-            color: #e3b341;
-            font-size: 11px;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-hdr {
-            background: #1c2433;
-            border: 1px solid #2d384e;
-            color: #c9d1d9;
-            padding: 5px 10px;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
         }
-        .btn-hdr:hover { background: #263248; border-color: #58a6ff; color: #ffffff; }
+        .hdr-icon-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
 
-        /* Workspace Container */
-        .app-container {
-            flex: 1;
-            height: calc(100vh - 50px);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* -------------------------------------------------------------
-           OPTIONS VIEW
-           ------------------------------------------------------------- */
-        #options_screen {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            background: #0b0e14;
-            overflow-y: auto;
-        }
-
-        /* Sub Navigation */
-        .opt-sub-nav {
-            background: #121721;
-            border-bottom: 1px solid #202736;
+        /* Sub Navigation Tabs (Chain, Trade, Positions, Orders) */
+        .delta-sub-nav {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
             padding: 0 16px;
             display: flex;
             align-items: center;
@@ -153,694 +199,1079 @@
             height: 44px;
             flex-shrink: 0;
         }
-        .opt-nav-links {
+        .sub-nav-tabs-group {
             display: flex;
-            gap: 20px;
+            gap: 22px;
             height: 100%;
         }
-        .opt-nav-item {
+        .sub-nav-tab {
             display: flex;
             align-items: center;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
-            color: #8b949e;
+            color: var(--text-secondary);
             cursor: pointer;
             position: relative;
-            padding: 0 4px;
-            transition: color 0.2s;
+            padding: 0 2px;
+            transition: all 0.15s;
         }
-        .opt-nav-item.active {
-            color: #58a6ff;
+        .sub-nav-tab.active {
+            color: var(--blue);
             font-weight: 800;
         }
-        .opt-nav-item.active::after {
+        .sub-nav-tab.active::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 2.5px;
-            background: #58a6ff;
-            border-radius: 2px 2px 0 0;
-        }
-
-        /* Option Chain Filter Views Toolbar */
-        .chain-view-filters {
-            display: flex;
-            gap: 6px;
-            background: #0b0e14;
-            padding: 2px;
-            border-radius: 6px;
-            border: 1px solid #2d384e;
-        }
-        .filter-btn {
-            background: transparent;
-            border: none;
-            color: #8b949e;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .filter-btn.active {
-            background: #1f6feb;
-            color: #ffffff;
+            height: 3px;
+            background: var(--blue);
+            border-radius: 3px 3px 0 0;
         }
 
         /* Expiry Pills Bar */
-        .expiry-bar {
-            background: #0f131c;
-            border-bottom: 1px solid #202736;
+        .delta-expiry-bar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
             padding: 8px 16px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
-            overflow-x: auto;
             flex-shrink: 0;
+            overflow-x: auto;
         }
-        .expiry-pill {
-            background: #161b22;
-            border: 1px solid #2d384e;
-            color: #8b949e;
-            padding: 5px 12px;
-            border-radius: 16px;
-            font-size: 11.5px;
+        .expiry-pills-scroll {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .expiry-pills-scroll::-webkit-scrollbar { display: none; }
+        .expiry-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 5px 14px;
+            border-radius: 18px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.15s;
         }
-        .expiry-pill.active {
-            background: #1f6feb22;
-            border-color: #1f6feb;
-            color: #58a6ff;
+        .expiry-chip.active {
+            background: var(--blue-light);
+            border-color: var(--blue);
+            color: var(--blue);
+            font-weight: 800;
         }
-        .expiry-pill:hover:not(.active) { background: #21262d; color: #f0f6fc; }
+        .expiry-bar-tools {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
 
-        /* Option Chain Table Section */
-        .chain-view-container {
+        /* Workspace Main Screen */
+        .app-body-container {
+            flex: 1;
+            height: calc(100vh - 192px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* View Containers */
+        #screen_options, #screen_futures {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #screen_futures { display: none; }
+
+        /* =========================================================================
+           1. OPTION CHAIN TABLE
+           ========================================================================= */
+        .chain-table-container {
             flex: 1;
             overflow-y: auto;
-            padding: 0 0 20px 0;
+            overflow-x: auto;
+            background: var(--bg-primary);
         }
-        .chain-table {
+        .delta-chain-table {
             width: 100%;
             border-collapse: collapse;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             text-align: center;
         }
-        .chain-table th {
-            background: #121721;
-            color: #8b949e;
-            font-size: 10.5px;
+        .delta-chain-table th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-size: 11px;
             font-weight: 700;
-            padding: 8px 4px;
-            border-bottom: 1px solid #202736;
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 20;
+            white-space: nowrap;
         }
-        .chain-table td {
-            padding: 7px 4px;
-            border-bottom: 1px solid #161c28;
+        .delta-chain-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-subtle);
             vertical-align: middle;
             cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.1s;
         }
-        .chain-table tr:hover { background: #141a24; }
+        .delta-chain-table tr:hover { background: var(--bg-tertiary); }
 
-        /* Moneyness Badges & Row Highlights */
-        .row-itm-call { background: rgba(46, 160, 67, 0.06); }
-        .row-itm-put { background: rgba(248, 81, 73, 0.06); }
+        .row-itm-c { background: var(--itm-call-bg); }
+        .row-itm-p { background: var(--itm-put-bg); }
 
-        .moneyness-tag {
-            font-size: 9px;
-            font-weight: 800;
-            padding: 2px 5px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .tag-itm-call { background: #2ea04333; color: #2ea043; border: 1px solid #2ea04366; }
-        .tag-itm-put { background: #f8514933; color: #f85149; border: 1px solid #f8514966; }
-        .tag-otm { background: #21262d; color: #8b949e; border: 1px solid #30363d; }
-        .tag-atm { background: #e3b341; color: #000000; font-weight: 900; }
-
-        .strike-pill {
-            background: #151a24;
-            color: #f0f6fc;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-        .strike-pill.atm {
-            background: #000000;
-            color: #ffffff;
-            border: 1px solid #e3b341;
-            box-shadow: 0 0 8px rgba(227, 179, 65, 0.4);
-        }
-
-        /* TRADE & PNL CALCULATOR TAB */
-        .trade-view-container {
-            display: none;
-            padding: 16px;
-            gap: 16px;
-            max-width: 950px;
-            margin: 0 auto;
-            width: 100%;
-            overflow-y: auto;
-        }
-
-        .trade-card {
-            background: #121721;
-            border: 1px solid #202736;
-            border-radius: 12px;
-            padding: 16px;
+        /* Mark Price Stack */
+        .mark-stack {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            align-items: center;
+            line-height: 1.25;
+        }
+        .mark-price-num { font-size: 12.5px; font-weight: 800; color: var(--text-primary); }
+        .mark-pct-num { font-size: 10px; font-weight: 700; }
+        .pct-up { color: var(--green); }
+        .pct-down { color: var(--red); }
+
+        /* Bid / Ask Stack */
+        .bidask-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.25;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
         }
 
-        .order-exec-grid {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 16px;
+        /* Strike Column with ATM Pill and Imbalance Bar */
+        .strike-cell-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
         }
-        .mini-orderbook {
-            background: #0b0e14;
-            border: 1px solid #202736;
-            border-radius: 8px;
+        .strike-number {
+            font-weight: 800;
+            color: var(--text-primary);
+            font-size: 12.5px;
+        }
+        .strike-number.atm {
+            background: var(--atm-black);
+            color: #ffffff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .sentiment-bar-wrap {
+            display: flex;
+            width: 32px;
+            height: 2.5px;
+            border-radius: 2px;
+            overflow: hidden;
+            background: var(--border-color);
+        }
+        .sentiment-bar-ce { background: var(--red); height: 100%; }
+        .sentiment-bar-pe { background: var(--green); height: 100%; }
+
+        /* Moneyness Tags */
+        .m-tag {
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            display: inline-block;
+        }
+        .m-itm-c { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+        .m-itm-p { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+        .m-atm { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); }
+        .m-otm { color: var(--text-muted); }
+
+        /* =========================================================================
+           2. TRADE TAB & ORDER BOOK (Exact Delta App View)
+           ========================================================================= */
+        .trade-screen-container {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            gap: 14px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Contract Info Bar */
+        .contract-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+        .contract-symbol-title {
+            font-size: 15.5px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Trade Form & Order Book Split */
+        .trade-split-grid {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 650px) {
+            .trade-split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Order Book */
+        .delta-orderbook {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             padding: 10px;
             display: flex;
             flex-direction: column;
+            gap: 4px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11.5px;
-            gap: 4px;
         }
-        .ob-row { display: flex; justify-content: space-between; }
-        .ob-ask { color: #f85149; }
-        .ob-bid { color: #2ea043; }
+        .ob-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .ob-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            height: 20px;
+            font-weight: 700;
+        }
+        .ob-depth-bar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            opacity: 0.15;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+        .ob-depth-bar.ask { background: var(--red); }
+        .ob-depth-bar.bid { background: var(--green); }
+        .ob-ask-price { color: var(--red); }
+        .ob-bid-price { color: var(--green); }
+        .ob-qty { color: var(--text-secondary); font-size: 11px; }
+        .ob-mid-price-box {
+            padding: 6px 0;
+            margin: 4px 0;
+            border-top: 1px dashed var(--border-color);
+            border-bottom: 1px dashed var(--border-color);
+            text-align: left;
+        }
+        .ob-mid-mark { font-size: 14px; font-weight: 900; color: var(--text-primary); }
+        .ob-mid-ltp { font-size: 10px; color: var(--text-secondary); text-decoration: underline dotted; }
 
-        .order-inputs-panel {
+        /* Trade Inputs Panel */
+        .delta-trade-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
         }
-        .side-toggle-grid {
+        .side-btn-toggle {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            background: var(--bg-secondary);
+            padding: 3px;
+            border-radius: 8px;
+            gap: 4px;
         }
-        .btn-side {
-            padding: 9px 0;
-            font-weight: 800;
+        .side-btn {
+            padding: 8px 0;
             font-size: 13px;
+            font-weight: 800;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
             border-radius: 6px;
             cursor: pointer;
-            border: 1px solid #2d384e;
-            background: #0b0e14;
-            color: #8b949e;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
-        .btn-side.active.buy { background: #2ea043; color: #fff; border-color: #2ea043; }
-        .btn-side.active.sell { background: #f85149; color: #fff; border-color: #f85149; }
+        .side-btn.active.buy { background: var(--green); color: #ffffff; }
+        .side-btn.active.sell { background: var(--red); color: #ffffff; }
 
-        .form-row {
+        .order-type-select {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .stepper-input-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #0b0e14;
-            border: 1px solid #2d384e;
-            border-radius: 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 6px 12px;
         }
-        .form-row input {
+        .stepper-input-box span { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+        .stepper-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stepper-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stepper-btn:hover { background: var(--bg-tertiary); }
+        .stepper-val-input {
             background: transparent;
             border: none;
-            color: #f0f6fc;
+            color: var(--text-primary);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            outline: none;
-            width: 100px;
-            text-align: center;
-        }
-        .btn-step {
-            background: #1c2433;
-            border: 1px solid #2d384e;
-            color: #c9d1d9;
-            width: 26px;
-            height: 26px;
-            border-radius: 4px;
+            font-size: 13.5px;
             font-weight: 800;
-            cursor: pointer;
+            text-align: center;
+            width: 80px;
+            outline: none;
         }
 
-        .btn-submit-main-opt {
+        .promo-refund-banner {
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            color: #7c3aed;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        [data-theme="dark"] .promo-refund-banner {
+            background: rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+        }
+
+        .btn-tpsl {
+            background: transparent;
+            border: 1px dashed var(--border-color);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-tpsl:hover { border-color: var(--blue); color: var(--blue); }
+
+        .btn-main-order-submit {
             width: 100%;
             padding: 12px 0;
-            border-radius: 6px;
+            border: none;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 800;
-            cursor: pointer;
-            border: none;
             color: #ffffff;
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: all 0.15s;
         }
-        .btn-submit-main-opt.buy { background: #2ea043; }
-        .btn-submit-main-opt.buy:hover { background: #3fb950; }
-        .btn-submit-main-opt.sell { background: #f85149; }
-        .btn-submit-main-opt.sell:hover { background: #ff6b63; }
+        .btn-main-order-submit.buy { background: var(--green); }
+        .btn-main-order-submit.buy:hover { opacity: 0.9; }
+        .btn-main-order-submit.sell { background: var(--red); }
+        .btn-main-order-submit.sell:hover { opacity: 0.9; }
 
-        /* Greek Badges Card */
-        .greeks-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            background: #0b0e14;
-            border: 1px solid #202736;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .greek-box-label { font-size: 10px; color: #8b949e; font-weight: 700; }
-        .greek-box-val { font-size: 13px; font-weight: 800; margin-top: 2px; }
-
-        /* PNL CALCULATOR & SIMULATOR */
-        .calculator-card {
-            background: #121721;
-            border: 1px solid #202736;
-            border-radius: 12px;
+        /* =========================================================================
+           3. PNL CALCULATOR & PAYOFF SIMULATOR CARD (Exact Delta App View)
+           ========================================================================= */
+        .delta-calculator-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
-        .calc-metrics-row {
+        .calc-header-tabs {
+            display: flex;
+            gap: 8px;
+        }
+        .calc-tab-pill {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .calc-tab-pill.active {
+            background: var(--blue-light);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .calc-summary-3col {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             text-align: center;
-            background: #0b0e14;
-            border: 1px solid #202736;
+            background: var(--bg-secondary);
             border-radius: 8px;
-            padding: 12px;
+            padding: 12px 6px;
         }
-        .calc-m-label { font-size: 10.5px; color: #8b949e; font-weight: 600; margin-bottom: 2px; }
-        .calc-m-val { font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 800; color: #f0f6fc; }
+        .calc-col-label { font-size: 10.5px; color: var(--text-secondary); font-weight: 600; margin-bottom: 2px; }
+        .calc-col-val { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 800; color: var(--text-primary); }
 
-        .slider-group {
+        /* Sliders with triple dash thumb */
+        .sim-slider-row {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
-        .slider-label-row {
+        .sim-slider-label-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: #f0f6fc;
         }
-        .slider-control-box {
+        .sim-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+        .sim-subtext { font-size: 11px; color: var(--text-secondary); }
+        .sim-stepper-box {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: #0b0e14;
-            border: 1px solid #2d384e;
-            padding: 4px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
+            padding: 2px 6px;
+            gap: 6px;
         }
-        .slider-input-range {
+        .sim-stepper-btn {
+            background: transparent;
+            border: none;
+            font-weight: 900;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 20px;
+            height: 20px;
+        }
+        .sim-stepper-btn:hover { color: var(--text-primary); }
+        .sim-input-slider {
             width: 100%;
-            accent-color: #58a6ff;
+            height: 4px;
+            background: var(--slider-bg);
+            border-radius: 2px;
+            outline: none;
+            accent-color: var(--blue);
             cursor: pointer;
         }
 
-        /* POSITIONS TAB */
-        .positions-view-container {
+        /* Greeks breakdown row */
+        .greeks-pill-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .gk-lbl { font-size: 10px; color: var(--text-secondary); font-weight: 700; }
+        .gk-val { font-size: 12.5px; font-weight: 800; margin-top: 2px; }
+
+        /* =========================================================================
+           4. POSITIONS & ORDERS VIEWS
+           ========================================================================= */
+        .tab-content-container {
             display: none;
+            flex: 1;
+            overflow-y: auto;
             padding: 16px;
-            max-width: 1050px;
+            max-width: 900px;
             margin: 0 auto;
             width: 100%;
-            overflow-y: auto;
         }
 
-        /* FUTURES SCREEN */
-        #futures_screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
+        /* =========================================================================
+           5. STICKY BOTTOM BALANCE BAR & MOBILE NAV (Exact Delta App)
+           ========================================================================= */
+        .delta-sticky-balance-bar {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 38px;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 700;
         }
-        #tradingview_chart_element {
-            width: 100%;
-            height: 100%;
+        .delta-bottom-nav {
+            background: var(--bottom-nav-bg);
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            height: 54px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            color: var(--text-secondary);
+            font-size: 10.5px;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.15s;
+        }
+        .bottom-nav-item.active {
+            color: var(--blue);
+            font-weight: 800;
+        }
+        .bottom-nav-icon { font-size: 17px; }
+        .zero-fee-badge {
+            position: absolute;
+            top: 2px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 8px;
+            font-weight: 900;
+            padding: 1px 4px;
+            border-radius: 8px;
+            line-height: 1;
         }
 
         /* Toast */
-        #toast_container {
+        #toast_box {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 2000;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            pointer-events: none;
         }
-        .toast {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-left: 4px solid #58a6ff;
-            color: #f0f6fc;
-            padding: 10px 16px;
-            border-radius: 6px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.6);
+        .toast-msg {
+            background: #1e293b;
+            color: #ffffff;
             font-size: 12.5px;
-            font-weight: 600;
-            animation: slideIn 0.3s ease-out;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeIn 0.2s ease-out;
         }
-        .toast.success { border-left-color: #2ea043; }
-        .toast.error { border-left-color: #f85149; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
-    <!-- Top Header -->
-    <header id="main_header">
-        <div class="header-left">
-            <!-- Symbol Selector -->
-            <div class="symbol-selector-box" onclick="toggleSymbol()">
-                <span>🪙</span>
-                <span id="selected_symbol_label">BTC • USDT</span>
-                <span style="color:#8b949e; font-size:10px;">▾</span>
-            </div>
-
-            <div class="live-price-tag" id="spot_price_tag">$84,150.00</div>
-
-            <!-- Mode Switcher -->
-            <div class="main-nav-tabs">
-                <button class="main-tab-btn active" id="tab_btn_options" onclick="switchAppMode('OPTIONS')">
-                    🎯 Options
-                </button>
-                <button class="main-tab-btn" id="tab_btn_futures" onclick="switchAppMode('FUTURES')">
-                    📈 Futures Chart
-                </button>
-            </div>
+    <!-- 1. Delta Top Header -->
+    <div class="delta-top-header">
+        <div class="header-title-box">
+            <div class="header-main-title">Options</div>
+            <div class="gold-vip-badge">👑 GOLD</div>
         </div>
-
-        <div class="header-right">
-            <button class="currency-toggle" onclick="toggleCurrency()" id="currency_toggle_btn">
-                Currency: USDT ($)
-            </button>
-            <div style="font-family:'JetBrains Mono'; font-size:11.5px; background:#1c2433; padding:4px 10px; border-radius:6px; border:1px solid #2d384e;">
-                <span style="color:#8b949e;">Available:</span> <b style="color:#58a6ff;" id="avail_bal_display">$10,000.00</b>
-            </div>
-            <button class="btn-hdr" onclick="resetBalance()">🔄 Reset</button>
+        <div class="header-actions">
+            <!-- Theme Mode Toggle -->
+            <button class="hdr-icon-btn" onclick="toggleThemeMode()" title="Toggle Theme" id="theme_toggle_btn">☀️</button>
+            <!-- Currency Toggle -->
+            <button class="hdr-icon-btn" style="width:auto; padding:0 8px; font-size:12px; font-weight:800; border:1px solid var(--border-color);" onclick="toggleCurrency()" id="currency_toggle_btn">₹ INR</button>
+            <!-- Reset Virtual Balance -->
+            <button class="hdr-icon-btn" onclick="resetVirtualAccount()" title="Reset Virtual Account">🔄</button>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Workspace -->
-    <div class="app-container">
+    <!-- 2. Symbol & Ticker Header Bar -->
+    <div class="delta-ticker-bar">
+        <div class="symbol-select-btn" onclick="toggleSymbol()">
+            <div class="coin-icon" id="coin_avatar">₿</div>
+            <div class="symbol-name-text">
+                <span id="symbol_label">BTC • USDT</span>
+                <span style="font-size:11px; color:var(--text-secondary);">▾</span>
+            </div>
+            <div class="symbol-price-text" id="header_spot_price">84,150.00</div>
+            <div class="price-change-pct pct-up" id="header_price_change">(+0.78%)</div>
+        </div>
+        <div class="header-actions">
+            <button class="hdr-icon-btn" title="Feedback">💬</button>
+            <button class="hdr-icon-btn" onclick="switchAppMode('FUTURES')" title="TradingView Chart">📊</button>
+            <button class="hdr-icon-btn" title="Search">🔍</button>
+            <button class="hdr-icon-btn" title="Settings">⋮</button>
+        </div>
+    </div>
 
-        <!-- =========================================================
-             1. OPTIONS MODULE (Chain, Trade, Positions, Orders)
-             ========================================================= -->
-        <div id="options_screen">
+    <!-- 3. Sub Navigation Tabs (Chain, Trade, Positions, Orders) -->
+    <div class="delta-sub-nav">
+        <div class="sub-nav-tabs-group">
+            <div class="sub-nav-tab active" id="tab_chain" onclick="switchSubNav('CHAIN')">Chain</div>
+            <div class="sub-nav-tab" id="tab_trade" onclick="switchSubNav('TRADE')">Trade</div>
+            <div class="sub-nav-tab" id="tab_positions" onclick="switchSubNav('POSITIONS')">Positions (<span id="pos_count_badge">0</span>)</div>
+            <div class="sub-nav-tab" id="tab_orders" onclick="switchSubNav('ORDERS')">Orders</div>
+        </div>
+        <div>
+            <span style="font-size:16px; cursor:pointer; color:var(--text-secondary);" title="History">🕒</span>
+        </div>
+    </div>
+
+    <!-- 4. Expiry Pills Bar -->
+    <div class="delta-expiry-bar">
+        <div class="expiry-pills-scroll" id="expiry_pills_bar">
+            <div class="expiry-chip active" onclick="selectExpiry(0, '02 Oct (13h 1m)', 0.003)">02 Oct (13h 1m)</div>
+            <div class="expiry-chip" onclick="selectExpiry(1, '03 Oct', 0.0055)">03 Oct</div>
+            <div class="expiry-chip" onclick="selectExpiry(2, '04 Oct', 0.0164)">04 Oct</div>
+            <div class="expiry-chip" onclick="selectExpiry(3, '09 Oct', 0.038)">09 Oct</div>
+            <div class="expiry-chip" onclick="selectExpiry(4, '16 Oct', 0.082)">16 Oct</div>
+            <div class="expiry-chip" onclick="selectExpiry(5, '30 Oct', 0.164)">30 Oct</div>
+        </div>
+        <div class="expiry-bar-tools">
+            <label style="display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="checkbox" id="basket_chk"> Basket
+            </label>
+            <span style="cursor:pointer; font-size:14px;" onclick="cycleViewMode()" title="Toggle Greeks / Volume / Price View">⚙️</span>
+        </div>
+    </div>
+
+    <!-- 5. Main Content Area -->
+    <div class="app-body-container">
+        
+        <!-- Screen: OPTIONS MODULE -->
+        <div id="screen_options">
             
-            <!-- Sub Navigation Tabs -->
-            <div class="opt-sub-nav">
-                <div class="opt-nav-links">
-                    <div class="opt-nav-item active" id="sub_nav_chain" onclick="switchOptSubTab('CHAIN')">Chain</div>
-                    <div class="opt-nav-item" id="sub_nav_trade" onclick="switchOptSubTab('TRADE')">Trade & Calculator</div>
-                    <div class="opt-nav-item" id="sub_nav_pos" onclick="switchOptSubTab('POS')">Positions (<span id="opt_pos_count">0</span>)</div>
-                    <div class="opt-nav-item" id="sub_nav_orders" onclick="switchOptSubTab('ORDERS')">Orders</div>
-                </div>
-
-                <!-- Option Chain View Mode Selector -->
-                <div class="chain-view-filters" id="chain_filters_box">
-                    <button class="filter-btn active" id="fbtn_all" onclick="setChainViewMode('ALL')">All & Greeks</button>
-                    <button class="filter-btn" id="fbtn_price" onclick="setChainViewMode('PRICE')">Price & Bid/Ask</button>
-                    <button class="filter-btn" id="fbtn_oi" onclick="setChainViewMode('OI')">OI & Volume</button>
-                    <button class="filter-btn" id="fbtn_greeks" onclick="setChainViewMode('GREEKS')">Greeks (Δ, Γ, Θ, ν)</button>
-                </div>
-            </div>
-
-            <!-- Expiry Pills Bar with Countdown -->
-            <div class="expiry-bar" id="expiry_pills_container">
-                <div class="expiry-pill active" onclick="selectExpiryPill(0, '02 Oct (13h 1m)', 0.003)">02 Oct (13h 1m)</div>
-                <div class="expiry-pill" onclick="selectExpiryPill(1, '03 Oct', 0.0055)">03 Oct</div>
-                <div class="expiry-pill" onclick="selectExpiryPill(2, '04 Oct', 0.0164)">04 Oct</div>
-                <div class="expiry-pill" onclick="selectExpiryPill(3, '09 Oct', 0.038)">09 Oct</div>
-                <div class="expiry-pill" onclick="selectExpiryPill(4, '16 Oct', 0.082)">16 Oct</div>
-                <div class="expiry-pill" onclick="selectExpiryPill(5, '30 Oct', 0.164)">30 Oct</div>
-            </div>
-
-            <!-- SUB-VIEW A: OPTION CHAIN TABLE WITH ITM/ATM/OTM & GREEKS -->
-            <div class="chain-view-container" id="opt_chain_view">
-                <table class="chain-table">
+            <!-- SUB-VIEW 1: OPTION CHAIN TABLE -->
+            <div class="chain-table-container" id="view_chain">
+                <table class="delta-chain-table">
                     <thead>
-                        <tr id="chain_thead_row">
-                            <!-- Injected dynamically based on view mode -->
+                        <tr id="chain_th_row">
+                            <!-- Dynamic Columns (Bid/Ask, Mark Price, Strike, etc.) -->
                         </tr>
                     </thead>
                     <tbody id="chain_tbody">
-                        <!-- Dynamic Option Chain Injected Here -->
+                        <!-- Dynamic Options Matrix -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- SUB-VIEW B: TRADE & PNL CALCULATOR WITH GREEKS BREAKDOWN -->
-            <div class="trade-view-container" id="opt_trade_view">
+            <!-- SUB-VIEW 2: TRADE TAB & PNL CALCULATOR -->
+            <div class="trade-screen-container" id="view_trade">
                 
-                <!-- Active Contract Banner -->
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#121721; padding:12px 16px; border-radius:8px; border:1px solid #202736;">
-                    <div>
-                        <span style="font-size:15px; font-weight:800; color:#f0f6fc;" id="active_contract_title">BTC-2OCT26-85000-C</span>
-                        <span class="moneyness-tag tag-otm" id="active_contract_moneyness" style="margin-left:8px;">OTM</span>
+                <!-- Contract Header -->
+                <div class="contract-header-bar">
+                    <div class="contract-symbol-title">
+                        <span id="active_contract_name">BTC-2OCT26-84000-C</span>
+                        <span class="m-tag m-atm" id="active_contract_moneyness_tag">ATM</span>
+                        <span style="font-size:13px; color:var(--text-secondary); cursor:pointer;">ⓘ</span>
                     </div>
-                    <div style="font-family:'JetBrains Mono'; font-size:14px; font-weight:800; color:#58a6ff;" id="active_contract_mark">$1,240.00</div>
-                </div>
-
-                <!-- Greeks Breakdown Card -->
-                <div class="greeks-summary-grid">
-                    <div>
-                        <div class="greek-box-label">Delta (Δ)</div>
-                        <div class="greek-box-val" style="color:#58a6ff;" id="trade_greek_delta">+0.48</div>
-                    </div>
-                    <div>
-                        <div class="greek-box-label">Theta (Θ) / Day</div>
-                        <div class="greek-box-val" style="color:#f85149;" id="trade_greek_theta">-$16.50</div>
-                    </div>
-                    <div>
-                        <div class="greek-box-label">Gamma (Γ)</div>
-                        <div class="greek-box-val" style="color:#e3b341;" id="trade_greek_gamma">0.00012</div>
-                    </div>
-                    <div>
-                        <div class="greek-box-label">Vega (ν) / 1% IV</div>
-                        <div class="greek-box-val" style="color:#bc8cff;" id="trade_greek_vega">$18.20</div>
+                    <div style="font-family:'JetBrains Mono'; font-weight:800; font-size:15px; color:var(--blue);" id="active_contract_price_display">
+                        $1,240.00
                     </div>
                 </div>
 
-                <!-- Order Placement Card -->
-                <div class="trade-card">
-                    <div class="order-exec-grid">
-                        <!-- Mini Order Book -->
-                        <div class="mini-orderbook">
-                            <div style="font-size:10px; color:#8b949e; font-weight:700; border-bottom:1px solid #202736; padding-bottom:3px;">Order Book</div>
-                            <div class="ob-row ob-ask"><span id="ob_ask_3">1,260.0</span><span>1.4</span></div>
-                            <div class="ob-row ob-ask"><span id="ob_ask_2">1,250.0</span><span>4.2</span></div>
-                            <div class="ob-row ob-ask"><span id="ob_ask_1">1,245.0</span><span>8.0</span></div>
-                            <div style="border-top:1px dashed #30363d; margin:2px 0;"></div>
-                            <div class="ob-row ob-bid"><span id="ob_bid_1">1,240.0</span><span>5.5</span></div>
-                            <div class="ob-row ob-bid"><span id="ob_bid_2">1,235.0</span><span>12.0</span></div>
-                            <div class="ob-row ob-bid"><span id="ob_bid_3">1,230.0</span><span>2.1</span></div>
+                <!-- Greeks Breakdown Strip -->
+                <div class="greeks-pill-row">
+                    <div>
+                        <div class="gk-lbl">Delta (Δ)</div>
+                        <div class="gk-val" style="color:var(--blue);" id="trade_gk_delta">+0.50</div>
+                    </div>
+                    <div>
+                        <div class="gk-lbl">Theta (Θ) / Day</div>
+                        <div class="gk-val" style="color:var(--red);" id="trade_gk_theta">-$18.20</div>
+                    </div>
+                    <div>
+                        <div class="gk-lbl">Gamma (Γ)</div>
+                        <div class="gk-val" style="color:var(--gold);" id="trade_gk_gamma">0.00014</div>
+                    </div>
+                    <div>
+                        <div class="gk-lbl">Vega (ν) / 1% IV</div>
+                        <div class="gk-val" style="color:#8b5cf6;" id="trade_gk_vega">$16.80</div>
+                    </div>
+                </div>
+
+                <!-- Split Grid: Order Book + Trade Form -->
+                <div class="trade-split-grid">
+                    
+                    <!-- Left: Mini Order Book -->
+                    <div class="delta-orderbook">
+                        <div class="ob-header">
+                            <span>Price (USDT)</span>
+                            <span id="ob_qty_unit">Qty (BTC)</span>
+                        </div>
+                        
+                        <!-- Asks (Red) -->
+                        <div class="ob-row">
+                            <div class="ob-depth-bar ask" style="width: 45%;"></div>
+                            <span class="ob-ask-price" id="ob_ask_5">1,265.0</span>
+                            <span class="ob-qty">1.4</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar ask" style="width: 70%;"></div>
+                            <span class="ob-ask-price" id="ob_ask_4">1,260.0</span>
+                            <span class="ob-qty">3.2</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar ask" style="width: 30%;"></div>
+                            <span class="ob-ask-price" id="ob_ask_3">1,255.0</span>
+                            <span class="ob-qty">0.8</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar ask" style="width: 90%;"></div>
+                            <span class="ob-ask-price" id="ob_ask_2">1,250.0</span>
+                            <span class="ob-qty">5.6</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar ask" style="width: 60%;"></div>
+                            <span class="ob-ask-price" id="ob_ask_1">1,245.0</span>
+                            <span class="ob-qty">2.1</span>
                         </div>
 
-                        <!-- Order Form -->
-                        <div class="order-inputs-panel">
-                            <div class="side-toggle-grid">
-                                <button class="btn-side active buy" id="btn_trade_buy" onclick="setTradeSide('BUY')">Buy</button>
-                                <button class="btn-side sell" id="btn_trade_sell" onclick="setTradeSide('SELL')">Sell</button>
-                            </div>
+                        <!-- Mid Price / Mark Price -->
+                        <div class="ob-mid-price-box">
+                            <div style="font-size:10px; color:var(--text-secondary);">Mark price ⓘ</div>
+                            <div class="ob-mid-mark" id="ob_mark_price">1,240.0</div>
+                            <div class="ob-mid-ltp" id="ob_ltp_price">LTP 1,240.0</div>
+                        </div>
 
-                            <!-- Limit Price -->
-                            <div class="form-row">
-                                <span style="font-size:11px; color:#8b949e; font-weight:700;">Price (USDT)</span>
-                                <div style="display:flex; align-items:center; gap:4px;">
-                                    <button class="btn-step" onclick="stepTradePrice(-10)">-</button>
-                                    <input type="number" id="trade_price_input" value="1240" oninput="recalcTradeForm()">
-                                    <button class="btn-step" onclick="stepTradePrice(10)">+</button>
+                        <!-- Bids (Green) -->
+                        <div class="ob-row">
+                            <div class="ob-depth-bar bid" style="width: 75%;"></div>
+                            <span class="ob-bid-price" id="ob_bid_1">1,238.0</span>
+                            <span class="ob-qty">4.8</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar bid" style="width: 40%;"></div>
+                            <span class="ob-bid-price" id="ob_bid_2">1,235.0</span>
+                            <span class="ob-qty">1.9</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar bid" style="width: 85%;"></div>
+                            <span class="ob-bid-price" id="ob_bid_3">1,230.0</span>
+                            <span class="ob-qty">6.2</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar bid" style="width: 20%;"></div>
+                            <span class="ob-bid-price" id="ob_bid_4">1,225.0</span>
+                            <span class="ob-qty">0.5</span>
+                        </div>
+                        <div class="ob-row">
+                            <div class="ob-depth-bar bid" style="width: 50%;"></div>
+                            <span class="ob-bid-price" id="ob_bid_5">1,220.0</span>
+                            <span class="ob-qty">2.7</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Trade Form -->
+                    <div class="delta-trade-form">
+                        <!-- Buy / Sell Toggle -->
+                        <div class="side-btn-toggle">
+                            <button class="side-btn active buy" id="btn_side_buy" onclick="setSide('BUY')">Buy</button>
+                            <button class="side-btn sell" id="btn_side_sell" onclick="setSide('SELL')">Sell</button>
+                        </div>
+
+                        <!-- Order Type -->
+                        <select class="order-type-select" id="order_type_select">
+                            <option value="LIMIT">Limit</option>
+                            <option value="MARKET">Market</option>
+                        </select>
+
+                        <!-- Limit Price Stepper -->
+                        <div>
+                            <div class="stepper-input-box">
+                                <span>Limit Price</span>
+                                <div class="stepper-right">
+                                    <button class="stepper-btn" onclick="stepPrice(-10)">-</button>
+                                    <input type="number" class="stepper-val-input" id="trade_price_in" value="1240" oninput="onTradeInputChange()">
+                                    <button class="stepper-btn" onclick="stepPrice(10)">+</button>
                                 </div>
                             </div>
+                            <div style="font-size:10.5px; color:var(--text-secondary); text-align:right; margin-top:2px;" id="price_inr_equiv">≈ ₹1,04,160</div>
+                        </div>
 
-                            <!-- Lots / Quantity -->
-                            <div class="form-row">
-                                <span style="font-size:11px; color:#8b949e; font-weight:700;">Lots (Quantity)</span>
-                                <div style="display:flex; align-items:center; gap:4px;">
-                                    <button class="btn-step" onclick="stepTradeLots(-0.05)">-</button>
-                                    <input type="number" id="trade_lots_input" value="0.10" step="0.05" oninput="recalcTradeForm()">
-                                    <button class="btn-step" onclick="stepTradeLots(0.05)">+</button>
+                        <!-- Lots / Quantity Stepper -->
+                        <div>
+                            <div class="stepper-input-box">
+                                <span>Lots</span>
+                                <div class="stepper-right">
+                                    <button class="stepper-btn" onclick="stepLots(-0.05)">-</button>
+                                    <input type="number" class="stepper-val-input" id="trade_lots_in" value="0.10" step="0.05" oninput="onTradeInputChange()">
+                                    <button class="stepper-btn" onclick="stepLots(0.05)">+</button>
                                 </div>
                             </div>
-
-                            <!-- Margin Summary -->
-                            <div style="display:flex; justify-content:space-between; font-size:11px; color:#8b949e;">
-                                <span>Est. Margin Required: <b style="color:#58a6ff;" id="trade_est_margin">$124.00</b></span>
-                                <span>Fees: <b style="color:#2ea043;">0.00% (Free)</b></span>
-                            </div>
-
-                            <button class="btn-submit-main-opt buy" id="btn_main_opt_submit" onclick="executeOptionTradeFromForm()">
-                                Buy Call
-                            </button>
+                            <div style="font-size:10.5px; color:var(--text-secondary); text-align:right; margin-top:2px;" id="lots_crypto_equiv">≈ 0.10 BTC</div>
                         </div>
+
+                        <!-- Balances & Margin -->
+                        <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700;">
+                            <span style="color:var(--text-secondary);">Available</span>
+                            <span id="form_avail_bal">₹8,40,000.00 ⊕</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700;">
+                            <span style="color:var(--text-secondary);">Est. margin ⓘ</span>
+                            <span id="form_est_margin">₹10,416.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700;">
+                            <span style="color:var(--text-secondary);">Fees</span>
+                            <span style="color:var(--green);">0.01% / 0.01% ₹0</span>
+                        </div>
+
+                        <!-- Promo banner -->
+                        <div class="promo-refund-banner">
+                            <span>Fees get refunded daily</span>
+                            <span>›</span>
+                        </div>
+
+                        <!-- Add TP/SL -->
+                        <button class="btn-tpsl">+ Add TP/SL</button>
+
+                        <!-- Main Submit Button -->
+                        <button class="btn-main-order-submit buy" id="btn_submit_order" onclick="placeVirtualOrder()">
+                            Buy Call
+                        </button>
                     </div>
+
                 </div>
 
-                <!-- PNL CALCULATOR & PAYOFF SIMULATOR -->
-                <div class="calculator-card">
-                    <div style="font-size:13px; font-weight:800; color:#f0f6fc;">
-                        📊 PNL Calculator & Greeks Simulator
+                <!-- Delta PNL Calculator Card (Sliders Simulator) -->
+                <div class="delta-calculator-card">
+                    <div class="calc-header-tabs">
+                        <div class="calc-tab-pill">📈 PNL Chart</div>
+                        <div class="calc-tab-pill active">🧮 PNL Calculator</div>
                     </div>
 
-                    <div class="calc-metrics-row">
+                    <div class="calc-summary-3col">
                         <div>
-                            <div class="calc-m-label">Avg. entry price</div>
-                            <div class="calc-m-val" id="calc_entry_val">$1,240.0</div>
-                        </div>
-                        <div>
-                            <div class="calc-m-label">Calculated price</div>
-                            <div class="calc-m-val" id="calc_sim_price">$1,385.0</div>
+                            <div class="calc-col-label">Avg. entry price</div>
+                            <div class="calc-col-val" id="calc_entry_val">1,240.0</div>
                         </div>
                         <div>
-                            <div class="calc-m-label">Calculated PNL</div>
-                            <div class="calc-m-val" style="color:#2ea043;" id="calc_sim_pnl">+$145.00 (+11.7%)</div>
+                            <div class="calc-col-label">Calculated price</div>
+                            <div class="calc-col-val" id="calc_sim_price">1,385.0</div>
+                        </div>
+                        <div>
+                            <div class="calc-col-label">Calculated PNL</div>
+                            <div class="calc-col-val" style="color:var(--green);" id="calc_sim_pnl">+₹1,218.00</div>
                         </div>
                     </div>
 
-                    <!-- Slider 1: Underlying Price Simulation -->
-                    <div class="slider-group">
-                        <div class="slider-label-row">
-                            <span>BTC Price (<span id="calc_btc_offset" style="color:#58a6ff;">+0.0% above current</span>)</span>
-                            <div style="display:flex; align-items:center; gap:4px;">
-                                <button class="btn-step" onclick="stepSliderPrice(-200)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800;" id="calc_btc_display">$84,150</span>
-                                <button class="btn-step" onclick="stepSliderPrice(200)">+</button>
+                    <!-- Slider 1: Underlying Price -->
+                    <div class="sim-slider-row">
+                        <div class="sim-slider-label-bar">
+                            <div>
+                                <div class="sim-title" id="slider_price_label">BTC price</div>
+                                <div class="sim-subtext" id="slider_price_subtext">0.0% above current</div>
+                            </div>
+                            <div class="sim-stepper-box">
+                                <button class="sim-stepper-btn" onclick="stepSimPrice(-200)">-</button>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="sim_price_box_val">84,150</span>
+                                <button class="sim-stepper-btn" onclick="stepSimPrice(200)">+</button>
                             </div>
                         </div>
-                        <div class="slider-control-box">
-                            <input type="range" class="slider-input-range" id="slider_btc_price" min="75000" max="95000" value="84150" step="50" oninput="onCalcSliderChange()">
-                        </div>
+                        <input type="range" class="sim-input-slider" id="slider_spot" min="60000" max="110000" value="84150" step="50" oninput="recalcSimulator()">
                     </div>
 
-                    <!-- Slider 2: Time to Expiry Simulation -->
-                    <div class="slider-group">
-                        <div class="slider-label-row">
-                            <span>Time (<span id="calc_time_offset" style="color:#e3b341;">13 hrs to expiry</span>)</span>
-                            <div style="display:flex; align-items:center; gap:4px;">
-                                <button class="btn-step" onclick="stepSliderTime(-2)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800;" id="calc_time_display">13h</span>
-                                <button class="btn-step" onclick="stepSliderTime(2)">+</button>
+                    <!-- Slider 2: Time to Expiry -->
+                    <div class="sim-slider-row">
+                        <div class="sim-slider-label-bar">
+                            <div>
+                                <div class="sim-title">Time</div>
+                                <div class="sim-subtext" id="slider_time_subtext">13 hrs to expiry</div>
+                            </div>
+                            <div class="sim-stepper-box">
+                                <button class="sim-stepper-btn" onclick="stepSimTime(-2)">-</button>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="sim_time_box_val">13h</span>
+                                <button class="sim-stepper-btn" onclick="stepSimTime(2)">+</button>
                             </div>
                         </div>
-                        <div class="slider-control-box">
-                            <input type="range" class="slider-input-range" id="slider_time" min="0" max="24" value="13" oninput="onCalcSliderChange()">
-                        </div>
+                        <input type="range" class="sim-input-slider" id="slider_time" min="0" max="24" value="13" oninput="recalcSimulator()">
                     </div>
 
-                    <!-- Slider 3: Implied Volatility (IV) Simulation -->
-                    <div class="slider-group">
-                        <div class="slider-label-row">
-                            <span>Implied Volatility (<span id="calc_iv_offset">Current 35%</span>)</span>
-                            <div style="display:flex; align-items:center; gap:4px;">
-                                <button class="btn-step" onclick="stepSliderIV(-5)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800;" id="calc_iv_display">35%</span>
-                                <button class="btn-step" onclick="stepSliderIV(5)">+</button>
+                    <!-- Slider 3: Implied Volatility (IV) -->
+                    <div class="sim-slider-row">
+                        <div class="sim-slider-label-bar">
+                            <div>
+                                <div class="sim-title">Implied Volatility</div>
+                                <div class="sim-subtext" id="slider_iv_subtext">Current 30%</div>
+                            </div>
+                            <div class="sim-stepper-box">
+                                <button class="sim-stepper-btn" onclick="stepSimIV(-5)">-</button>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="sim_iv_box_val">30%</span>
+                                <button class="sim-stepper-btn" onclick="stepSimIV(5)">+</button>
                             </div>
                         </div>
-                        <div class="slider-control-box">
-                            <input type="range" class="slider-input-range" id="slider_iv" min="10" max="100" value="35" oninput="onCalcSliderChange()">
-                        </div>
+                        <input type="range" class="sim-input-slider" id="slider_iv" min="10" max="100" value="30" oninput="recalcSimulator()">
                     </div>
 
                     <div style="text-align:right;">
-                        <button class="btn-hdr" onclick="resetCalculatorSliders()">🔄 Reset Calculator</button>
+                        <button style="background:transparent; border:1px solid var(--border-color); color:var(--text-secondary); font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:6px; cursor:pointer;" onclick="resetSimulator()">
+                            🔄 Reset
+                        </button>
                     </div>
                 </div>
 
             </div>
 
-            <!-- SUB-VIEW C: POSITIONS TAB -->
-            <div class="positions-view-container" id="opt_pos_view">
-                <div style="background:#121721; border:1px solid #202736; border-radius:12px; padding:16px;">
-                    <div style="font-size:14px; font-weight:800; color:#f0f6fc; margin-bottom:12px;">Active Option Positions</div>
-                    <div id="no_pos_alert" style="text-align:center; color:#8b949e; padding:30px;">
-                        📌 Koi active option position nahi hai. Option Chain ya Trade tab se position open karein.
+            <!-- SUB-VIEW 3: POSITIONS TAB -->
+            <div class="tab-content-container" id="view_positions">
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:16px;">
+                    <div style="font-size:14.5px; font-weight:800; margin-bottom:12px;">Active Option Positions</div>
+                    <div id="no_positions_msg" style="text-align:center; color:var(--text-secondary); padding:40px 10px;">
+                        📌 Koi active position nahi hai. Option Chain me strike par click karke order place karein.
                     </div>
-                    <table class="chain-table" id="pos_grid_table" style="display:none;">
+                    <table class="delta-chain-table" id="pos_table" style="display:none;">
                         <thead>
                             <tr>
                                 <th>Contract</th>
-                                <th>Type</th>
                                 <th>Side</th>
                                 <th>Lots</th>
                                 <th>Delta (Δ)</th>
                                 <th>Theta (Θ)</th>
-                                <th>Entry Price</th>
-                                <th>Mark Price</th>
-                                <th>PnL ($)</th>
+                                <th>Entry</th>
+                                <th>Mark</th>
+                                <th>PnL</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="pos_grid_tbody"></tbody>
+                        <tbody id="pos_tbody"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- SUB-VIEW D: ORDERS / HISTORY TAB -->
-            <div class="positions-view-container" id="opt_orders_view">
-                <div style="background:#121721; border:1px solid #202736; border-radius:12px; padding:16px;">
-                    <div style="font-size:14px; font-weight:800; color:#f0f6fc; margin-bottom:12px;">Closed Option Orders</div>
-                    <div id="no_orders_alert" style="text-align:center; color:#8b949e; padding:30px;">
-                        Abhi tak koi closed option trade nahi hai.
+            <!-- SUB-VIEW 4: ORDERS HISTORY TAB -->
+            <div class="tab-content-container" id="view_orders">
+                <div style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:16px;">
+                    <div style="font-size:14.5px; font-weight:800; margin-bottom:12px;">Completed Trades History</div>
+                    <div id="no_orders_msg" style="text-align:center; color:var(--text-secondary); padding:40px 10px;">
+                        Abhi tak koi closed trade nahi hai.
                     </div>
-                    <div id="orders_list_container"></div>
+                    <div id="orders_list_wrapper"></div>
                 </div>
             </div>
 
         </div>
 
-        <!-- =========================================================
-             2. FUTURES MODULE
-             ========================================================= -->
-        <div id="futures_screen">
-            <div id="tradingview_chart_element"></div>
+        <!-- Screen: FUTURES MODULE -->
+        <div id="screen_futures">
+            <div id="tv_chart_container" style="width:100%; height:100%;"></div>
         </div>
 
     </div>
 
+    <!-- 6. Sticky Bottom Available Balance Bar -->
+    <div class="delta-sticky-balance-bar">
+        <span>Available</span>
+        <span style="font-family:'JetBrains Mono'; font-weight:800; cursor:pointer;" onclick="switchSubNav('POSITIONS')" id="bottom_avail_bal_text">₹8,40,000.00 ⌃</span>
+    </div>
+
+    <!-- 7. Delta Bottom 5 Navigation Tabs -->
+    <div class="delta-bottom-nav">
+        <div class="bottom-nav-item" onclick="switchAppMode('OPTIONS')">
+            <div class="bottom-nav-icon">🏠</div>
+            <div>Home</div>
+        </div>
+        <div class="bottom-nav-item" onclick="switchAppMode('OPTIONS')">
+            <div class="bottom-nav-icon">📈</div>
+            <div>Invest</div>
+        </div>
+        <div class="bottom-nav-item" id="bnav_futures" onclick="switchAppMode('FUTURES')">
+            <div class="bottom-nav-icon">📄</div>
+            <div>Futures</div>
+        </div>
+        <div class="bottom-nav-item active" id="bnav_options" onclick="switchAppMode('OPTIONS')">
+            <div class="zero-fee-badge">₹0 FEES</div>
+            <div class="bottom-nav-icon">⇅</div>
+            <div>Options</div>
+        </div>
+        <div class="bottom-nav-item" onclick="switchSubNav('POSITIONS')">
+            <div class="bottom-nav-icon">🥧</div>
+            <div>Portfolio</div>
+        </div>
+    </div>
+
     <!-- Toast Notifications -->
-    <div id="toast_container"></div>
+    <div id="toast_box"></div>
 
     <script>
         // =========================================================================
-        // State & Data
+        // Application State
         // =========================================================================
-        let currentSymbol = 'BTC';
-        let currentCurrency = 'USDT';
+        let currentSymbol = 'BTC'; // 'BTC' or 'ETH'
+        let currentCurrency = 'INR'; // 'INR' or 'USDT'
+        let currentTheme = 'light';
+        let currentViewMode = 'PRICE'; // 'PRICE', 'ALL', 'OI', 'GREEKS'
         let inrRate = 84.0;
-        let chainViewMode = 'ALL'; // 'ALL', 'PRICE', 'OI', 'GREEKS'
-        
-        let spotPrices = { 'BTC': 84150.0, 'ETH': 2700.50 };
+
+        let spotPrices = { 'BTC': 84150.0, 'ETH': 2700.20 };
         let activeExpiryIndex = 0;
         let activeExpiryT = 0.003;
-        let activeExpiryLabel = '02 Oct';
+        let activeExpiryLabel = '02 Oct (13h 1m)';
 
-        let activeOptionTrade = {
+        let activeContract = {
             strike: 84000,
             optType: 'C',
             side: 'BUY',
@@ -848,13 +1279,12 @@
             lots: 0.10
         };
 
-        // Persistent Balance & Positions
         let userBalance = parseFloat(localStorage.getItem('delta_paper_balance')) || 10000.0;
-        let activeOptionPositions = JSON.parse(localStorage.getItem('delta_opt_positions')) || [];
-        let closedOptionTrades = JSON.parse(localStorage.getItem('delta_opt_history')) || [];
+        let activePositions = JSON.parse(localStorage.getItem('delta_opt_positions')) || [];
+        let completedOrders = JSON.parse(localStorage.getItem('delta_opt_history')) || [];
 
         // =========================================================================
-        // 1. Comprehensive Black-Scholes Formula with All 4 Greeks
+        // Black-Scholes Formula & Option Greeks
         // =========================================================================
         function normCDF(x) {
             let t = 1 / (1 + 0.2316419 * Math.abs(x));
@@ -863,7 +1293,7 @@
             return x > 0 ? 1 - prob : prob;
         }
 
-        function calculateOptionGreeks(S, K, T, sigma = 0.35, r = 0.05) {
+        function calculateGreeks(S, K, T, sigma = 0.30, r = 0.05) {
             if (T <= 0.0001) T = 0.0001;
             let d1 = (Math.log(S / K) + (r + (sigma * sigma) / 2) * T) / (sigma * Math.sqrt(T));
             let d2 = d1 - sigma * Math.sqrt(T);
@@ -871,18 +1301,13 @@
             let callPrice = S * normCDF(d1) - K * Math.exp(-r * T) * normCDF(d2);
             let putPrice = K * Math.exp(-r * T) * normCDF(-d2) - S * normCDF(-d1);
 
-            // Delta
             let callDelta = normCDF(d1);
             let putDelta = callDelta - 1;
 
-            // Gamma
             let pdfD1 = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * d1 * d1);
             let gamma = pdfD1 / (S * sigma * Math.sqrt(T));
-
-            // Vega (per 1% IV)
             let vega = (S * Math.sqrt(T) * pdfD1) / 100;
 
-            // Theta (per day)
             let thetaCall = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) - r * K * Math.exp(-r * T) * normCDF(d2)) / 365;
             let thetaPut = (-(S * pdfD1 * sigma) / (2 * Math.sqrt(T)) + r * K * Math.exp(-r * T) * normCDF(-d2)) / 365;
 
@@ -899,295 +1324,309 @@
         }
 
         // =========================================================================
-        // 2. Navigation & View Switchers
+        // Formatting Helpers
         // =========================================================================
-        function switchAppMode(mode) {
-            const btnOpt = document.getElementById('tab_btn_options');
-            const btnFut = document.getElementById('tab_btn_futures');
-            const scrOpt = document.getElementById('options_screen');
-            const scrFut = document.getElementById('futures_screen');
-
-            if (mode === 'OPTIONS') {
-                btnOpt.classList.add('active');
-                btnFut.classList.remove('active');
-                scrOpt.style.display = 'flex';
-                scrFut.style.display = 'none';
-                renderOptionChain();
-            } else {
-                btnFut.classList.add('active');
-                btnOpt.classList.remove('active');
-                scrOpt.style.display = 'none';
-                scrFut.style.display = 'block';
-                loadFuturesChart();
-            }
-        }
-
-        function switchOptSubTab(tab) {
-            ['chain', 'trade', 'pos', 'orders'].forEach(t => {
-                document.getElementById(`sub_nav_${t}`).classList.remove('active');
-            });
-            document.getElementById(`sub_nav_${tab.toLowerCase()}`).classList.add('active');
-
-            document.getElementById('opt_chain_view').style.display = tab === 'CHAIN' ? 'block' : 'none';
-            document.getElementById('opt_trade_view').style.display = tab === 'TRADE' ? 'flex' : 'none';
-            document.getElementById('opt_pos_view').style.display = tab === 'POS' ? 'block' : 'none';
-            document.getElementById('opt_orders_view').style.display = tab === 'ORDERS' ? 'block' : 'none';
-
-            if (tab === 'POS') renderPositionsTab();
-            if (tab === 'ORDERS') renderOrdersTab();
-        }
-
-        function setChainViewMode(mode) {
-            chainViewMode = mode;
-            ['all', 'price', 'oi', 'greeks'].forEach(m => {
-                document.getElementById(`fbtn_${m}`).classList.remove('active');
-            });
-            document.getElementById(`fbtn_${mode.toLowerCase()}`).classList.add('active');
-            renderOptionChain();
-        }
-
-        function toggleSymbol() {
-            currentSymbol = currentSymbol === 'BTC' ? 'ETH' : 'BTC';
-            document.getElementById('selected_symbol_label').innerText = `${currentSymbol} • USDT`;
-            updateSpotPrice();
-            
-            const S = spotPrices[currentSymbol];
-            activeOptionTrade.strike = Math.round(S / (currentSymbol === 'BTC' ? 500 : 20)) * (currentSymbol === 'BTC' ? 500 : 20);
-            
-            const sliderBtc = document.getElementById('slider_btc_price');
-            sliderBtc.min = (S * 0.8).toFixed(0);
-            sliderBtc.max = (S * 1.2).toFixed(0);
-            sliderBtc.value = S.toFixed(0);
-
-            renderOptionChain();
-            openTradeForContract(activeOptionTrade.strike, 'C');
-        }
-
-        function toggleCurrency() {
-            currentCurrency = currentCurrency === 'USDT' ? 'INR' : 'USDT';
-            document.getElementById('currency_toggle_btn').innerText = `Currency: ${currentCurrency === 'USDT' ? 'USDT ($)' : 'INR (₹)'}`;
-            updateSpotPrice();
-            updateBalanceDisplay();
-            renderOptionChain();
-            recalcTradeForm();
-        }
-
-        function formatPrice(val) {
+        function formatMoney(val) {
             if (currentCurrency === 'INR') {
                 return `₹${(val * inrRate).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
             }
             return `$${val.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
         }
 
-        function updateSpotPrice() {
+        function formatRawNum(val) {
+            return val.toLocaleString('en-US', {minimumFractionDigits:1, maximumFractionDigits:2});
+        }
+
+        // =========================================================================
+        // Navigation & Views
+        // =========================================================================
+        function switchAppMode(mode) {
+            const scrOpt = document.getElementById('screen_options');
+            const scrFut = document.getElementById('screen_futures');
+            const navOpt = document.getElementById('bnav_options');
+            const navFut = document.getElementById('bnav_futures');
+
+            if (mode === 'OPTIONS') {
+                scrOpt.style.display = 'flex';
+                scrFut.style.display = 'none';
+                navOpt.classList.add('active');
+                navFut.classList.remove('active');
+                renderOptionChain();
+            } else {
+                scrOpt.style.display = 'none';
+                scrFut.style.display = 'flex';
+                navFut.classList.add('active');
+                navOpt.classList.remove('active');
+                loadFuturesTV();
+            }
+        }
+
+        function switchSubNav(tab) {
+            switchAppMode('OPTIONS');
+            ['chain', 'trade', 'positions', 'orders'].forEach(t => {
+                document.getElementById(`tab_${t}`).classList.remove('active');
+            });
+            document.getElementById(`tab_${tab.toLowerCase()}`).classList.add('active');
+
+            document.getElementById('view_chain').style.display = tab === 'CHAIN' ? 'block' : 'none';
+            document.getElementById('view_trade').style.display = tab === 'TRADE' ? 'flex' : 'none';
+            document.getElementById('view_positions').style.display = tab === 'POSITIONS' ? 'block' : 'none';
+            document.getElementById('view_orders').style.display = tab === 'ORDERS' ? 'block' : 'none';
+
+            if (tab === 'POSITIONS') renderPositions();
+            if (tab === 'ORDERS') renderOrders();
+        }
+
+        function cycleViewMode() {
+            const modes = ['PRICE', 'ALL', 'OI', 'GREEKS'];
+            let nextIdx = (modes.indexOf(currentViewMode) + 1) % modes.length;
+            currentViewMode = modes[nextIdx];
+            showToast(`View Mode: ${currentViewMode}`);
+            renderOptionChain();
+        }
+
+        function toggleThemeMode() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme_toggle_btn').innerText = currentTheme === 'light' ? '☀️' : '🌙';
+        }
+
+        function toggleCurrency() {
+            currentCurrency = currentCurrency === 'INR' ? 'USDT' : 'INR';
+            document.getElementById('currency_toggle_btn').innerText = currentCurrency === 'INR' ? '₹ INR' : '$ USDT';
+            updateAllBalances();
+            renderOptionChain();
+            onTradeInputChange();
+        }
+
+        function toggleSymbol() {
+            currentSymbol = currentSymbol === 'BTC' ? 'ETH' : 'BTC';
+            document.getElementById('coin_avatar').innerText = currentSymbol === 'BTC' ? '₿' : 'Ξ';
+            document.getElementById('symbol_label').innerText = `${currentSymbol} • USDT`;
+            document.getElementById('slider_price_label').innerText = `${currentSymbol} price`;
+            document.getElementById('ob_qty_unit').innerText = `Qty (${currentSymbol})`;
+
             const S = spotPrices[currentSymbol];
-            document.getElementById('spot_price_tag').innerText = formatPrice(S);
+            activeContract.strike = Math.round(S / (currentSymbol === 'BTC' ? 500 : 25)) * (currentSymbol === 'BTC' ? 500 : 25);
+            
+            const sl = document.getElementById('slider_spot');
+            sl.min = (S * 0.8).toFixed(0);
+            sl.max = (S * 1.2).toFixed(0);
+            sl.value = S.toFixed(0);
+
+            updateHeaderPrice();
+            renderOptionChain();
+            selectContract(activeContract.strike, 'C');
         }
 
-        function updateBalanceDisplay() {
-            document.getElementById('avail_bal_display').innerText = formatPrice(userBalance);
+        function updateHeaderPrice() {
+            const S = spotPrices[currentSymbol];
+            document.getElementById('header_spot_price').innerText = formatRawNum(S);
         }
 
-        function resetBalance() {
-            if (!confirm("Kya aap virtual balance ko reset karna chahte hain?")) return;
+        function updateAllBalances() {
+            const txt = formatMoney(userBalance);
+            document.getElementById('form_avail_bal').innerText = `${txt} ⊕`;
+            document.getElementById('bottom_avail_bal_text').innerText = `${txt} ⌃`;
+        }
+
+        function resetVirtualAccount() {
+            if (!confirm("Reset virtual balance to ₹8,40,000 ($10,000)?")) return;
             userBalance = 10000.0;
-            activeOptionPositions = [];
-            closedOptionTrades = [];
+            activePositions = [];
+            completedOrders = [];
             localStorage.setItem('delta_paper_balance', '10000');
             localStorage.setItem('delta_opt_positions', '[]');
             localStorage.setItem('delta_opt_history', '[]');
-            updateBalanceDisplay();
-            renderPositionsTab();
-            renderOrdersTab();
-            showToast("Account Reset Successfully!", "success");
+            updateAllBalances();
+            renderPositions();
+            renderOrders();
+            showToast("Virtual Account Reset Successful!");
         }
 
-        // =========================================================================
-        // 3. Option Chain with ITM/ATM/OTM, Volume, OI & Greeks
-        // =========================================================================
-        function selectExpiryPill(idx, label, tVal) {
+        function selectExpiry(idx, label, tVal) {
             activeExpiryIndex = idx;
             activeExpiryLabel = label;
             activeExpiryT = tVal;
-            document.querySelectorAll('.expiry-pill').forEach((p, i) => {
-                p.classList.toggle('active', i === idx);
+            document.querySelectorAll('.expiry-chip').forEach((c, i) => {
+                c.classList.toggle('active', i === idx);
             });
             renderOptionChain();
         }
 
+        // =========================================================================
+        // Option Chain Matrix Builder
+        // =========================================================================
         function renderOptionChain() {
-            const thead = document.getElementById('chain_thead_row');
+            const thead = document.getElementById('chain_th_row');
             const tbody = document.getElementById('chain_tbody');
             if (!thead || !tbody) return;
 
             const S = spotPrices[currentSymbol];
-            const step = currentSymbol === 'BTC' ? 500 : 20;
+            const step = currentSymbol === 'BTC' ? 500 : 25;
             const atm = Math.round(S / step) * step;
 
-            // Render Table Headers based on Filter View
-            if (chainViewMode === 'ALL') {
+            // Render Header based on Mode
+            if (currentViewMode === 'PRICE') {
                 thead.innerHTML = `
-                    <th style="color:#2ea043;">Type</th>
-                    <th style="color:#2ea043;">OI (Qty)</th>
-                    <th style="color:#2ea043;">Delta (Δ)</th>
-                    <th style="color:#2ea043;">Theta (Θ)</th>
-                    <th style="color:#2ea043;">Bid / Ask</th>
-                    <th style="color:#2ea043;">Mark price [C]</th>
-                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
-                    <th style="color:#f85149;">[P] Mark price</th>
-                    <th style="color:#f85149;">Bid / Ask</th>
-                    <th style="color:#f85149;">Theta (Θ)</th>
-                    <th style="color:#f85149;">Delta (Δ)</th>
-                    <th style="color:#f85149;">OI (Qty)</th>
-                    <th style="color:#f85149;">Type</th>
+                    <th style="color:var(--text-secondary); text-align:right; width:22%;">Bid / Ask</th>
+                    <th style="color:var(--text-primary); text-align:center; width:22%;">Mark price <span style="color:var(--green); font-size:10px;">C</span></th>
+                    <th style="color:var(--text-secondary); text-align:center; width:12%;">Strike</th>
+                    <th style="color:var(--text-primary); text-align:center; width:22%;"><span style="color:var(--red); font-size:10px;">P</span> Mark price</th>
+                    <th style="color:var(--text-secondary); text-align:left; width:22%;">Bid / Ask</th>
                 `;
-            } else if (chainViewMode === 'GREEKS') {
+            } else if (currentViewMode === 'OI') {
                 thead.innerHTML = `
-                    <th style="color:#2ea043;">Type</th>
-                    <th style="color:#2ea043;">Delta (Δ)</th>
-                    <th style="color:#2ea043;">Gamma (Γ)</th>
-                    <th style="color:#2ea043;">Theta (Θ)</th>
-                    <th style="color:#2ea043;">Vega (ν)</th>
-                    <th style="color:#2ea043;">Mark price [C]</th>
-                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
-                    <th style="color:#f85149;">[P] Mark price</th>
-                    <th style="color:#f85149;">Vega (ν)</th>
-                    <th style="color:#f85149;">Theta (Θ)</th>
-                    <th style="color:#f85149;">Gamma (Γ)</th>
-                    <th style="color:#f85149;">Delta (Δ)</th>
-                    <th style="color:#f85149;">Type</th>
+                    <th style="color:var(--text-secondary); width:20%;">24h Vol</th>
+                    <th style="color:var(--green); width:20%;">OI (Qty) C</th>
+                    <th style="color:var(--text-secondary); width:20%;">Strike</th>
+                    <th style="color:var(--red); width:20%;">P OI (Qty)</th>
+                    <th style="color:var(--text-secondary); width:20%;">24h Vol</th>
                 `;
-            } else if (chainViewMode === 'OI') {
+            } else if (currentViewMode === 'GREEKS') {
                 thead.innerHTML = `
-                    <th style="color:#2ea043;">Type</th>
-                    <th style="color:#2ea043;">24h Vol</th>
-                    <th style="color:#2ea043;">OI (Qty) [C]</th>
-                    <th style="color:#2ea043;">Mark [C]</th>
-                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
-                    <th style="color:#f85149;">Mark [P]</th>
-                    <th style="color:#f85149;">[P] OI (Qty)</th>
-                    <th style="color:#f85149;">24h Vol</th>
-                    <th style="color:#f85149;">Type</th>
+                    <th style="color:var(--blue);">Delta (Δ)</th>
+                    <th style="color:var(--red);">Theta (Θ)</th>
+                    <th style="color:var(--text-secondary);">Strike</th>
+                    <th style="color:var(--red);">Theta (Θ)</th>
+                    <th style="color:var(--blue);">Delta (Δ)</th>
                 `;
             } else {
-                // PRICE VIEW
+                // ALL VIEW
                 thead.innerHTML = `
-                    <th style="color:#2ea043;">Type</th>
-                    <th style="color:#2ea043; text-align:right;">Bid / Ask</th>
-                    <th style="color:#2ea043; text-align:left; padding-left:12px;">Mark price [C]</th>
-                    <th style="color:#e3b341; background:#0d1117;">Strike</th>
-                    <th style="color:#f85149; text-align:right; padding-right:12px;">[P] Mark price</th>
-                    <th style="color:#f85149; text-align:left;">Bid / Ask</th>
-                    <th style="color:#f85149;">Type</th>
+                    <th style="color:var(--text-secondary);">Type</th>
+                    <th style="color:var(--blue);">Delta</th>
+                    <th style="color:var(--green);">Mark [C]</th>
+                    <th style="color:var(--text-secondary);">Strike</th>
+                    <th style="color:var(--red);">[P] Mark</th>
+                    <th style="color:var(--blue);">Delta</th>
+                    <th style="color:var(--text-secondary);">Type</th>
                 `;
             }
 
             let strikes = [];
-            for (let k = atm - (step * 7); k <= atm + (step * 7); k += step) {
+            for (let k = atm - (step * 8); k <= atm + (step * 8); k += step) {
                 strikes.push(k);
             }
 
             let html = '';
             strikes.forEach(K => {
-                const g = calculateOptionGreeks(S, K, activeExpiryT);
+                const g = calculateGreeks(S, K, activeExpiryT);
                 const isATM = K === atm;
                 const isITMCall = S > K;
                 const isITMPut = S < K;
 
-                const callPrice = g.call;
-                const putPrice = g.put;
-                const callBid = (callPrice * 0.98).toFixed(1);
-                const callAsk = (callPrice * 1.02).toFixed(1);
-                const putBid = (putPrice * 0.98).toFixed(1);
-                const putAsk = (putPrice * 1.02).toFixed(1);
+                const cPrice = g.call;
+                const pPrice = g.put;
+                const cBid = (cPrice * 0.985).toFixed(1);
+                const cAsk = (cPrice * 1.015).toFixed(1);
+                const pBid = (pPrice * 0.985).toFixed(1);
+                const pAsk = (pPrice * 1.015).toFixed(1);
 
-                const callMoneynessTag = isATM ? '<span class="moneyness-tag tag-atm">ATM</span>' : (isITMCall ? '<span class="moneyness-tag tag-itm-call">ITM</span>' : '<span class="moneyness-tag tag-otm">OTM</span>');
-                const putMoneynessTag = isATM ? '<span class="moneyness-tag tag-atm">ATM</span>' : (isITMPut ? '<span class="moneyness-tag tag-itm-put">ITM</span>' : '<span class="moneyness-tag tag-otm">OTM</span>');
+                // Simulated 24h Pct Changes
+                const dist = (K - atm) / step;
+                const cPct = (isITMCall ? 15 + Math.abs(dist) * 4 : -25 - Math.abs(dist) * 8).toFixed(2);
+                const pPct = (isITMPut ? 20 + Math.abs(dist) * 5 : -35 - Math.abs(dist) * 6).toFixed(2);
 
-                // Simulated OI & Volume
-                const dist = Math.abs(K - atm) / step;
-                const oiCall = (Math.max(0.1, 4.5 - dist * 0.5)).toFixed(2) + 'K';
-                const oiPut = (Math.max(0.1, 3.8 - dist * 0.4)).toFixed(2) + 'K';
-                const volCall = (Math.max(1.2, 24.5 - dist * 2.5)).toFixed(1) + 'M';
-                const volPut = (Math.max(0.8, 18.2 - dist * 1.8)).toFixed(1) + 'M';
+                const cPctClass = parseFloat(cPct) >= 0 ? 'pct-up' : 'pct-down';
+                const pPctClass = parseFloat(pPct) >= 0 ? 'pct-up' : 'pct-down';
 
-                if (chainViewMode === 'ALL') {
+                const cMTag = isATM ? '<span class="m-tag m-atm">ATM</span>' : (isITMCall ? '<span class="m-tag m-itm-c">ITM</span>' : '<span class="m-tag m-otm">OTM</span>');
+                const pMTag = isATM ? '<span class="m-tag m-atm">ATM</span>' : (isITMPut ? '<span class="m-tag m-itm-p">ITM</span>' : '<span class="m-tag m-otm">OTM</span>');
+
+                // Simulated Volume & OI
+                const oiC = (Math.max(0.1, 4.2 - Math.abs(dist) * 0.4)).toFixed(2) + 'K';
+                const oiP = (Math.max(0.1, 3.6 - Math.abs(dist) * 0.35)).toFixed(2) + 'K';
+                const volC = (Math.max(0.5, 24.0 - Math.abs(dist) * 2.2)).toFixed(2) + 'M';
+                const volP = (Math.max(0.5, 18.5 - Math.abs(dist) * 1.8)).toFixed(2) + 'M';
+
+                // Imbalance ratio
+                const ceRatio = Math.min(80, Math.max(20, 50 - dist * 5));
+                const peRatio = 100 - ceRatio;
+
+                if (currentViewMode === 'PRICE') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')">${oiCall}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#58a6ff;">+${g.callDelta}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#f85149;">${g.callTheta}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#8b949e;">${callBid}/${callAsk}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
-
-                            <td onclick="openTradeForContract(${K}, 'C')">
-                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                        <tr class="${isITMCall ? 'row-itm-c' : (isITMPut ? 'row-itm-p' : '')}">
+                            <td onclick="selectContract(${K}, 'C')" style="text-align:right;">
+                                <div class="bidask-stack">
+                                    <span>${cBid}</span>
+                                    <span>${cAsk}</span>
+                                </div>
                             </td>
-
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#8b949e;">${putBid}/${putAsk}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149;">${g.putTheta}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#58a6ff;">${g.putDelta}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${oiPut}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                            <td onclick="selectContract(${K}, 'C')">
+                                <div class="mark-stack">
+                                    <span class="mark-price-num">${cPrice.toFixed(2)}</span>
+                                    <span class="mark-pct-num ${cPctClass}">${parseFloat(cPct) >= 0 ? '+' : ''}${cPct}%</span>
+                                </div>
+                            </td>
+                            <td onclick="selectContract(${K}, 'C')">
+                                <div class="strike-cell-box">
+                                    <span class="strike-number ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                                    <div class="sentiment-bar-wrap">
+                                        <div class="sentiment-bar-ce" style="width:${ceRatio}%;"></div>
+                                        <div class="sentiment-bar-pe" style="width:${peRatio}%;"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td onclick="selectContract(${K}, 'P')">
+                                <div class="mark-stack">
+                                    <span class="mark-price-num">${pPrice.toFixed(2)}</span>
+                                    <span class="mark-pct-num ${pPctClass}">${parseFloat(pPct) >= 0 ? '+' : ''}${pPct}%</span>
+                                </div>
+                            </td>
+                            <td onclick="selectContract(${K}, 'P')" style="text-align:left;">
+                                <div class="bidask-stack">
+                                    <span>${pBid}</span>
+                                    <span>${pAsk}</span>
+                                </div>
+                            </td>
                         </tr>
                     `;
-                } else if (chainViewMode === 'GREEKS') {
+                } else if (currentViewMode === 'OI') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#58a6ff;">+${g.callDelta}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#e3b341;">${g.gamma}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#f85149;">${g.callTheta}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#bc8cff;">${g.vega}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
-
-                            <td onclick="openTradeForContract(${K}, 'C')">
-                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                        <tr class="${isITMCall ? 'row-itm-c' : (isITMPut ? 'row-itm-p' : '')}">
+                            <td onclick="selectContract(${K}, 'C')">${volC}</td>
+                            <td onclick="selectContract(${K}, 'C')" style="color:var(--green); font-weight:800;">${oiC}</td>
+                            <td onclick="selectContract(${K}, 'C')">
+                                <div class="strike-cell-box">
+                                    <span class="strike-number ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                                    <div class="sentiment-bar-wrap">
+                                        <div class="sentiment-bar-ce" style="width:${ceRatio}%;"></div>
+                                        <div class="sentiment-bar-pe" style="width:${peRatio}%;"></div>
+                                    </div>
+                                </div>
                             </td>
-
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#bc8cff;">${g.vega}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149;">${g.putTheta}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#e3b341;">${g.gamma}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#58a6ff;">${g.putDelta}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                            <td onclick="selectContract(${K}, 'P')" style="color:var(--red); font-weight:800;">${oiP}</td>
+                            <td onclick="selectContract(${K}, 'P')">${volP}</td>
                         </tr>
                     `;
-                } else if (chainViewMode === 'OI') {
+                } else if (currentViewMode === 'GREEKS') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')">${volCall}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="color:#2ea043; font-weight:800;">${oiCall}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')">${callPrice.toFixed(2)}</td>
-
-                            <td onclick="openTradeForContract(${K}, 'C')">
-                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                        <tr class="${isITMCall ? 'row-itm-c' : (isITMPut ? 'row-itm-p' : '')}">
+                            <td onclick="selectContract(${K}, 'C')" style="color:var(--blue); font-weight:800;">+${g.callDelta}</td>
+                            <td onclick="selectContract(${K}, 'C')" style="color:var(--red);">${g.callTheta}$</td>
+                            <td onclick="selectContract(${K}, 'C')">
+                                <div class="strike-cell-box">
+                                    <span class="strike-number ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                                </div>
                             </td>
-
-                            <td onclick="openTradeForContract(${K}, 'P')">${putPrice.toFixed(2)}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="color:#f85149; font-weight:800;">${oiPut}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${volPut}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                            <td onclick="selectContract(${K}, 'P')" style="color:var(--red);">${g.putTheta}$</td>
+                            <td onclick="selectContract(${K}, 'P')" style="color:var(--blue); font-weight:800;">${g.putDelta}</td>
                         </tr>
                     `;
                 } else {
-                    // PRICE VIEW
+                    // ALL VIEW
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="openTradeForContract(${K}, 'C')">${callMoneynessTag}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="text-align:right; color:#8b949e;">${callBid} / ${callAsk}</td>
-                            <td onclick="openTradeForContract(${K}, 'C')" style="text-align:left; padding-left:12px; color:#2ea043; font-weight:800;">${callPrice.toFixed(2)}</td>
-
-                            <td onclick="openTradeForContract(${K}, 'C')">
-                                <span class="strike-pill ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
+                        <tr class="${isITMCall ? 'row-itm-c' : (isITMPut ? 'row-itm-p' : '')}">
+                            <td onclick="selectContract(${K}, 'C')">${cMTag}</td>
+                            <td onclick="selectContract(${K}, 'C')" style="color:var(--blue);">+${g.callDelta}</td>
+                            <td onclick="selectContract(${K}, 'C')" style="color:var(--green); font-weight:800;">${cPrice.toFixed(2)}</td>
+                            <td onclick="selectContract(${K}, 'C')">
+                                <span class="strike-number ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
                             </td>
-
-                            <td onclick="openTradeForContract(${K}, 'P')" style="text-align:right; padding-right:12px; color:#f85149; font-weight:800;">${putPrice.toFixed(2)}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')" style="text-align:left; color:#8b949e;">${putBid} / ${putAsk}</td>
-                            <td onclick="openTradeForContract(${K}, 'P')">${putMoneynessTag}</td>
+                            <td onclick="selectContract(${K}, 'P')" style="color:var(--red); font-weight:800;">${pPrice.toFixed(2)}</td>
+                            <td onclick="selectContract(${K}, 'P')" style="color:var(--blue);">${g.putDelta}</td>
+                            <td onclick="selectContract(${K}, 'P')">${pMTag}</td>
                         </tr>
                     `;
                 }
@@ -1197,148 +1636,161 @@
         }
 
         // =========================================================================
-        // 4. Trade Tab & Calculator with Live Greeks
+        // Trade Tab Handler
         // =========================================================================
-        function openTradeForContract(strike, optType) {
-            activeOptionTrade.strike = strike;
-            activeOptionTrade.optType = optType;
-            
-            const S = spotPrices[currentSymbol];
-            const g = calculateOptionGreeks(S, strike, activeExpiryT);
-            const prem = optType === 'C' ? g.call : g.put;
-            activeOptionTrade.entryPrice = prem;
+        function selectContract(strike, optType) {
+            activeContract.strike = strike;
+            activeContract.optType = optType;
 
-            const isATM = Math.abs(strike - S) < (currentSymbol === 'BTC' ? 250 : 10);
+            const S = spotPrices[currentSymbol];
+            const g = calculateGreeks(S, strike, activeExpiryT);
+            const prem = optType === 'C' ? g.call : g.put;
+            activeContract.entryPrice = prem;
+
+            const isATM = Math.abs(strike - S) < (currentSymbol === 'BTC' ? 250 : 15);
             const isITM = (optType === 'C' && S > strike) || (optType === 'P' && S < strike);
-            
-            const moneynessTagElem = document.getElementById('active_contract_moneyness');
+
+            const mTag = document.getElementById('active_contract_moneyness_tag');
             if (isATM) {
-                moneynessTagElem.className = 'moneyness-tag tag-atm';
-                moneynessTagElem.innerText = 'ATM (At The Money)';
+                mTag.className = 'm-tag m-atm';
+                mTag.innerText = 'ATM';
             } else if (isITM) {
-                moneynessTagElem.className = optType === 'C' ? 'moneyness-tag tag-itm-call' : 'moneyness-tag tag-itm-put';
-                moneynessTagElem.innerText = 'ITM (In The Money)';
+                mTag.className = optType === 'C' ? 'm-tag m-itm-c' : 'm-tag m-itm-p';
+                mTag.innerText = 'ITM';
             } else {
-                moneynessTagElem.className = 'moneyness-tag tag-otm';
-                moneynessTagElem.innerText = 'OTM (Out of The Money)';
+                mTag.className = 'm-tag m-otm';
+                mTag.innerText = 'OTM';
             }
 
-            const title = `${currentSymbol}-${activeExpiryLabel.toUpperCase().replace(/\s+/g,'')}-${strike}-${optType}`;
-            document.getElementById('active_contract_title').innerText = title;
-            document.getElementById('active_contract_mark').innerText = formatPrice(prem);
-            document.getElementById('trade_price_input').value = prem.toFixed(1);
+            const cleanExpiry = activeExpiryLabel.split(' ')[0].toUpperCase();
+            const contractName = `${currentSymbol}-${cleanExpiry}26-${strike}-${optType}`;
+            document.getElementById('active_contract_name').innerText = contractName;
+            document.getElementById('active_contract_price_display').innerText = formatMoney(prem);
+            document.getElementById('trade_price_in').value = prem.toFixed(1);
 
-            // Update Greeks display
-            document.getElementById('trade_greek_delta').innerText = optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
-            document.getElementById('trade_greek_theta').innerText = `${optType === 'C' ? g.callTheta : g.putTheta}$/day`;
-            document.getElementById('trade_greek_gamma').innerText = `${g.gamma}`;
-            document.getElementById('trade_greek_vega').innerText = `$${g.vega}`;
+            // Greeks Strip
+            document.getElementById('trade_gk_delta').innerText = optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
+            document.getElementById('trade_gk_theta').innerText = `${optType === 'C' ? g.callTheta : g.putTheta}$/d`;
+            document.getElementById('trade_gk_gamma').innerText = `${g.gamma}`;
+            document.getElementById('trade_gk_vega').innerText = `$${g.vega}`;
 
-            // Update mini orderbook
-            document.getElementById('ob_ask_1').innerText = (prem * 1.01).toFixed(1);
-            document.getElementById('ob_ask_2').innerText = (prem * 1.02).toFixed(1);
-            document.getElementById('ob_ask_3').innerText = (prem * 1.03).toFixed(1);
-            document.getElementById('ob_bid_1').innerText = (prem * 0.99).toFixed(1);
-            document.getElementById('ob_bid_2').innerText = (prem * 0.98).toFixed(1);
-            document.getElementById('ob_bid_3').innerText = (prem * 0.97).toFixed(1);
+            // Order Book Mid Prices
+            document.getElementById('ob_mark_price').innerText = prem.toFixed(1);
+            document.getElementById('ob_ltp_price').innerText = `LTP ${(prem * 0.998).toFixed(1)}`;
 
-            recalcTradeForm();
-            resetCalculatorSliders();
-            switchOptSubTab('TRADE');
+            // Order Book Ladder
+            document.getElementById('ob_ask_1').innerText = (prem * 1.005).toFixed(1);
+            document.getElementById('ob_ask_2').innerText = (prem * 1.010).toFixed(1);
+            document.getElementById('ob_ask_3').innerText = (prem * 1.015).toFixed(1);
+            document.getElementById('ob_ask_4').innerText = (prem * 1.020).toFixed(1);
+            document.getElementById('ob_ask_5').innerText = (prem * 1.025).toFixed(1);
+
+            document.getElementById('ob_bid_1').innerText = (prem * 0.995).toFixed(1);
+            document.getElementById('ob_bid_2').innerText = (prem * 0.990).toFixed(1);
+            document.getElementById('ob_bid_3').innerText = (prem * 0.985).toFixed(1);
+            document.getElementById('ob_bid_4').innerText = (prem * 0.980).toFixed(1);
+            document.getElementById('ob_bid_5').innerText = (prem * 0.975).toFixed(1);
+
+            onTradeInputChange();
+            resetSimulator();
+            switchSubNav('TRADE');
         }
 
-        function setTradeSide(side) {
-            activeOptionTrade.side = side;
-            const btnBuy = document.getElementById('btn_trade_buy');
-            const btnSell = document.getElementById('btn_trade_sell');
-            const btnSub = document.getElementById('btn_main_opt_submit');
+        function setSide(side) {
+            activeContract.side = side;
+            const btnBuy = document.getElementById('btn_side_buy');
+            const btnSell = document.getElementById('btn_side_sell');
+            const submitBtn = document.getElementById('btn_submit_order');
 
             if (side === 'BUY') {
-                btnBuy.className = 'btn-side active buy';
-                btnSell.className = 'btn-side sell';
-                btnSub.className = 'btn-submit-main-opt buy';
-                btnSub.innerText = activeOptionTrade.optType === 'C' ? 'Buy Call' : 'Buy Put';
+                btnBuy.className = 'side-btn active buy';
+                btnSell.className = 'side-btn sell';
+                submitBtn.className = 'btn-main-order-submit buy';
+                submitBtn.innerText = activeContract.optType === 'C' ? 'Buy Call' : 'Buy Put';
             } else {
-                btnSell.className = 'btn-side active sell';
-                btnBuy.className = 'btn-side buy';
-                btnSub.className = 'btn-submit-main-opt sell';
-                btnSub.innerText = activeOptionTrade.optType === 'C' ? 'Sell Call' : 'Sell Put';
+                btnSell.className = 'side-btn active sell';
+                btnBuy.className = 'side-btn buy';
+                submitBtn.className = 'btn-main-order-submit sell';
+                submitBtn.innerText = activeContract.optType === 'C' ? 'Sell Call' : 'Sell Put';
             }
-            recalcTradeForm();
+            onTradeInputChange();
         }
 
-        function stepTradePrice(delta) {
-            const input = document.getElementById('trade_price_input');
+        function stepPrice(delta) {
+            const input = document.getElementById('trade_price_in');
             input.value = Math.max(0.1, parseFloat(input.value) + delta).toFixed(1);
-            recalcTradeForm();
+            onTradeInputChange();
         }
 
-        function stepTradeLots(delta) {
-            const input = document.getElementById('trade_lots_input');
+        function stepLots(delta) {
+            const input = document.getElementById('trade_lots_in');
             input.value = Math.max(0.01, parseFloat(input.value) + delta).toFixed(2);
-            recalcTradeForm();
+            onTradeInputChange();
         }
 
-        function recalcTradeForm() {
-            const price = parseFloat(document.getElementById('trade_price_input').value) || 0;
-            const lots = parseFloat(document.getElementById('trade_lots_input').value) || 0.10;
+        function onTradeInputChange() {
+            const price = parseFloat(document.getElementById('trade_price_in').value) || 0;
+            const lots = parseFloat(document.getElementById('trade_lots_in').value) || 0.10;
             const margin = price * lots;
 
-            document.getElementById('trade_est_margin').innerText = formatPrice(margin);
-            document.getElementById('calc_entry_val').innerText = formatPrice(price);
-            onCalcSliderChange();
+            document.getElementById('price_inr_equiv').innerText = `≈ ₹${(price * inrRate).toLocaleString('en-IN', {maximumFractionDigits:2})}`;
+            document.getElementById('lots_crypto_equiv').innerText = `≈ ${lots} ${currentSymbol}`;
+            document.getElementById('form_est_margin').innerText = formatMoney(margin);
+            document.getElementById('calc_entry_val').innerText = formatRawNum(price);
+
+            recalcSimulator();
         }
 
-        function executeOptionTradeFromForm() {
-            const price = parseFloat(document.getElementById('trade_price_input').value) || 0;
-            const lots = parseFloat(document.getElementById('trade_lots_input').value) || 0.10;
+        function placeVirtualOrder() {
+            const price = parseFloat(document.getElementById('trade_price_in').value) || 0;
+            const lots = parseFloat(document.getElementById('trade_lots_in').value) || 0.10;
             const margin = price * lots;
 
-            if (activeOptionTrade.side === 'BUY' && margin > userBalance) {
-                showToast("❌ Insufficient Balance!", "error");
+            if (activeContract.side === 'BUY' && margin > userBalance) {
+                showToast("❌ Insufficient Virtual Balance!");
                 return;
             }
 
-            if (activeOptionTrade.side === 'BUY') userBalance -= margin;
+            if (activeContract.side === 'BUY') userBalance -= margin;
             else userBalance += margin;
             localStorage.setItem('delta_paper_balance', userBalance.toString());
 
             const S = spotPrices[currentSymbol];
-            const g = calculateOptionGreeks(S, activeOptionTrade.strike, activeExpiryT);
-            const deltaVal = activeOptionTrade.optType === 'C' ? g.callDelta : g.putDelta;
-            const thetaVal = activeOptionTrade.optType === 'C' ? g.callTheta : g.putTheta;
+            const g = calculateGreeks(S, activeContract.strike, activeExpiryT);
+            const delta = activeContract.optType === 'C' ? g.callDelta : g.putDelta;
+            const theta = activeContract.optType === 'C' ? g.callTheta : g.putTheta;
 
-            const isATM = Math.abs(activeOptionTrade.strike - S) < (currentSymbol === 'BTC' ? 250 : 10);
-            const isITM = (activeOptionTrade.optType === 'C' && S > activeOptionTrade.strike) || (activeOptionTrade.optType === 'P' && S < activeOptionTrade.strike);
-            const moneyness = isATM ? 'ATM' : (isITM ? 'ITM' : 'OTM');
+            const isATM = Math.abs(activeContract.strike - S) < (currentSymbol === 'BTC' ? 250 : 15);
+            const isITM = (activeContract.optType === 'C' && S > activeContract.strike) || (activeContract.optType === 'P' && S < activeContract.strike);
+            const m = isATM ? 'ATM' : (isITM ? 'ITM' : 'OTM');
 
             const newPos = {
                 id: 'opt_' + Date.now(),
-                contract: `${currentSymbol}-${activeOptionTrade.strike}-${activeOptionTrade.optType}`,
-                optType: activeOptionTrade.optType,
-                side: activeOptionTrade.side,
-                moneyness: moneyness,
+                contract: `${currentSymbol}-${activeContract.strike}-${activeContract.optType}`,
+                optType: activeContract.optType,
+                side: activeContract.side,
                 lots: lots,
-                delta: deltaVal,
-                theta: thetaVal,
+                moneyness: m,
+                delta: delta,
+                theta: theta,
                 entryPrice: price,
                 expiryT: activeExpiryT,
-                strike: activeOptionTrade.strike
+                strike: activeContract.strike
             };
 
-            activeOptionPositions.push(newPos);
-            localStorage.setItem('delta_opt_positions', JSON.stringify(activeOptionPositions));
+            activePositions.push(newPos);
+            localStorage.setItem('delta_opt_positions', JSON.stringify(activePositions));
 
-            updateBalanceDisplay();
-            showToast(`✅ ${activeOptionTrade.side} ${newPos.contract} Order Executed!`, "success");
-            switchOptSubTab('POS');
+            updateAllBalances();
+            showToast(`✅ ${activeContract.side} ${newPos.contract} Executed!`);
+            switchSubNav('POSITIONS');
         }
 
         // =========================================================================
         // PNL Calculator Sliders Engine
         // =========================================================================
-        function onCalcSliderChange() {
-            const simSpot = parseFloat(document.getElementById('slider_btc_price').value);
+        function recalcSimulator() {
+            const simSpot = parseFloat(document.getElementById('slider_spot').value);
             const simHours = parseFloat(document.getElementById('slider_time').value);
             const simIV = parseFloat(document.getElementById('slider_iv').value) / 100;
 
@@ -1346,110 +1798,106 @@
             const offsetPct = ((simSpot - baseSpot) / baseSpot * 100).toFixed(1);
             const sign = offsetPct >= 0 ? '+' : '';
 
-            document.getElementById('calc_btc_display').innerText = formatPrice(simSpot);
-            document.getElementById('calc_btc_offset').innerText = `${sign}${offsetPct}% above current`;
+            document.getElementById('sim_price_box_val').innerText = simSpot.toLocaleString();
+            document.getElementById('slider_price_subtext').innerText = `${sign}${offsetPct}% above current`;
 
-            document.getElementById('calc_time_display').innerText = `${simHours}h`;
-            document.getElementById('calc_time_offset').innerText = `${simHours} hrs to expiry`;
+            document.getElementById('sim_time_box_val').innerText = `${simHours}h`;
+            document.getElementById('slider_time_subtext').innerText = `${simHours} hrs to expiry`;
 
-            document.getElementById('calc_iv_display').innerText = `${(simIV * 100).toFixed(0)}%`;
-            document.getElementById('calc_iv_offset').innerText = `Current ${(simIV * 100).toFixed(0)}%`;
+            document.getElementById('sim_iv_box_val').innerText = `${(simIV * 100).toFixed(0)}%`;
+            document.getElementById('slider_iv_subtext').innerText = `Current ${(simIV * 100).toFixed(0)}%`;
 
-            // Calculate simulated option price
             const simT = Math.max(0.0001, simHours / (365 * 24));
-            const simGreeks = calculateOptionGreeks(simSpot, activeOptionTrade.strike, simT, simIV);
-            const simPrem = activeOptionTrade.optType === 'C' ? simGreeks.call : simGreeks.put;
+            const simGreeks = calculateGreeks(simSpot, activeContract.strike, simT, simIV);
+            const simPrem = activeContract.optType === 'C' ? simGreeks.call : simGreeks.put;
 
-            const entry = parseFloat(document.getElementById('trade_price_input').value) || activeOptionTrade.entryPrice;
-            const lots = parseFloat(document.getElementById('trade_lots_input').value) || 0.10;
+            const entry = parseFloat(document.getElementById('trade_price_in').value) || activeContract.entryPrice;
+            const lots = parseFloat(document.getElementById('trade_lots_in').value) || 0.10;
 
             let pnl = 0;
-            if (activeOptionTrade.side === 'BUY') {
+            if (activeContract.side === 'BUY') {
                 pnl = (simPrem - entry) * lots;
             } else {
                 pnl = (entry - simPrem) * lots;
             }
-            const roi = (pnl / (entry * lots)) * 100;
 
-            document.getElementById('calc_sim_price').innerText = formatPrice(simPrem);
+            document.getElementById('calc_sim_price').innerText = formatRawNum(simPrem);
             
             const pnlElem = document.getElementById('calc_sim_pnl');
             const pnlSign = pnl >= 0 ? '+' : '';
-            pnlElem.innerText = `${pnlSign}${formatPrice(pnl)} (${pnlSign}${roi.toFixed(1)}%)`;
-            pnlElem.style.color = pnl >= 0 ? '#2ea043' : '#f85149';
+            pnlElem.innerText = `${pnlSign}${formatMoney(pnl)}`;
+            pnlElem.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
         }
 
-        function stepSliderPrice(delta) {
-            const sl = document.getElementById('slider_btc_price');
+        function stepSimPrice(delta) {
+            const sl = document.getElementById('slider_spot');
             sl.value = Math.max(parseFloat(sl.min), Math.min(parseFloat(sl.max), parseFloat(sl.value) + delta));
-            onCalcSliderChange();
+            recalcSimulator();
         }
 
-        function stepSliderTime(delta) {
+        function stepSimTime(delta) {
             const sl = document.getElementById('slider_time');
             sl.value = Math.max(0, Math.min(24, parseFloat(sl.value) + delta));
-            onCalcSliderChange();
+            recalcSimulator();
         }
 
-        function stepSliderIV(delta) {
+        function stepSimIV(delta) {
             const sl = document.getElementById('slider_iv');
             sl.value = Math.max(10, Math.min(100, parseFloat(sl.value) + delta));
-            onCalcSliderChange();
+            recalcSimulator();
         }
 
-        function resetCalculatorSliders() {
+        function resetSimulator() {
             const S = spotPrices[currentSymbol];
-            const slPrice = document.getElementById('slider_btc_price');
-            slPrice.value = S;
+            document.getElementById('slider_spot').value = S;
             document.getElementById('slider_time').value = 13;
-            document.getElementById('slider_iv').value = 35;
-            onCalcSliderChange();
+            document.getElementById('slider_iv').value = 30;
+            recalcSimulator();
         }
 
         // =========================================================================
-        // 5. Positions & Orders Lists
+        // Positions & Orders Tabs
         // =========================================================================
-        function renderPositionsTab() {
-            const table = document.getElementById('pos_grid_table');
-            const tbody = document.getElementById('pos_grid_tbody');
-            const alertMsg = document.getElementById('no_pos_alert');
-            const countElem = document.getElementById('opt_pos_count');
+        function renderPositions() {
+            const table = document.getElementById('pos_table');
+            const tbody = document.getElementById('pos_tbody');
+            const msg = document.getElementById('no_positions_msg');
+            const badge = document.getElementById('pos_count_badge');
 
-            countElem.innerText = activeOptionPositions.length;
+            badge.innerText = activePositions.length;
 
-            if (!activeOptionPositions || activeOptionPositions.length === 0) {
+            if (!activePositions || activePositions.length === 0) {
                 table.style.display = 'none';
-                alertMsg.style.display = 'block';
+                msg.style.display = 'block';
                 return;
             }
 
             table.style.display = 'table';
-            alertMsg.style.display = 'none';
+            msg.style.display = 'none';
 
             const S = spotPrices[currentSymbol];
             let html = '';
-            activeOptionPositions.forEach((pos, idx) => {
-                const g = calculateOptionGreeks(S, pos.strike, pos.expiryT);
+            activePositions.forEach((pos, idx) => {
+                const g = calculateGreeks(S, pos.strike, pos.expiryT);
                 const mark = pos.optType === 'C' ? g.call : g.put;
                 const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
-                const pnlColor = pnl >= 0 ? '#2ea043' : '#f85149';
+                const pnlColor = pnl >= 0 ? 'var(--green)' : 'var(--red)';
                 const sign = pnl >= 0 ? '+' : '';
-
-                const tagClass = pos.moneyness === 'ATM' ? 'tag-atm' : (pos.moneyness === 'ITM' ? (pos.optType === 'C' ? 'tag-itm-call' : 'tag-itm-put') : 'tag-otm');
 
                 html += `
                     <tr>
                         <td><b>${pos.contract}</b></td>
-                        <td><span class="moneyness-tag ${tagClass}">${pos.moneyness || 'OTM'}</span></td>
-                        <td style="color:${pos.side === 'BUY' ? '#2ea043' : '#f85149'}; font-weight:800;">${pos.side}</td>
+                        <td style="color:${pos.side === 'BUY' ? 'var(--green)' : 'var(--red)'}; font-weight:800;">${pos.side}</td>
                         <td>${pos.lots}</td>
-                        <td style="color:#58a6ff;">${pos.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`}</td>
-                        <td style="color:#f85149;">${pos.optType === 'C' ? g.callTheta : g.putTheta}$</td>
-                        <td>${formatPrice(pos.entryPrice)}</td>
-                        <td style="color:#58a6ff; font-weight:800;">${formatPrice(mark)}</td>
-                        <td style="color:${pnlColor}; font-weight:800;">${sign}${formatPrice(pnl)}</td>
+                        <td style="color:var(--blue);">${pos.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`}</td>
+                        <td style="color:var(--red);">${pos.optType === 'C' ? g.callTheta : g.putTheta}$</td>
+                        <td>${formatMoney(pos.entryPrice)}</td>
+                        <td style="font-weight:800;">${formatMoney(mark)}</td>
+                        <td style="color:${pnlColor}; font-weight:800;">${sign}${formatMoney(pnl)}</td>
                         <td>
-                            <button class="btn-hdr" style="color:#f85149; border-color:#f85149;" onclick="closePositionIdx(${idx})">✕ Square Off</button>
+                            <button style="background:transparent; border:1px solid var(--red); color:var(--red); font-size:11px; font-weight:800; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="squareOffPosition(${idx})">
+                                ✕ Close
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -1457,17 +1905,17 @@
             tbody.innerHTML = html;
         }
 
-        function closePositionIdx(idx) {
-            const pos = activeOptionPositions[idx];
+        function squareOffPosition(idx) {
+            const pos = activePositions[idx];
             const S = spotPrices[currentSymbol];
-            const g = calculateOptionGreeks(S, pos.strike, pos.expiryT);
+            const g = calculateGreeks(S, pos.strike, pos.expiryT);
             const mark = pos.optType === 'C' ? g.call : g.put;
             const pnl = pos.side === 'BUY' ? (mark - pos.entryPrice) * pos.lots : (pos.entryPrice - mark) * pos.lots;
 
             userBalance += (pos.lots * mark);
             localStorage.setItem('delta_paper_balance', userBalance.toString());
 
-            closedOptionTrades.push({
+            completedOrders.push({
                 contract: pos.contract,
                 side: pos.side,
                 lots: pos.lots,
@@ -1476,52 +1924,52 @@
                 pnl: pnl,
                 time: new Date().toLocaleTimeString()
             });
-            localStorage.setItem('delta_opt_history', JSON.stringify(closedOptionTrades));
+            localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
 
-            activeOptionPositions.splice(idx, 1);
-            localStorage.setItem('delta_opt_positions', JSON.stringify(activeOptionPositions));
+            activePositions.splice(idx, 1);
+            localStorage.setItem('delta_opt_positions', JSON.stringify(activePositions));
 
-            updateBalanceDisplay();
-            renderPositionsTab();
-            showToast(`✅ Closed ${pos.contract} | PnL: ${formatPrice(pnl)}`, "success");
+            updateAllBalances();
+            renderPositions();
+            showToast(`✅ Squared Off ${pos.contract} | PnL: ${formatMoney(pnl)}`);
         }
 
-        function renderOrdersTab() {
-            const container = document.getElementById('orders_list_container');
-            const alertMsg = document.getElementById('no_orders_alert');
+        function renderOrders() {
+            const wrapper = document.getElementById('orders_list_wrapper');
+            const msg = document.getElementById('no_orders_msg');
 
-            if (!closedOptionTrades || closedOptionTrades.length === 0) {
-                alertMsg.style.display = 'block';
-                container.innerHTML = '';
+            if (!completedOrders || completedOrders.length === 0) {
+                msg.style.display = 'block';
+                wrapper.innerHTML = '';
                 return;
             }
 
-            alertMsg.style.display = 'none';
+            msg.style.display = 'none';
             let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
-            closedOptionTrades.slice().reverse().forEach(tr => {
-                const isWin = tr.pnl >= 0;
+            completedOrders.slice().reverse().forEach(ord => {
+                const isWin = ord.pnl >= 0;
                 html += `
-                    <div style="background:#0b0e14; border:1px solid #202736; border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+                    <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:8px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; font-size:12.5px;">
                         <div>
-                            <span style="font-weight:800; color:#f0f6fc;">${tr.contract}</span>
-                            <span style="color:#8b949e; margin-left:8px;">${tr.side} ${tr.lots} lots</span>
-                            <div style="font-size:10px; color:#8b949e; margin-top:3px;">${tr.time}</div>
+                            <span style="font-weight:800;">${ord.contract}</span>
+                            <span style="color:var(--text-secondary); margin-left:8px;">${ord.side} ${ord.lots} lots</span>
+                            <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">${ord.time}</div>
                         </div>
-                        <div style="text-align:right; font-family:'JetBrains Mono'; font-weight:800; font-size:13px; color:${isWin ? '#2ea043' : '#f85149'};">
-                            ${isWin ? '+' : ''}${formatPrice(tr.pnl)}
+                        <div style="text-align:right; font-family:'JetBrains Mono'; font-weight:800; font-size:13.5px; color:${isWin ? 'var(--green)' : 'var(--red)'};">
+                            ${isWin ? '+' : ''}${formatMoney(ord.pnl)}
                         </div>
                     </div>
                 `;
             });
             html += '</div>';
-            container.innerHTML = html;
+            wrapper.innerHTML = html;
         }
 
         // =========================================================================
-        // 6. Futures Chart Loader
+        // Futures Chart Loader
         // =========================================================================
-        function loadFuturesChart() {
-            const cont = document.getElementById('tradingview_chart_element');
+        function loadFuturesTV() {
+            const cont = document.getElementById('tv_chart_container');
             if (!cont || cont.innerHTML.trim() !== '') return;
 
             new TradingView.widget({
@@ -1529,32 +1977,32 @@
                 "symbol": "BINANCE:BTCUSDT.P",
                 "interval": "1",
                 "timezone": "Asia/Kolkata",
-                "theme": "dark",
+                "theme": currentTheme,
                 "style": "1",
                 "locale": "en",
-                "container_id": "tradingview_chart_element"
+                "container_id": "tv_chart_container"
             });
         }
 
-        function showToast(msg, type = "info") {
-            const cont = document.getElementById('toast_container');
-            if (!cont) return;
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = msg;
-            cont.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3500);
+        function showToast(msg) {
+            const box = document.getElementById('toast_box');
+            if (!box) return;
+            const t = document.createElement('div');
+            t.className = 'toast-msg';
+            t.innerText = msg;
+            box.appendChild(t);
+            setTimeout(() => { t.remove(); }, 3000);
         }
 
         // =========================================================================
-        // 7. Page Init
+        // Init
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
-            updateSpotPrice();
-            updateBalanceDisplay();
+            updateHeaderPrice();
+            updateAllBalances();
             renderOptionChain();
-            openTradeForContract(84000, 'C');
-            renderPositionsTab();
+            selectContract(84000, 'C');
+            renderPositions();
         });
     </script>
 </body>
