@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CoinDCX Pro - Crypto Futures & Options Cockpit Terminal (Live PNL, Greeks, Calculator)</title>
+    <title>CoinDCX Pro - Crypto Futures & Options Cockpit (Live PNL, Payoff Chart & Calculator)</title>
     <!-- TradingView Advanced Charting Library -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -110,13 +110,12 @@
         .header-left-group {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
         }
         .coindcx-brand-logo {
             display: flex;
             align-items: center;
             gap: 8px;
-            text-decoration: none;
             cursor: pointer;
         }
         .coindcx-logo-icon {
@@ -138,9 +137,7 @@
             letter-spacing: -0.5px;
             color: var(--text-main);
         }
-        .coindcx-logo-text span {
-            color: var(--cdx-orange);
-        }
+        .coindcx-logo-text span { color: var(--cdx-orange); }
         .coindcx-pro-tag {
             background: var(--cdx-orange-bg);
             color: var(--cdx-orange);
@@ -166,7 +163,7 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 700;
             padding: 5px 12px;
             border-radius: 6px;
@@ -263,7 +260,7 @@
             font-weight: 900;
         }
         .pair-title-text {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -295,7 +292,7 @@
         .stat-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-muted); }
 
         /* -------------------------------------------------------------
-           3. DERIVATIVES SUB-NAV TABS (Option Chain, Pro Trade, Pos, Orders)
+           3. DERIVATIVES SUB-NAV TABS
            ------------------------------------------------------------- */
         .coindcx-sub-navbar {
             background: var(--header-bg);
@@ -309,7 +306,7 @@
         }
         .sub-nav-links {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             height: 100%;
         }
         .sub-nav-item {
@@ -426,7 +423,7 @@
         #screen_futures { display: none; }
 
         /* =============================================================
-           OPTION CHAIN (CoinDCX Equity & Crypto Standard)
+           OPTION CHAIN
            ============================================================= */
         .chain-table-box {
             flex: 1;
@@ -512,7 +509,7 @@
         .chip-otm { color: var(--text-faint); }
 
         /* =============================================================
-           PRO TRADE & COCKPIT PANEL (CoinDCX Standard Layout)
+           PRO TRADE & COCKPIT PANEL WITH BUILT-IN CALCULATOR & PAYOFF
            ============================================================= */
         .pro-trade-container {
             display: none;
@@ -520,7 +517,7 @@
             overflow-y: auto;
             padding: 12px 16px;
             gap: 14px;
-            max-width: 960px;
+            max-width: 980px;
             margin: 0 auto;
             width: 100%;
         }
@@ -545,10 +542,10 @@
 
         .trade-cockpit-grid {
             display: grid;
-            grid-template-columns: 200px 1fr;
+            grid-template-columns: 210px 1fr;
             gap: 14px;
         }
-        @media (max-width: 700px) {
+        @media (max-width: 720px) {
             .trade-cockpit-grid { grid-template-columns: 1fr; }
         }
 
@@ -678,6 +675,24 @@
             outline: none;
         }
 
+        /* Live Instant Profit Box embedded inside Order Form */
+        .order-form-pnl-preview-box {
+            background: var(--bg-surface-secondary);
+            border: 1px dashed var(--cdx-green-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+        }
+        .pnl-preview-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 13px;
+            color: var(--cdx-green);
+        }
+
         /* Percentage Quick Picks */
         .pct-picks-row {
             display: grid;
@@ -712,41 +727,82 @@
         .coindcx-cta-submit.sell { background: var(--cdx-red); }
 
         /* =============================================================
-           INTERACTIVE PNL CALCULATOR & PAYOFF SIMULATOR
+           CALCULATOR (SIMPLE VS CHART MODE) EMBEDDED IN ORDER AREA
            ============================================================= */
-        .coindcx-calc-card {
+        .calculator-suite-container {
             background: var(--bg-surface);
             border: 1px solid var(--border-ui);
             border-radius: 8px;
-            padding: 16px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             box-shadow: var(--card-shadow);
         }
+        .calc-mode-switcher {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            padding: 3px;
+            border-radius: 6px;
+        }
+        .calc-mode-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .calc-mode-btn.active {
+            background: var(--cdx-orange);
+            color: #FFFFFF;
+        }
+
+        /* Payoff Chart Canvas Box */
+        .payoff-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 170px;
+            background: var(--bg-surface-secondary);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-ui);
+        }
+        #payoff_canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
         .calc-3col-summary {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             text-align: center;
             background: var(--bg-surface-secondary);
             border-radius: 6px;
-            padding: 10px 4px;
+            padding: 8px 4px;
         }
         .calc-lbl { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-bottom: 2px; }
-        .calc-num { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 800; color: var(--text-main); }
+        .calc-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; color: var(--text-main); }
 
         .slider-control-card {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
         .slider-meta-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .slider-meta-header .title { font-size: 12px; font-weight: 700; }
-        .slider-meta-header .subtitle { font-size: 11px; color: var(--text-muted); }
+        .slider-meta-header .title { font-size: 11.5px; font-weight: 700; }
+        .slider-meta-header .subtitle { font-size: 10.5px; color: var(--text-muted); }
         .coindcx-range-slider {
             width: 100%;
             height: 4px;
@@ -757,16 +813,47 @@
             cursor: pointer;
         }
 
-        /* Greeks Strip */
-        .greeks-metrics-strip {
+        /* =============================================================
+           FUTURES COCKPIT WITH DEDICATED FUTURES ORDER PANEL
+           ============================================================= */
+        .futures-cockpit-layout {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-columns: 1fr 310px;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        @media (max-width: 850px) {
+            .futures-cockpit-layout { grid-template-columns: 1fr; overflow-y: auto; }
+        }
+
+        .futures-order-panel {
+            background: var(--header-bg);
+            border-left: 1px solid var(--border-ui);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+        .leverage-selector-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            padding: 4px 8px;
             border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
+        }
+        .leverage-badge {
+            background: var(--cdx-orange-bg);
+            color: var(--cdx-orange);
+            border: 1px solid var(--cdx-orange-border);
+            font-size: 11px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
         /* =============================================================
@@ -777,7 +864,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            max-width: 960px;
+            max-width: 980px;
             margin: 0 auto;
             width: 100%;
         }
@@ -787,22 +874,8 @@
             font-weight: 800;
         }
 
-        /* =============================================================
-           FUTURES VIEW
-           ============================================================= */
-        .futures-header-toolbar {
-            background: var(--header-bg);
-            border-bottom: 1px solid var(--border-ui);
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 48px;
-            flex-shrink: 0;
-        }
-
         /* -------------------------------------------------------------
-           6. STICKY BOTTOM BALANCE BAR & MOBILE NAV (CoinDCX Style)
+           6. STICKY BOTTOM BALANCE BAR & MOBILE NAV
            ------------------------------------------------------------- */
         .coindcx-sticky-bottom-bar {
             background: var(--bg-surface-secondary);
@@ -951,12 +1024,12 @@
                 <span class="stat-val" id="stat_24h_vol">48.25K BTC</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Funding / Countdown</span>
-                <span class="stat-val" style="color:var(--cdx-orange);">0.0100% in 03:42:15</span>
+                <span class="stat-label">Funding Rate</span>
+                <span class="stat-val" style="color:var(--cdx-orange);">0.0100% (3h 40m)</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Cockpit Feed</span>
-                <span class="stat-val" style="color:var(--cdx-green);">● Connected</span>
+                <span class="stat-label">WebSocket Feed</span>
+                <span class="stat-val" style="color:var(--cdx-green);">● Live Connected</span>
             </div>
         </div>
     </div>
@@ -965,8 +1038,8 @@
     <div class="coindcx-sub-navbar">
         <div class="sub-nav-links">
             <div class="sub-nav-item active" id="sub_tab_chain" onclick="switchSubTab('CHAIN')">Option Chain</div>
-            <div class="sub-nav-item" id="sub_tab_trade" onclick="switchSubTab('TRADE')">Pro Trade & Cockpit</div>
-            <div class="sub-nav-item" id="sub_tab_positions" onclick="switchSubTab('POSITIONS')">Positions (<span id="active_pos_badge">0</span>)</div>
+            <div class="sub-nav-item" id="sub_tab_trade" onclick="switchSubTab('TRADE')">Option Trade & Calculator</div>
+            <div class="sub-nav-item" id="sub_tab_positions" onclick="switchSubTab('POSITIONS')">Active Positions (<span id="active_pos_badge">0</span>)</div>
             <div class="sub-nav-item" id="sub_tab_orders" onclick="switchSubTab('ORDERS')">Order History</div>
         </div>
         <div style="font-size:11.5px; color:var(--text-muted); font-weight:700;">
@@ -975,7 +1048,7 @@
     </div>
 
     <!-- 4. EXPIRY DATE PILLS SELECTOR BAR -->
-    <div class="expiry-selection-bar">
+    <div class="expiry-selection-bar" id="expiry_bar_wrapper">
         <div class="expiry-pills-list" id="expiry_pills_container">
             <div class="expiry-pill-item active" onclick="selectExpiryPill(0, '02 Oct (Today)', 0.003)">02 Oct (Today)</div>
             <div class="expiry-pill-item" onclick="selectExpiryPill(1, '03 Oct', 0.0055)">03 Oct</div>
@@ -1009,7 +1082,7 @@
                 </table>
             </div>
 
-            <!-- VIEW 2: PRO TRADE & COCKPIT ORDER FORM -->
+            <!-- VIEW 2: PRO TRADE & COCKPIT ORDER FORM WITH EMBEDDED P&L CALCULATOR (SIMPLE & CHART) -->
             <div class="pro-trade-container" id="view_trade">
                 
                 <!-- Active Contract Banner -->
@@ -1021,26 +1094,6 @@
                     </div>
                     <div style="font-family:'JetBrains Mono'; font-weight:800; font-size:15px; color:var(--cdx-orange);" id="active_contract_mark_val">
                         $1,240.00
-                    </div>
-                </div>
-
-                <!-- Greeks Breakdown Strip -->
-                <div class="greeks-metrics-strip">
-                    <div>
-                        <div class="calc-lbl">Delta (Δ)</div>
-                        <div class="calc-num" style="color:var(--cdx-blue);" id="trade_gk_delta">+0.50</div>
-                    </div>
-                    <div>
-                        <div class="calc-lbl">Theta (Θ) / Day</div>
-                        <div class="calc-num" style="color:var(--cdx-red);" id="trade_gk_theta">-$18.20</div>
-                    </div>
-                    <div>
-                        <div class="calc-lbl">Gamma (Γ)</div>
-                        <div class="calc-num" style="color:var(--cdx-gold);" id="trade_gk_gamma">0.00014</div>
-                    </div>
-                    <div>
-                        <div class="calc-lbl">Vega (ν) / 1% IV</div>
-                        <div class="calc-num" style="color:#A855F7;" id="trade_gk_vega">$16.80</div>
                     </div>
                 </div>
 
@@ -1115,7 +1168,7 @@
                         </div>
                     </div>
 
-                    <!-- Right: Order Form -->
+                    <!-- Right: Order Form With Built-in Live P&L Preview -->
                     <div class="coindcx-order-form">
                         <!-- Buy / Sell Segmented Switch -->
                         <div class="side-segmented-switch">
@@ -1123,19 +1176,10 @@
                             <button class="side-switch-btn sell" id="btn_order_side_sell" onclick="setOrderSide('SELL')">Sell / Short</button>
                         </div>
 
-                        <!-- Order Type -->
-                        <div class="form-input-card">
-                            <span>Order Type</span>
-                            <select id="select_order_type" style="background:transparent; border:none; color:var(--text-main); font-weight:800; outline:none; cursor:pointer;">
-                                <option value="LIMIT">Limit Order</option>
-                                <option value="MARKET">Market Order</option>
-                            </select>
-                        </div>
-
-                        <!-- Limit Price Stepper -->
+                        <!-- Order Price Stepper -->
                         <div>
                             <div class="form-input-card">
-                                <span>Order Price</span>
+                                <span>Order Price (USDT)</span>
                                 <div class="stepper-widget">
                                     <button class="step-icon-btn" onclick="stepOrderPrice(-10)">-</button>
                                     <input type="number" class="input-val-box" id="input_order_price" value="1240" oninput="onFormChange()">
@@ -1145,10 +1189,10 @@
                             <div style="font-size:10.5px; color:var(--text-faint); text-align:right; margin-top:2px;" id="price_inr_preview">≈ ₹1,04,160</div>
                         </div>
 
-                        <!-- Lots Stepper -->
+                        <!-- Quantity / Lots Stepper with Direct Instant Profit Live Preview -->
                         <div>
                             <div class="form-input-card">
-                                <span>Quantity / Lots</span>
+                                <span>Quantity (Lots)</span>
                                 <div class="stepper-widget">
                                     <button class="step-icon-btn" onclick="stepOrderLots(-0.05)">-</button>
                                     <input type="number" class="input-val-box" id="input_order_lots" value="0.10" step="0.05" oninput="onFormChange()">
@@ -1156,6 +1200,15 @@
                                 </div>
                             </div>
                             <div style="font-size:10.5px; color:var(--text-faint); text-align:right; margin-top:2px;" id="lots_crypto_preview">≈ 0.10 BTC</div>
+                        </div>
+
+                        <!-- LIVE P&L PREVIEW RIGHT INSIDE LOT SETTING AREA -->
+                        <div class="order-form-pnl-preview-box">
+                            <div>
+                                <span style="color:var(--text-muted); font-size:10.5px;">Potential Target Profit:</span>
+                                <div style="font-size:10px; color:var(--text-faint);" id="pnl_preview_target_label">Target: +1.0% Spot Move</div>
+                            </div>
+                            <div class="pnl-preview-val" id="order_form_live_pnl_preview">+₹1,218.00 (+11.7%)</div>
                         </div>
 
                         <!-- Quick Percentage Picks -->
@@ -1168,12 +1221,8 @@
 
                         <!-- Cost & Margin Required -->
                         <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700;">
-                            <span style="color:var(--text-muted);">Est. Margin:</span>
+                            <span style="color:var(--text-muted);">Margin Cost:</span>
                             <span id="form_margin_display">₹10,416.00</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700;">
-                            <span style="color:var(--text-muted);">Taker / Maker Fees:</span>
-                            <span style="color:var(--cdx-green);">0.00% (Free Virtual)</span>
                         </div>
 
                         <!-- Main Submit Button -->
@@ -1184,40 +1233,58 @@
 
                 </div>
 
-                <!-- Interactive PNL Calculator & Payoff Simulator Card -->
-                <div class="coindcx-calc-card">
+                <!-- DUAL-MODE P&L CALCULATOR (SIMPLE MODE + VISUAL PAYOFF CHART MODE) -->
+                <div class="calculator-suite-container">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div style="font-size:13.5px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
-                            <span>🧮</span> CoinDCX P&L Calculator & Payoff Simulator
+                            <span>🧮</span> P&L Calculator & Payoff Simulator
                         </div>
-                        <button class="btn-ui-action" onclick="resetCalculatorSliders()">🔄 Reset Sliders</button>
+                        <!-- Simple vs Chart Mode Toggle -->
+                        <div class="calc-mode-switcher" style="width: 220px;">
+                            <button class="calc-mode-btn active" id="btn_calc_simple" onclick="setCalculatorMode('SIMPLE')">📊 Simple</button>
+                            <button class="calc-mode-btn" id="btn_calc_chart" onclick="setCalculatorMode('CHART')">📈 Payoff Chart</button>
+                        </div>
                     </div>
 
+                    <!-- Summary 3-Col Bar -->
                     <div class="calc-3col-summary">
                         <div>
-                            <div class="calc-lbl">Entry Price</div>
+                            <div class="calc-lbl">Entry Premium</div>
                             <div class="calc-num" id="calc_entry_display">1,240.0</div>
                         </div>
                         <div>
-                            <div class="calc-lbl">Simulated Mark Price</div>
+                            <div class="calc-lbl">Calculated Mark</div>
                             <div class="calc-num" id="calc_sim_price_display">1,385.0</div>
                         </div>
                         <div>
-                            <div class="calc-lbl">Projected P&L</div>
+                            <div class="calc-lbl">Estimated P&L</div>
                             <div class="calc-num" style="color:var(--cdx-green);" id="calc_sim_pnl_display">+₹1,218.00</div>
                         </div>
                     </div>
 
+                    <!-- VISUAL PAYOFF GRAPH (Chart Mode) -->
+                    <div id="calc_chart_view_box" style="display:none; flex-direction:column; gap:8px;">
+                        <div class="payoff-canvas-wrapper">
+                            <canvas id="payoff_canvas"></canvas>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-muted); font-family:'JetBrains Mono';">
+                            <span>Max Loss: <b style="color:var(--cdx-red);" id="chart_max_loss">-$124.00</b></span>
+                            <span>Breakeven: <b style="color:var(--cdx-gold);" id="chart_breakeven">$85,240.00</b></span>
+                            <span>Max Profit: <b style="color:var(--cdx-green);" id="chart_max_profit">Unlimited (+$)</b></span>
+                        </div>
+                    </div>
+
+                    <!-- SLIDERS (Active in both modes) -->
                     <!-- Slider 1: Underlying Spot Price -->
                     <div class="slider-control-card">
                         <div class="slider-meta-header">
                             <div>
-                                <span class="title" id="slider_sym_label">BTC Spot Price</span>
+                                <span class="title" id="slider_sym_label">Target Spot Price</span>
                                 <span class="subtitle" id="slider_price_offset" style="margin-left:6px;">+0.0% above current</span>
                             </div>
                             <div class="stepper-widget">
                                 <button class="step-icon-btn" onclick="stepSliderPrice(-250)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="slider_price_num_box">84,150</span>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12px;" id="slider_price_num_box">84,150</span>
                                 <button class="step-icon-btn" onclick="stepSliderPrice(250)">+</button>
                             </div>
                         </div>
@@ -1233,7 +1300,7 @@
                             </div>
                             <div class="stepper-widget">
                                 <button class="step-icon-btn" onclick="stepSliderTime(-2)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="slider_time_num_box">13h</span>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12px;" id="slider_time_num_box">13h</span>
                                 <button class="step-icon-btn" onclick="stepSliderTime(2)">+</button>
                             </div>
                         </div>
@@ -1249,7 +1316,7 @@
                             </div>
                             <div class="stepper-widget">
                                 <button class="step-icon-btn" onclick="stepSliderIV(-5)">-</button>
-                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12.5px;" id="slider_iv_num_box">30%</span>
+                                <span style="font-family:'JetBrains Mono'; font-weight:800; font-size:12px;" id="slider_iv_num_box">30%</span>
                                 <button class="step-icon-btn" onclick="stepSliderIV(5)">+</button>
                             </div>
                         </div>
@@ -1259,27 +1326,26 @@
 
             </div>
 
-            <!-- VIEW 3: LIVE POSITIONS TERMINAL -->
+            <!-- VIEW 3: LIVE POSITIONS TERMINAL (OPTIONS + FUTURES) -->
             <div class="module-tab-view" id="view_positions">
                 <div style="background:var(--bg-surface); border:1px solid var(--border-ui); border-radius:8px; padding:16px; box-shadow:var(--card-shadow);">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <div style="font-size:14.5px; font-weight:800;">Active Positions & Live P&L Cockpit</div>
+                        <div style="font-size:14.5px; font-weight:800;">Active Positions & Live Real-Time P&L</div>
                         <div style="font-size:11px; color:var(--cdx-green); font-weight:700; display:flex; align-items:center; gap:4px;">
                             <span style="width:7px; height:7px; background:var(--cdx-green); border-radius:50%; display:inline-block;"></span>
-                            WebSocket Real-Time Feed Active
+                            Live WebSocket PnL Active
                         </div>
                     </div>
                     <div id="empty_positions_alert" style="text-align:center; color:var(--text-muted); padding:40px 10px;">
-                        📌 Koi active position nahi hai. Option Chain me strike par click karke order execute karein.
+                        📌 Koi active position nahi hai. Option Chain ya Futures se trade place karein.
                     </div>
                     <table class="coindcx-chain-table" id="positions_data_table" style="display:none;">
                         <thead>
                             <tr>
+                                <th>Type</th>
                                 <th>Contract</th>
                                 <th>Side</th>
                                 <th>Qty</th>
-                                <th>Delta (Δ)</th>
-                                <th>Theta (Θ)</th>
                                 <th>Entry Price</th>
                                 <th>Mark (Live)</th>
                                 <th>P&L (Live)</th>
@@ -1304,20 +1370,87 @@
 
         </div>
 
-        <!-- MODULE B: FUTURES TRADINGVIEW COCKPIT -->
+        <!-- MODULE B: FUTURES TRADINGVIEW COCKPIT & LIVE FUTURES ORDER PANEL -->
         <div id="screen_futures">
-            <div class="futures-header-toolbar">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:6px;">
-                        <span id="tv_symbol_text">BINANCE:BTCUSDT.P</span>
-                        <span style="color:var(--cdx-green); font-size:11px;">● LIVE</span>
+            <div class="futures-cockpit-layout">
+                
+                <!-- Left: TradingView Chart -->
+                <div style="height:100%; width:100%; display:flex; flex-direction:column; overflow:hidden;">
+                    <div class="futures-header-toolbar">
+                        <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:6px;">
+                            <span id="tv_symbol_text">BINANCE:BTCUSDT.P</span>
+                            <span style="color:var(--cdx-green); font-size:11px;">● LIVE 1m</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-ui-action" onclick="toggleUnderlyingSymbol()">🔄 Switch BTC/ETH</button>
+                        </div>
                     </div>
+                    <div id="tradingview_embed_box" style="flex:1; width:100%; height:calc(100% - 48px);"></div>
                 </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <button class="btn-ui-action" onclick="switchMainTab('OPTIONS')">🎯 Back to Options</button>
+
+                <!-- Right: CoinDCX Futures Order Execution Panel -->
+                <div class="futures-order-panel">
+                    <div style="font-size:14px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+                        <span>⚡ Trade Futures</span>
+                        <span class="leverage-badge" id="fut_lev_display">20x Cross</span>
+                    </div>
+
+                    <!-- Buy / Sell Segmented Switch -->
+                    <div class="side-segmented-switch">
+                        <button class="side-switch-btn active buy" id="btn_fut_side_buy" onclick="setFuturesSide('LONG')">Buy / Long</button>
+                        <button class="side-switch-btn sell" id="btn_fut_side_sell" onclick="setFuturesSide('SHORT')">Sell / Short</button>
+                    </div>
+
+                    <!-- Leverage Slider -->
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
+                            <span style="color:var(--text-muted);">Leverage Multiplier:</span>
+                            <span style="color:var(--cdx-orange);" id="fut_lev_num">20x</span>
+                        </div>
+                        <input type="range" class="coindcx-range-slider" id="slider_fut_leverage" min="1" max="100" value="20" oninput="onFuturesFormChange()">
+                        <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-faint);">
+                            <span>1x</span><span>10x</span><span>25x</span><span>50x</span><span>100x</span>
+                        </div>
+                    </div>
+
+                    <!-- Entry Price -->
+                    <div class="form-input-card">
+                        <span>Price (USDT)</span>
+                        <input type="number" class="input-val-box" id="fut_price_input" value="84150" oninput="onFuturesFormChange()" style="width:90px;">
+                    </div>
+
+                    <!-- Order Quantity Lots / BTC -->
+                    <div>
+                        <div class="form-input-card">
+                            <span id="fut_lots_label">Size (BTC)</span>
+                            <div class="stepper-widget">
+                                <button class="step-icon-btn" onclick="stepFuturesLots(-0.05)">-</button>
+                                <input type="number" class="input-val-box" id="fut_lots_input" value="0.10" step="0.05" oninput="onFuturesFormChange()">
+                                <button class="step-icon-btn" onclick="stepFuturesLots(0.05)">+</button>
+                            </div>
+                        </div>
+                        <div style="font-size:10.5px; color:var(--text-faint); text-align:right; margin-top:2px;" id="fut_notional_preview">Notional: $8,415.00</div>
+                    </div>
+
+                    <!-- Margin Required & Liquidation Price Estimation -->
+                    <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:6px; padding:8px 10px; display:flex; flex-direction:column; gap:4px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-muted);">Margin Req:</span>
+                            <b id="fut_margin_req_text">₹35,343.00 ($420.75)</b>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--text-muted);">Est. Liq Price:</span>
+                            <b style="color:var(--cdx-orange);" id="fut_liq_price_text">$80,240.00</b>
+                        </div>
+                    </div>
+
+                    <!-- Futures Submit CTA Button -->
+                    <button class="coindcx-cta-submit buy" id="btn_submit_futures_order" onclick="placeFuturesOrder()">
+                        Open Long (20x)
+                    </button>
                 </div>
+
             </div>
-            <div id="tradingview_embed_box" style="flex:1; width:100%; height:calc(100% - 48px);"></div>
         </div>
 
     </div>
@@ -1366,6 +1499,7 @@
         let currentCurrency = 'INR'; // 'INR' or 'USDT'
         let currentTheme = localStorage.getItem('coindcx_theme') || 'dark';
         let currentChainFilter = 'PRICE'; // 'PRICE', 'OI', 'GREEKS', 'ALL'
+        let currentCalcMode = 'SIMPLE'; // 'SIMPLE' or 'CHART'
         let inrRate = 84.0;
 
         let spotPrices = { 'BTC': 84150.0, 'ETH': 2700.20 };
@@ -1384,8 +1518,14 @@
             lots: 0.10
         };
 
+        let activeFuturesTrade = {
+            side: 'LONG',
+            leverage: 20
+        };
+
         let userBalance = parseFloat(localStorage.getItem('delta_paper_balance')) || 10000.0;
         let activePositions = JSON.parse(localStorage.getItem('delta_opt_positions')) || [];
+        let futuresPositions = JSON.parse(localStorage.getItem('delta_fut_positions')) || [];
         let completedOrders = JSON.parse(localStorage.getItem('delta_opt_history')) || [];
 
         // =========================================================================
@@ -1503,7 +1643,7 @@
                 updateActiveContractLiveMark();
             }
 
-            // Continuously update live positions PnL in real-time
+            // Continuously update live positions PnL in real-time (both Options & Futures)
             recalculateOpenPositionsPNL();
         }
 
@@ -1523,8 +1663,11 @@
         }
 
         function recalculateOpenPositionsPNL() {
-            if (!activePositions || activePositions.length === 0) return;
+            const totalCount = activePositions.length + futuresPositions.length;
+            const badge = document.getElementById('active_pos_badge');
+            if (badge) badge.innerText = totalCount;
 
+            // 1. Update Options Positions
             activePositions.forEach((pos, idx) => {
                 const sym = pos.symbol || 'BTC';
                 const S = spotPrices[sym];
@@ -1534,13 +1677,39 @@
                 const pnlColor = pnl >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
                 const sign = pnl >= 0 ? '+' : '';
 
-                const row = document.getElementById(`pos_row_idx_${idx}`);
+                const row = document.getElementById(`opt_pos_row_${idx}`);
                 if (row) {
                     const markCell = row.querySelector('.live-mark-cell');
                     const pnlCell = row.querySelector('.live-pnl-cell');
                     if (markCell) markCell.innerText = formatCurrency(mark);
                     if (pnlCell) {
                         pnlCell.innerText = `${sign}${formatCurrency(pnl)}`;
+                        pnlCell.style.color = pnlColor;
+                    }
+                }
+            });
+
+            // 2. Update Futures Positions
+            futuresPositions.forEach((fpos, idx) => {
+                const sym = fpos.symbol || 'BTC';
+                const S = spotPrices[sym];
+                let pnl = 0;
+                if (fpos.side === 'LONG') {
+                    pnl = (S - fpos.entryPrice) * fpos.lots;
+                } else {
+                    pnl = (fpos.entryPrice - S) * fpos.lots;
+                }
+                const pnlColor = pnl >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+                const sign = pnl >= 0 ? '+' : '';
+                const roe = ((pnl / fpos.margin) * 100).toFixed(1);
+
+                const row = document.getElementById(`fut_pos_row_${idx}`);
+                if (row) {
+                    const markCell = row.querySelector('.live-mark-cell');
+                    const pnlCell = row.querySelector('.live-pnl-cell');
+                    if (markCell) markCell.innerText = formatCurrency(S);
+                    if (pnlCell) {
+                        pnlCell.innerText = `${sign}${formatCurrency(pnl)} (${sign}${roe}%)`;
                         pnlCell.style.color = pnlColor;
                     }
                 }
@@ -1557,6 +1726,7 @@
             const navFut = document.getElementById('main_tab_futures');
             const bnavOpt = document.getElementById('bnav_options');
             const bnavFut = document.getElementById('bnav_futures');
+            const expBar = document.getElementById('expiry_bar_wrapper');
 
             if (tab === 'OPTIONS') {
                 scrOpt.style.display = 'flex';
@@ -1565,6 +1735,7 @@
                 navFut.classList.remove('active');
                 bnavOpt.classList.add('active');
                 bnavFut.classList.remove('active');
+                if (expBar) expBar.style.display = 'flex';
                 renderCoinDCXOptionChain();
             } else {
                 scrOpt.style.display = 'none';
@@ -1573,7 +1744,10 @@
                 navOpt.classList.remove('active');
                 bnavFut.classList.add('active');
                 bnavOpt.classList.remove('active');
+                if (expBar) expBar.style.display = 'none';
                 document.getElementById('tv_symbol_text').innerText = `BINANCE:${currentSymbol}USDT.P`;
+                document.getElementById('fut_price_input').value = spotPrices[currentSymbol];
+                onFuturesFormChange();
                 loadTradingViewChart();
             }
         }
@@ -1603,11 +1777,20 @@
             renderCoinDCXOptionChain();
         }
 
+        function setCalculatorMode(mode) {
+            currentCalcMode = mode;
+            document.getElementById('btn_calc_simple').classList.toggle('active', mode === 'SIMPLE');
+            document.getElementById('btn_calc_chart').classList.toggle('active', mode === 'CHART');
+            document.getElementById('calc_chart_view_box').style.display = mode === 'CHART' ? 'flex' : 'none';
+            if (mode === 'CHART') drawPayoffChart();
+        }
+
         function toggleTheme() {
             currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.body.setAttribute('data-theme', currentTheme);
             document.getElementById('btn_theme_toggle').innerText = currentTheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
             localStorage.setItem('coindcx_theme', currentTheme);
+            if (currentCalcMode === 'CHART') drawPayoffChart();
             if (document.getElementById('screen_futures').style.display === 'flex') {
                 loadTradingViewChart();
             }
@@ -1626,8 +1809,9 @@
             currentSymbol = currentSymbol === 'BTC' ? 'ETH' : 'BTC';
             document.getElementById('pair_avatar').innerText = currentSymbol === 'BTC' ? '₿' : 'Ξ';
             document.getElementById('pair_symbol_text').innerText = `${currentSymbol}USDT Perpetual`;
-            document.getElementById('slider_sym_label').innerText = `${currentSymbol} Spot Price`;
+            document.getElementById('slider_sym_label').innerText = `Target ${currentSymbol} Price`;
             document.getElementById('ob_unit_lbl').innerText = `Qty (${currentSymbol})`;
+            document.getElementById('fut_lots_label').innerText = `Size (${currentSymbol})`;
 
             const S = spotPrices[currentSymbol];
             activeContract.strike = Math.round(S / (currentSymbol === 'BTC' ? 500 : 25)) * (currentSymbol === 'BTC' ? 500 : 25);
@@ -1641,8 +1825,15 @@
             document.getElementById('stat_24h_low').innerText = formatCurrency(S * 0.98);
             document.getElementById('stat_24h_vol').innerText = currentSymbol === 'BTC' ? '48.25K BTC' : '320.40K ETH';
 
+            document.getElementById('fut_price_input').value = S;
+            document.getElementById('tv_symbol_text').innerText = `BINANCE:${currentSymbol}USDT.P`;
+
             renderCoinDCXOptionChain();
             selectOptionContract(activeContract.strike, 'C');
+            onFuturesFormChange();
+            if (document.getElementById('screen_futures').style.display === 'flex') {
+                loadTradingViewChart();
+            }
         }
 
         function updateWalletDisplay() {
@@ -1655,9 +1846,11 @@
             if (!confirm("Reset Virtual Paper Balance to ₹8,40,000 ($10,000)?")) return;
             userBalance = 10000.0;
             activePositions = [];
+            futuresPositions = [];
             completedOrders = [];
             localStorage.setItem('delta_paper_balance', '10000');
             localStorage.setItem('delta_opt_positions', '[]');
+            localStorage.setItem('delta_fut_positions', '[]');
             localStorage.setItem('delta_opt_history', '[]');
             updateWalletDisplay();
             renderPositionsView();
@@ -1676,7 +1869,7 @@
         }
 
         // =========================================================================
-        // Option Chain Matrix Builder (CoinDCX Standard)
+        // Option Chain Matrix Builder
         // =========================================================================
         function renderCoinDCXOptionChain() {
             const thead = document.getElementById('chain_table_head');
@@ -1712,7 +1905,6 @@
                     <th style="color:var(--cdx-blue);">Delta (Δ)</th>
                 `;
             } else {
-                // ALL DATA
                 thead.innerHTML = `
                     <th style="color:var(--text-muted);">Moneyness</th>
                     <th style="color:var(--cdx-blue);">Delta</th>
@@ -1828,7 +2020,7 @@
         }
 
         // =========================================================================
-        // Pro Trade & Cockpit Form Handler
+        // Option Trade & Form Handler
         // =========================================================================
         function selectOptionContract(strike, optType) {
             activeContract.strike = strike;
@@ -1884,7 +2076,6 @@
             document.getElementById('ob_b_5').innerText = (prem * 0.975).toFixed(1);
 
             onFormChange();
-            resetCalculatorSliders();
             switchSubTab('TRADE');
         }
 
@@ -1966,6 +2157,7 @@
 
             const newPos = {
                 id: 'opt_' + Date.now(),
+                type: 'OPTION',
                 symbol: currentSymbol,
                 contract: `${currentSymbol}-${activeContract.strike}-${activeContract.optType === 'C' ? 'CE' : 'PE'}`,
                 optType: activeContract.optType,
@@ -1988,7 +2180,7 @@
         }
 
         // =========================================================================
-        // P&L Calculator Sliders Engine
+        // P&L Calculator & Payoff Simulator Engine
         // =========================================================================
         function onSimulatorChange() {
             const simSpot = parseFloat(document.getElementById('slider_underlying_price').value);
@@ -2022,12 +2214,23 @@
                 pnl = (entry - simPrem) * lots;
             }
 
+            const roi = (pnl / (entry * lots)) * 100;
             document.getElementById('calc_sim_price_display').innerText = formatRawNumber(simPrem);
             
             const pnlElem = document.getElementById('calc_sim_pnl_display');
             const pnlSign = pnl >= 0 ? '+' : '';
-            pnlElem.innerText = `${pnlSign}${formatCurrency(pnl)}`;
+            pnlElem.innerText = `${pnlSign}${formatCurrency(pnl)} (${pnlSign}${roi.toFixed(1)}%)`;
             pnlElem.style.color = pnl >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+
+            // Update live preview directly inside the order form
+            const previewEl = document.getElementById('order_form_live_pnl_preview');
+            if (previewEl) {
+                previewEl.innerText = `${pnlSign}${formatCurrency(pnl)} (${pnlSign}${roi.toFixed(1)}%)`;
+                previewEl.style.color = pnl >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+                document.getElementById('pnl_preview_target_label').innerText = `Target: ${sign}${offsetPct}% ($${simSpot.toLocaleString()})`;
+            }
+
+            if (currentCalcMode === 'CHART') drawPayoffChart();
         }
 
         function stepSliderPrice(delta) {
@@ -2057,7 +2260,232 @@
         }
 
         // =========================================================================
-        // Positions & Orders Views
+        // Visual Payoff Curve Chart (Canvas Engine)
+        // =========================================================================
+        function drawPayoffChart() {
+            const canvas = document.getElementById('payoff_canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas resolution
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const W = rect.width;
+            const H = rect.height;
+            ctx.clearRect(0, 0, W, H);
+
+            const S = spotPrices[currentSymbol];
+            const K = activeContract.strike;
+            const entry = parseFloat(document.getElementById('input_order_price').value) || activeContract.entryPrice;
+            const lots = parseFloat(document.getElementById('input_order_lots').value) || 0.10;
+            const isBuy = activeContract.side === 'BUY';
+            const isCall = activeContract.optType === 'C';
+
+            const minPrice = S * 0.85;
+            const maxPrice = S * 1.15;
+            const priceToX = (p) => ((p - minPrice) / (maxPrice - minPrice)) * (W - 60) + 40;
+
+            // Compute Max Profit, Max Loss & Breakeven
+            let maxLoss = 0, maxProfitText = '', bePrice = 0;
+            if (isCall && isBuy) {
+                maxLoss = entry * lots;
+                bePrice = K + entry;
+                maxProfitText = 'Unlimited (+$)';
+            } else if (!isCall && isBuy) {
+                maxLoss = entry * lots;
+                bePrice = K - entry;
+                maxProfitText = `+$${((K - entry) * lots).toFixed(0)}`;
+            } else if (isCall && !isBuy) {
+                maxLoss = -1; // unlimited
+                bePrice = K + entry;
+                maxProfitText = `+$${(entry * lots).toFixed(0)}`;
+            } else {
+                maxLoss = -1;
+                bePrice = K - entry;
+                maxProfitText = `+$${(entry * lots).toFixed(0)}`;
+            }
+
+            document.getElementById('chart_max_loss').innerText = maxLoss > 0 ? `-$${maxLoss.toFixed(2)}` : 'Unlimited (-$)';
+            document.getElementById('chart_breakeven').innerText = `$${bePrice.toLocaleString()}`;
+            document.getElementById('chart_max_profit').innerText = maxProfitText;
+
+            // Zero PnL line Y
+            const zeroY = H / 2;
+            const scalePnlToY = (pnl) => zeroY - (pnl / (entry * lots * 3)) * (H / 2.5);
+
+            // Draw Grid & Zero Line
+            ctx.strokeStyle = currentTheme === 'dark' ? '#232F46' : '#E2E8F0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.setLineDash([4, 4]);
+            ctx.moveTo(30, zeroY);
+            ctx.lineTo(W - 10, zeroY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Payoff Curve
+            const points = [];
+            for (let p = minPrice; p <= maxPrice; p += (maxPrice - minPrice) / 60) {
+                let payoff = 0;
+                if (isCall) {
+                    const intrinsic = Math.max(0, p - K);
+                    payoff = isBuy ? (intrinsic - entry) * lots : (entry - intrinsic) * lots;
+                } else {
+                    const intrinsic = Math.max(0, K - p);
+                    payoff = isBuy ? (intrinsic - entry) * lots : (entry - intrinsic) * lots;
+                }
+                const x = priceToX(p);
+                const y = Math.max(10, Math.min(H - 10, scalePnlToY(payoff)));
+                points.push({ x, y, p, payoff });
+            }
+
+            // Fill Profit & Loss Polygons
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+            ctx.lineTo(points[points.length - 1].x, zeroY);
+            ctx.lineTo(points[0].x, zeroY);
+            ctx.closePath();
+            ctx.fillStyle = currentTheme === 'dark' ? 'rgba(0, 194, 136, 0.12)' : 'rgba(0, 194, 136, 0.18)';
+            ctx.fill();
+
+            // Draw Payoff Stroke Line
+            ctx.beginPath();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#FA4A29';
+            ctx.moveTo(points[0].x, points[0].y);
+            points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+            ctx.stroke();
+
+            // Draw Current Spot Vertical Marker
+            const spotX = priceToX(S);
+            ctx.strokeStyle = '#3B82F6';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(spotX, 10);
+            ctx.lineTo(spotX, H - 10);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Spot label
+            ctx.fillStyle = '#3B82F6';
+            ctx.font = 'bold 10px JetBrains Mono';
+            ctx.fillText(`Spot $${S.toLocaleString()}`, Math.min(W - 80, spotX + 4), 22);
+
+            // Draw Breakeven Marker
+            if (bePrice >= minPrice && bePrice <= maxPrice) {
+                const beX = priceToX(bePrice);
+                ctx.fillStyle = '#F59E0B';
+                ctx.beginPath();
+                ctx.arc(beX, zeroY, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillText(`BE $${bePrice.toFixed(0)}`, beX - 25, zeroY - 8);
+            }
+        }
+
+        // =========================================================================
+        // Futures Order Form & Trading Execution
+        // =========================================================================
+        function setFuturesSide(side) {
+            activeFuturesTrade.side = side;
+            const btnBuy = document.getElementById('btn_fut_side_buy');
+            const btnSell = document.getElementById('btn_fut_side_sell');
+            const submitBtn = document.getElementById('btn_submit_futures_order');
+
+            if (side === 'LONG') {
+                btnBuy.className = 'side-switch-btn active buy';
+                btnSell.className = 'side-switch-btn sell';
+                submitBtn.className = 'coindcx-cta-submit buy';
+                submitBtn.innerText = `Open Long (${activeFuturesTrade.leverage}x)`;
+            } else {
+                btnSell.className = 'side-switch-btn active sell';
+                btnBuy.className = 'side-switch-btn buy';
+                submitBtn.className = 'coindcx-cta-submit sell';
+                submitBtn.innerText = `Open Short (${activeFuturesTrade.leverage}x)`;
+            }
+            onFuturesFormChange();
+        }
+
+        function stepFuturesLots(delta) {
+            const inEl = document.getElementById('fut_lots_input');
+            inEl.value = Math.max(0.01, parseFloat(inEl.value) + delta).toFixed(2);
+            onFuturesFormChange();
+        }
+
+        function onFuturesFormChange() {
+            const lev = parseInt(document.getElementById('slider_fut_leverage').value) || 20;
+            activeFuturesTrade.leverage = lev;
+            document.getElementById('fut_lev_display').innerText = `${lev}x Cross`;
+            document.getElementById('fut_lev_num').innerText = `${lev}x`;
+
+            const price = parseFloat(document.getElementById('fut_price_input').value) || spotPrices[currentSymbol];
+            const lots = parseFloat(document.getElementById('fut_lots_input').value) || 0.10;
+            const notional = price * lots;
+            const marginReq = notional / lev;
+
+            document.getElementById('fut_notional_preview').innerText = `Notional: $${notional.toLocaleString('en-US', {maximumFractionDigits:2})}`;
+            document.getElementById('fut_margin_req_text').innerText = formatCurrency(marginReq);
+
+            // Liquidation Price calculation
+            const liq = activeFuturesTrade.side === 'LONG'
+                ? price * (1 - (1 / lev) + 0.005)
+                : price * (1 + (1 / lev) - 0.005);
+            document.getElementById('fut_liq_price_text').innerText = `$${Math.max(0, liq).toLocaleString('en-US', {maximumFractionDigits:2})}`;
+
+            const submitBtn = document.getElementById('btn_submit_futures_order');
+            submitBtn.innerText = activeFuturesTrade.side === 'LONG' ? `Open Long (${lev}x)` : `Open Short (${lev}x)`;
+        }
+
+        function placeFuturesOrder() {
+            const sym = currentSymbol;
+            const S = spotPrices[sym];
+            const price = parseFloat(document.getElementById('fut_price_input').value) || S;
+            const lots = parseFloat(document.getElementById('fut_lots_input').value) || 0.10;
+            const lev = activeFuturesTrade.leverage || 20;
+            const notional = price * lots;
+            const margin = notional / lev;
+
+            if (margin > userBalance) {
+                showCoinDCXToast("❌ Insufficient Margin Balance!");
+                return;
+            }
+
+            userBalance -= margin;
+            localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+            const liqPrice = activeFuturesTrade.side === 'LONG' 
+                ? price * (1 - (1 / lev) + 0.005) 
+                : price * (1 + (1 / lev) - 0.005);
+
+            const newFutPos = {
+                id: 'fut_' + Date.now(),
+                type: 'FUTURES',
+                symbol: sym,
+                contract: `${sym}USDT Perp (${lev}x)`,
+                side: activeFuturesTrade.side,
+                entryPrice: price,
+                lots: lots,
+                leverage: lev,
+                margin: margin,
+                liqPrice: Math.max(0, liqPrice),
+                time: new Date().toLocaleTimeString()
+            };
+
+            futuresPositions.push(newFutPos);
+            localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+
+            updateWalletDisplay();
+            renderPositionsView();
+            showCoinDCXToast(`✅ ${activeFuturesTrade.side} ${newFutPos.contract} Executed!`);
+            switchSubTab('POSITIONS');
+        }
+
+        // =========================================================================
+        // Positions & Orders Views (Unified Options + Futures)
         // =========================================================================
         function renderPositionsView() {
             const table = document.getElementById('positions_data_table');
@@ -2065,9 +2493,10 @@
             const alertBox = document.getElementById('empty_positions_alert');
             const badge = document.getElementById('active_pos_badge');
 
-            badge.innerText = activePositions.length;
+            const totalCount = activePositions.length + futuresPositions.length;
+            badge.innerText = totalCount;
 
-            if (!activePositions || activePositions.length === 0) {
+            if (totalCount === 0) {
                 table.style.display = 'none';
                 alertBox.style.display = 'block';
                 return;
@@ -2077,6 +2506,35 @@
             alertBox.style.display = 'none';
 
             let html = '';
+
+            // 1. Render Futures Positions
+            futuresPositions.forEach((fpos, idx) => {
+                const sym = fpos.symbol || 'BTC';
+                const S = spotPrices[sym];
+                let pnl = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+                const pnlColor = pnl >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+                const sign = pnl >= 0 ? '+' : '';
+                const roe = ((pnl / fpos.margin) * 100).toFixed(1);
+
+                html += `
+                    <tr id="fut_pos_row_${idx}">
+                        <td><span class="moneyness-chip" style="background:var(--cdx-orange-bg); color:var(--cdx-orange);">FUTURES</span></td>
+                        <td><b>${fpos.contract}</b></td>
+                        <td style="color:${fpos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:800;">${fpos.side}</td>
+                        <td>${fpos.lots} ${sym}</td>
+                        <td>${formatCurrency(fpos.entryPrice)}</td>
+                        <td class="live-mark-cell" style="font-weight:800;">${formatCurrency(S)}</td>
+                        <td class="live-pnl-cell" style="color:${pnlColor}; font-weight:800;">${sign}${formatCurrency(pnl)} (${sign}${roe}%)</td>
+                        <td>
+                            <button style="background:transparent; border:1px solid var(--cdx-red); color:var(--cdx-red); font-size:11px; font-weight:800; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="closeFuturesPositionByIdx(${idx})">
+                                ✕ Close
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // 2. Render Options Positions
             activePositions.forEach((pos, idx) => {
                 const sym = pos.symbol || 'BTC';
                 const S = spotPrices[sym];
@@ -2087,27 +2545,55 @@
                 const sign = pnl >= 0 ? '+' : '';
 
                 html += `
-                    <tr id="pos_row_idx_${idx}">
+                    <tr id="opt_pos_row_${idx}">
+                        <td><span class="moneyness-chip" style="background:var(--cdx-green-bg); color:var(--cdx-green);">OPTIONS</span></td>
                         <td><b>${pos.contract}</b></td>
                         <td style="color:${pos.side === 'BUY' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:800;">${pos.side}</td>
-                        <td>${pos.lots}</td>
-                        <td style="color:var(--cdx-blue);">${pos.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`}</td>
-                        <td style="color:var(--cdx-red);">${pos.optType === 'C' ? g.callTheta : g.putTheta}$</td>
+                        <td>${pos.lots} lots</td>
                         <td>${formatCurrency(pos.entryPrice)}</td>
                         <td class="live-mark-cell" style="font-weight:800;">${formatCurrency(mark)}</td>
                         <td class="live-pnl-cell" style="color:${pnlColor}; font-weight:800;">${sign}${formatCurrency(pnl)}</td>
                         <td>
-                            <button style="background:transparent; border:1px solid var(--cdx-red); color:var(--cdx-red); font-size:11px; font-weight:800; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="closePositionByIdx(${idx})">
+                            <button style="background:transparent; border:1px solid var(--cdx-red); color:var(--cdx-red); font-size:11px; font-weight:800; padding:3px 8px; border-radius:4px; cursor:pointer;" onclick="closeOptionPositionByIdx(${idx})">
                                 ✕ Close
                             </button>
                         </td>
                     </tr>
                 `;
             });
+
             tbody.innerHTML = html;
         }
 
-        function closePositionByIdx(idx) {
+        function closeFuturesPositionByIdx(idx) {
+            const fpos = futuresPositions[idx];
+            const sym = fpos.symbol || 'BTC';
+            const S = spotPrices[sym];
+            let pnl = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+
+            userBalance += (fpos.margin + pnl);
+            localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+            completedOrders.push({
+                contract: fpos.contract,
+                side: fpos.side,
+                lots: fpos.lots,
+                entryPrice: fpos.entryPrice,
+                exitPrice: S,
+                pnl: pnl,
+                time: new Date().toLocaleTimeString()
+            });
+            localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+
+            futuresPositions.splice(idx, 1);
+            localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+
+            updateWalletDisplay();
+            renderPositionsView();
+            showCoinDCXToast(`✅ Squared Off ${fpos.contract} | PnL: ${formatCurrency(pnl)}`);
+        }
+
+        function closeOptionPositionByIdx(idx) {
             const pos = activePositions[idx];
             const sym = pos.symbol || 'BTC';
             const S = spotPrices[sym];
@@ -2155,7 +2641,7 @@
                     <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; font-size:12.5px;">
                         <div>
                             <span style="font-weight:800;">${ord.contract}</span>
-                            <span style="color:var(--text-muted); margin-left:8px;">${ord.side} ${ord.lots} lots</span>
+                            <span style="color:var(--text-muted); margin-left:8px;">${ord.side} ${ord.lots}</span>
                             <div style="font-size:10px; color:var(--text-faint); margin-top:2px;">${ord.time}</div>
                         </div>
                         <div style="text-align:right; font-family:'JetBrains Mono'; font-weight:800; font-size:13.5px; color:${isWin ? 'var(--cdx-green)' : 'var(--cdx-red)'};">
@@ -2203,7 +2689,7 @@
         }
 
         // =========================================================================
-        // Init
+        // Init Application
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
             document.body.setAttribute('data-theme', currentTheme);
