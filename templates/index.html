@@ -463,6 +463,25 @@
         .row-itm-call { background: var(--itm-call-bg); }
         .row-itm-put { background: var(--itm-put-bg); }
 
+        /* Option Chain Table Active Highlight */
+        .coindcx-chain-table tr.row-active-selected {
+            background: rgba(250, 74, 41, 0.14) !important;
+            border-top: 2px solid var(--cdx-orange) !important;
+            border-bottom: 2px solid var(--cdx-orange) !important;
+        }
+        .coindcx-chain-table tr.row-active-selected .strike-badge {
+            background: var(--cdx-orange) !important;
+            color: #FFFFFF !important;
+            border: 1px solid var(--cdx-orange) !important;
+            box-shadow: 0 0 10px rgba(250, 74, 41, 0.4);
+        }
+        .coindcx-chain-table td.cell-active-selected {
+            background: rgba(250, 74, 41, 0.24) !important;
+            outline: 2px solid var(--cdx-orange);
+            outline-offset: -2px;
+            font-weight: 900 !important;
+        }
+
         /* Strike & Sentiment Meter */
         .strike-center-cell {
             display: flex;
@@ -520,6 +539,209 @@
             max-width: 980px;
             margin: 0 auto;
             width: 100%;
+        }
+
+        .contract-banner-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 12px 14px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .contract-banner-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .contract-name-title {
+            font-size: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .iv-badge {
+            font-size: 10px;
+            font-weight: 800;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        .trade-greeks-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+        .gk-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .gk-lbl {
+            font-size: 9.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .gk-val {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Strike Selector Suite Card */
+        .strike-selector-suite-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 12px 14px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .strike-suite-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .opt-type-toggle-group {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            padding: 3px;
+            border-radius: 6px;
+        }
+        .opt-type-btn {
+            border: none;
+            padding: 7px 16px;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 4px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all 0.15s;
+        }
+        .opt-type-btn.call.active {
+            background: var(--cdx-green);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 194, 136, 0.3);
+        }
+        .opt-type-btn.put.active {
+            background: var(--cdx-red);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(246, 70, 93, 0.3);
+        }
+
+        .strike-dropdown-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 280px;
+        }
+        .strike-select-box {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 6px;
+            padding: 4px 8px;
+        }
+        .trade-strike-select {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 2px 0;
+            width: 100%;
+        }
+        .trade-strike-select option {
+            background: var(--bg-surface);
+            color: var(--text-main);
+        }
+        .strike-step-nav-btn {
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            color: var(--text-main);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .strike-step-nav-btn:hover {
+            border-color: var(--cdx-orange);
+            color: var(--cdx-orange);
+        }
+        .strike-atm-jump-btn {
+            background: var(--cdx-orange-bg);
+            border: 1px solid var(--cdx-orange-border);
+            color: var(--cdx-orange);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .strike-atm-jump-btn:hover {
+            background: var(--cdx-orange);
+            color: #FFFFFF;
+        }
+
+        .quick-strike-pills {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+        .quick-strike-pill-btn {
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .quick-strike-pill-btn:hover {
+            border-color: var(--cdx-orange);
+            color: var(--cdx-orange);
+        }
+        .quick-strike-pill-btn.active {
+            background: var(--cdx-orange);
+            border-color: var(--cdx-orange);
+            color: #FFFFFF;
+            font-weight: 800;
+            box-shadow: 0 2px 6px rgba(250, 74, 41, 0.3);
         }
 
         .contract-banner {
@@ -1085,15 +1307,75 @@
             <!-- VIEW 2: PRO TRADE & COCKPIT ORDER FORM WITH EMBEDDED P&L CALCULATOR (SIMPLE & CHART) -->
             <div class="pro-trade-container" id="view_trade">
                 
-                <!-- Active Contract Banner -->
-                <div class="contract-banner">
-                    <div class="contract-name-title">
-                        <span id="active_contract_title">BTC-2OCT26-84000-CE</span>
-                        <span class="moneyness-chip chip-atm" id="active_moneyness_badge">ATM</span>
-                        <span style="font-size:12px; color:var(--text-muted); cursor:pointer;">ⓘ Contract Info</span>
+                <!-- 1. Active Contract Banner & Live Greeks Strip -->
+                <div class="contract-banner-card">
+                    <div class="contract-banner-top">
+                        <div class="contract-name-title">
+                            <span id="active_contract_title">BTC-02OCT26-84000-CE</span>
+                            <span class="moneyness-chip chip-atm" id="active_moneyness_badge">ATM</span>
+                            <span class="iv-badge" id="active_iv_badge">IV 30%</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-family:'JetBrains Mono'; font-weight:800; font-size:16px; color:var(--cdx-orange);" id="active_contract_mark_val">
+                                $1,240.00
+                            </div>
+                            <div style="font-size:10.5px; color:var(--text-muted); font-family:'JetBrains Mono';" id="active_contract_mark_inr">
+                                ≈ ₹1,04,160.00
+                            </div>
+                        </div>
                     </div>
-                    <div style="font-family:'JetBrains Mono'; font-weight:800; font-size:15px; color:var(--cdx-orange);" id="active_contract_mark_val">
-                        $1,240.00
+
+                    <!-- Live Greeks Badges Strip -->
+                    <div class="trade-greeks-strip">
+                        <div class="gk-item">
+                            <span class="gk-lbl">Delta (Δ)</span>
+                            <span class="gk-val" id="trade_gk_delta" style="color:var(--cdx-blue);">+0.52</span>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-lbl">Theta (Θ)</span>
+                            <span class="gk-val" id="trade_gk_theta" style="color:var(--cdx-red);">-18.4$/d</span>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-lbl">Gamma (Γ)</span>
+                            <span class="gk-val" id="trade_gk_gamma">0.00012</span>
+                        </div>
+                        <div class="gk-item">
+                            <span class="gk-lbl">Vega (ν)</span>
+                            <span class="gk-val" id="trade_gk_vega">$42.10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. DIRECT STRIKE PRICE SELECTOR & CALL/PUT SWITCHER SUITE -->
+                <div class="strike-selector-suite-card">
+                    <div class="strike-suite-row">
+                        <!-- Option Type Switcher (CE vs PE) -->
+                        <div class="opt-type-toggle-group">
+                            <button class="opt-type-btn call active" id="btn_type_call" onclick="setOptionType('C')">
+                                🟢 Call (CE)
+                            </button>
+                            <button class="opt-type-btn put" id="btn_type_put" onclick="setOptionType('P')">
+                                🔴 Put (PE)
+                            </button>
+                        </div>
+
+                        <!-- Strike Price Dropdown + Steppers -->
+                        <div class="strike-dropdown-wrapper">
+                            <button class="strike-step-nav-btn" onclick="stepStrikeContract(-1)" title="Previous Lower Strike">◀ Lower</button>
+                            <div class="strike-select-box">
+                                <span style="font-size:9.5px; color:var(--text-muted); font-weight:700;">SELECT STRIKE:</span>
+                                <select id="trade_strike_dropdown" class="trade-strike-select" onchange="onStrikeDropdownChange(this.value)">
+                                    <!-- Populated dynamically with all strikes + live premiums -->
+                                </select>
+                            </div>
+                            <button class="strike-step-nav-btn" onclick="stepStrikeContract(1)" title="Next Higher Strike">Higher ▶</button>
+                            <button class="strike-atm-jump-btn" onclick="setATMStrike()" title="Jump to ATM Strike">🎯 ATM</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Strike Jump Pills -->
+                    <div class="quick-strike-pills" id="quick_strike_pills_container">
+                        <!-- Dynamic Pills generated by JS -->
                     </div>
                 </div>
 
@@ -1653,7 +1935,22 @@
             const prem = activeContract.optType === 'C' ? g.call : g.put;
 
             const disp = document.getElementById('active_contract_mark_val');
-            if (disp) disp.innerText = formatCurrency(prem);
+            if (disp) disp.innerText = `$${prem.toFixed(2)}`;
+
+            const inrDisp = document.getElementById('active_contract_mark_inr');
+            if (inrDisp) inrDisp.innerText = `≈ ₹${(prem * inrRate).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+            const deltaEl = document.getElementById('trade_gk_delta');
+            if (deltaEl) deltaEl.innerText = activeContract.optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
+
+            const thetaEl = document.getElementById('trade_gk_theta');
+            if (thetaEl) thetaEl.innerText = `${activeContract.optType === 'C' ? g.callTheta : g.putTheta}$/d`;
+
+            const gammaEl = document.getElementById('trade_gk_gamma');
+            if (gammaEl) gammaEl.innerText = `${g.gamma}`;
+
+            const vegaEl = document.getElementById('trade_gk_vega');
+            if (vegaEl) vegaEl.innerText = `$${g.vega}`;
 
             const obMark = document.getElementById('ob_mark_price');
             if (obMark) obMark.innerText = prem.toFixed(1);
@@ -1807,29 +2104,48 @@
 
         function toggleUnderlyingSymbol() {
             currentSymbol = currentSymbol === 'BTC' ? 'ETH' : 'BTC';
-            document.getElementById('pair_avatar').innerText = currentSymbol === 'BTC' ? '₿' : 'Ξ';
-            document.getElementById('pair_symbol_text').innerText = `${currentSymbol}USDT Perpetual`;
-            document.getElementById('slider_sym_label').innerText = `Target ${currentSymbol} Price`;
-            document.getElementById('ob_unit_lbl').innerText = `Qty (${currentSymbol})`;
-            document.getElementById('fut_lots_label').innerText = `Size (${currentSymbol})`;
+            const avatarEl = document.getElementById('pair_avatar');
+            if (avatarEl) avatarEl.innerText = currentSymbol === 'BTC' ? '₿' : 'Ξ';
+            
+            const symTextEl = document.getElementById('pair_symbol_text');
+            if (symTextEl) symTextEl.innerText = `${currentSymbol}USDT Perpetual`;
+            
+            const slLbl = document.getElementById('slider_sym_label');
+            if (slLbl) slLbl.innerText = `Target ${currentSymbol} Price`;
+            
+            const obUnit = document.getElementById('ob_unit_lbl');
+            if (obUnit) obUnit.innerText = `Qty (${currentSymbol})`;
+            
+            const futLotsLbl = document.getElementById('fut_lots_label');
+            if (futLotsLbl) futLotsLbl.innerText = `Size (${currentSymbol})`;
 
             const S = spotPrices[currentSymbol];
-            activeContract.strike = Math.round(S / (currentSymbol === 'BTC' ? 500 : 25)) * (currentSymbol === 'BTC' ? 500 : 25);
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            activeContract.strike = Math.round(S / step) * step;
             
             const sl = document.getElementById('slider_underlying_price');
-            sl.min = (S * 0.8).toFixed(0);
-            sl.max = (S * 1.2).toFixed(0);
-            sl.value = S.toFixed(0);
+            if (sl) {
+                sl.min = (S * 0.8).toFixed(0);
+                sl.max = (S * 1.2).toFixed(0);
+                sl.value = S.toFixed(0);
+            }
 
-            document.getElementById('stat_24h_high').innerText = formatCurrency(S * 1.02);
-            document.getElementById('stat_24h_low').innerText = formatCurrency(S * 0.98);
-            document.getElementById('stat_24h_vol').innerText = currentSymbol === 'BTC' ? '48.25K BTC' : '320.40K ETH';
+            const hEl = document.getElementById('stat_24h_high');
+            if (hEl) hEl.innerText = formatCurrency(S * 1.02);
+            const lEl = document.getElementById('stat_24h_low');
+            if (lEl) lEl.innerText = formatCurrency(S * 0.98);
+            const vEl = document.getElementById('stat_24h_vol');
+            if (vEl) vEl.innerText = currentSymbol === 'BTC' ? '48.25K BTC' : '320.40K ETH';
 
-            document.getElementById('fut_price_input').value = S;
-            document.getElementById('tv_symbol_text').innerText = `BINANCE:${currentSymbol}USDT.P`;
+            const futInp = document.getElementById('fut_price_input');
+            if (futInp) futInp.value = S;
+            const tvSym = document.getElementById('tv_symbol_text');
+            if (tvSym) tvSym.innerText = `BINANCE:${currentSymbol}USDT.P`;
 
             renderCoinDCXOptionChain();
-            selectOptionContract(activeContract.strike, 'C');
+            populateStrikeDropdown();
+            renderQuickStrikePills();
+            selectOptionContract(activeContract.strike, 'C', true);
             onFuturesFormChange();
             if (document.getElementById('screen_futures').style.display === 'flex') {
                 loadTradingViewChart();
@@ -1838,8 +2154,10 @@
 
         function updateWalletDisplay() {
             const formatted = formatCurrency(userBalance);
-            document.getElementById('hdr_wallet_bal').innerText = formatted;
-            document.getElementById('bottom_margin_text').innerText = `${formatted} ⌃`;
+            const hdr = document.getElementById('hdr_wallet_bal');
+            if (hdr) hdr.innerText = formatted;
+            const btm = document.getElementById('bottom_margin_text');
+            if (btm) btm.innerText = `${formatted} ⌃`;
         }
 
         function resetVirtualAccount() {
@@ -1866,10 +2184,12 @@
                 p.classList.toggle('active', i === idx);
             });
             renderCoinDCXOptionChain();
+            populateStrikeDropdown();
+            selectOptionContract(activeContract.strike, activeContract.optType, true);
         }
 
         // =========================================================================
-        // Option Chain Matrix Builder
+        // Option Chain Matrix Builder & Strike Management
         // =========================================================================
         function renderCoinDCXOptionChain() {
             const thead = document.getElementById('chain_table_head');
@@ -1917,7 +2237,7 @@
             }
 
             let strikes = [];
-            for (let k = atm - (step * 8); k <= atm + (step * 8); k += step) {
+            for (let k = atm - (step * 10); k <= atm + (step * 10); k += step) {
                 strikes.push(k);
             }
 
@@ -1927,6 +2247,9 @@
                 const isATM = K === atm;
                 const isITMCall = S > K;
                 const isITMPut = S < K;
+                const isSelectedStrike = (K === activeContract.strike);
+                const isSelectedCall = isSelectedStrike && (activeContract.optType === 'C');
+                const isSelectedPut = isSelectedStrike && (activeContract.optType === 'P');
 
                 const cPrice = g.call;
                 const pPrice = g.put;
@@ -1947,16 +2270,18 @@
                 const ceRatio = Math.min(80, Math.max(20, 50 - dist * 5));
                 const peRatio = 100 - ceRatio;
 
+                const rowClass = `${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')} ${isSelectedStrike ? 'row-active-selected' : ''}`;
+
                 if (currentChainFilter === 'PRICE') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="selectOptionContract(${K}, 'C')" style="text-align:right; color:var(--text-muted);">
+                        <tr class="${rowClass}">
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="text-align:right; color:var(--text-muted);">
                                 <div>${cBid} / ${cAsk}</div>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'C')">
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')">
                                 <div style="font-weight:800; color:var(--cdx-green);">${cPrice.toFixed(2)}</div>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'C')">
+                            <td onclick="selectOptionContract(${K}, activeContract.optType)">
                                 <div class="strike-center-cell">
                                     <span class="strike-badge ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
                                     <div class="sentiment-bar-track">
@@ -1965,52 +2290,52 @@
                                     </div>
                                 </div>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'P')">
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')">
                                 <div style="font-weight:800; color:var(--cdx-red);">${pPrice.toFixed(2)}</div>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="text-align:left; color:var(--text-muted);">
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="text-align:left; color:var(--text-muted);">
                                 <div>${pBid} / ${pAsk}</div>
                             </td>
                         </tr>
                     `;
                 } else if (currentChainFilter === 'OI') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="selectOptionContract(${K}, 'C')">${volC}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-green); font-weight:800;">${oiC}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')">
+                        <tr class="${rowClass}">
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')">${volC}</td>
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-green); font-weight:800;">${oiC}</td>
+                            <td onclick="selectOptionContract(${K}, activeContract.optType)">
                                 <div class="strike-center-cell">
                                     <span class="strike-badge ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
                                 </div>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red); font-weight:800;">${oiP}</td>
-                            <td onclick="selectOptionContract(${K}, 'P')">${volP}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red); font-weight:800;">${oiP}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')">${volP}</td>
                         </tr>
                     `;
                 } else if (currentChainFilter === 'GREEKS') {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-blue); font-weight:800;">+${g.callDelta}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-red);">${g.callTheta}$</td>
-                            <td onclick="selectOptionContract(${K}, 'C')">
+                        <tr class="${rowClass}">
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-blue); font-weight:800;">+${g.callDelta}</td>
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-red);">${g.callTheta}$</td>
+                            <td onclick="selectOptionContract(${K}, activeContract.optType)">
                                 <span class="strike-badge ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red);">${g.putTheta}$</td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-blue); font-weight:800;">${g.putDelta}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red);">${g.putTheta}$</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-blue); font-weight:800;">${g.putDelta}</td>
                         </tr>
                     `;
                 } else {
                     html += `
-                        <tr class="${isITMCall ? 'row-itm-call' : (isITMPut ? 'row-itm-put' : '')}">
-                            <td onclick="selectOptionContract(${K}, 'C')">${cMTag}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-blue);">+${g.callDelta}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-green); font-weight:800;">${cPrice.toFixed(2)}</td>
-                            <td onclick="selectOptionContract(${K}, 'C')">
+                        <tr class="${rowClass}">
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')">${cMTag}</td>
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-blue);">+${g.callDelta}</td>
+                            <td class="${isSelectedCall ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'C')" style="color:var(--cdx-green); font-weight:800;">${cPrice.toFixed(2)}</td>
+                            <td onclick="selectOptionContract(${K}, activeContract.optType)">
                                 <span class="strike-badge ${isATM ? 'atm' : ''}">${K.toLocaleString()}</span>
                             </td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red); font-weight:800;">${pPrice.toFixed(2)}</td>
-                            <td onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-blue);">${g.putDelta}</td>
-                            <td onclick="selectOptionContract(${K}, 'P')">${pMTag}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-red); font-weight:800;">${pPrice.toFixed(2)}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')" style="color:var(--cdx-blue);">${g.putDelta}</td>
+                            <td class="${isSelectedPut ? 'cell-active-selected' : ''}" onclick="selectOptionContract(${K}, 'P')">${pMTag}</td>
                         </tr>
                     `;
                 }
@@ -2019,10 +2344,98 @@
             tbody.innerHTML = html;
         }
 
+        function populateStrikeDropdown() {
+            const dropdown = document.getElementById('trade_strike_dropdown');
+            if (!dropdown) return;
+
+            const S = spotPrices[currentSymbol];
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            const atm = Math.round(S / step) * step;
+
+            let strikes = [];
+            for (let k = atm - (step * 10); k <= atm + (step * 10); k += step) {
+                strikes.push(k);
+            }
+
+            let html = '';
+            strikes.forEach(k => {
+                const g = calculateGreeks(S, k, activeExpiryT);
+                const isATM = k === atm;
+                const isSelected = k === activeContract.strike;
+                const cPrem = g.call.toFixed(1);
+                const pPrem = g.put.toFixed(1);
+                const tag = isATM ? '[ATM]' : (k > S ? '[OTM CE / ITM PE]' : '[ITM CE / OTM PE]');
+                
+                html += `<option value="${k}" ${isSelected ? 'selected' : ''}>
+                    ${k.toLocaleString()} ${tag} — CE: $${cPrem} | PE: $${pPrem}
+                </option>`;
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.value = activeContract.strike;
+        }
+
+        function renderQuickStrikePills() {
+            const container = document.getElementById('quick_strike_pills_container');
+            if (!container) return;
+
+            const S = spotPrices[currentSymbol];
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            const atm = Math.round(S / step) * step;
+
+            const pillOffsets = [-2, -1, 0, 1, 2];
+            let html = '';
+            pillOffsets.forEach(offset => {
+                const k = atm + (offset * step);
+                const isATM = offset === 0;
+                const isSelected = (k === activeContract.strike);
+                const label = isATM ? `🎯 ATM (${k.toLocaleString()})` : (offset > 0 ? `+${offset * step} (${k.toLocaleString()})` : `${offset * step} (${k.toLocaleString()})`);
+                
+                html += `
+                    <button class="quick-strike-pill-btn ${isSelected ? 'active' : ''}" onclick="selectOptionContract(${k}, activeContract.optType, true)">
+                        ${label}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function onStrikeDropdownChange(val) {
+            const k = parseFloat(val);
+            if (!isNaN(k)) {
+                selectOptionContract(k, activeContract.optType, true);
+            }
+        }
+
+        function setOptionType(optType) {
+            activeContract.optType = optType;
+            const btnCall = document.getElementById('btn_type_call');
+            const btnPut = document.getElementById('btn_type_put');
+            if (btnCall && btnPut) {
+                btnCall.classList.toggle('active', optType === 'C');
+                btnPut.classList.toggle('active', optType === 'P');
+            }
+            selectOptionContract(activeContract.strike, optType, true);
+        }
+
+        function setATMStrike() {
+            const S = spotPrices[currentSymbol];
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            const atm = Math.round(S / step) * step;
+            selectOptionContract(atm, activeContract.optType, true);
+        }
+
+        function stepStrikeContract(deltaSteps) {
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            const newStrike = activeContract.strike + (deltaSteps * step);
+            selectOptionContract(newStrike, activeContract.optType, true);
+        }
+
         // =========================================================================
         // Option Trade & Form Handler
         // =========================================================================
-        function selectOptionContract(strike, optType) {
+        function selectOptionContract(strike, optType, keepTab = false) {
             activeContract.strike = strike;
             activeContract.optType = optType;
 
@@ -2031,52 +2444,104 @@
             const prem = optType === 'C' ? g.call : g.put;
             activeContract.entryPrice = prem;
 
-            const isATM = Math.abs(strike - S) < (currentSymbol === 'BTC' ? 250 : 15);
+            const step = currentSymbol === 'BTC' ? 500 : 25;
+            const isATM = Math.abs(strike - S) < (step / 2);
             const isITM = (optType === 'C' && S > strike) || (optType === 'P' && S < strike);
 
+            // 1. Moneyness Badge
             const mTag = document.getElementById('active_moneyness_badge');
-            if (isATM) {
-                mTag.className = 'moneyness-chip chip-atm';
-                mTag.innerText = 'ATM';
-            } else if (isITM) {
-                mTag.className = optType === 'C' ? 'moneyness-chip chip-itm-call' : 'moneyness-chip chip-itm-put';
-                mTag.innerText = 'ITM';
-            } else {
-                mTag.className = 'moneyness-chip chip-otm';
-                mTag.innerText = 'OTM';
+            if (mTag) {
+                if (isATM) {
+                    mTag.className = 'moneyness-chip chip-atm';
+                    mTag.innerText = 'ATM';
+                } else if (isITM) {
+                    mTag.className = optType === 'C' ? 'moneyness-chip chip-itm-call' : 'moneyness-chip chip-itm-put';
+                    mTag.innerText = 'ITM';
+                } else {
+                    mTag.className = 'moneyness-chip chip-otm';
+                    mTag.innerText = 'OTM';
+                }
             }
 
+            // 2. Contract Title & Price Displays
             const cleanExpiry = activeExpiryLabel.split(' ')[0].toUpperCase();
             const contractName = `${currentSymbol}-${cleanExpiry}26-${strike}-${optType === 'C' ? 'CE' : 'PE'}`;
-            document.getElementById('active_contract_title').innerText = contractName;
-            document.getElementById('active_contract_mark_val').innerText = formatCurrency(prem);
-            document.getElementById('input_order_price').value = prem.toFixed(1);
+            const titleEl = document.getElementById('active_contract_title');
+            if (titleEl) titleEl.innerText = contractName;
 
-            // Greeks Strip
-            document.getElementById('trade_gk_delta').innerText = optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
-            document.getElementById('trade_gk_theta').innerText = `${optType === 'C' ? g.callTheta : g.putTheta}$/d`;
-            document.getElementById('trade_gk_gamma').innerText = `${g.gamma}`;
-            document.getElementById('trade_gk_vega').innerText = `$${g.vega}`;
+            const markValEl = document.getElementById('active_contract_mark_val');
+            if (markValEl) markValEl.innerText = `$${prem.toFixed(2)}`;
 
-            // Order Book Mid Prices
-            document.getElementById('ob_mark_price').innerText = prem.toFixed(1);
-            document.getElementById('ob_ltp_price').innerText = `LTP ${(prem * 0.998).toFixed(1)}`;
+            const inrValEl = document.getElementById('active_contract_mark_inr');
+            if (inrValEl) inrValEl.innerText = `≈ ₹${(prem * inrRate).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+            const orderPriceEl = document.getElementById('input_order_price');
+            if (orderPriceEl) orderPriceEl.value = prem.toFixed(1);
+
+            // 3. Greeks Badges
+            const deltaEl = document.getElementById('trade_gk_delta');
+            if (deltaEl) {
+                deltaEl.innerText = optType === 'C' ? `+${g.callDelta}` : `${g.putDelta}`;
+                deltaEl.style.color = optType === 'C' ? 'var(--cdx-blue)' : 'var(--cdx-red)';
+            }
+            const thetaEl = document.getElementById('trade_gk_theta');
+            if (thetaEl) thetaEl.innerText = `${optType === 'C' ? g.callTheta : g.putTheta}$/d`;
+
+            const gammaEl = document.getElementById('trade_gk_gamma');
+            if (gammaEl) gammaEl.innerText = `${g.gamma}`;
+
+            const vegaEl = document.getElementById('trade_gk_vega');
+            if (vegaEl) vegaEl.innerText = `$${g.vega}`;
+
+            // 4. Sync CE/PE toggle buttons
+            const btnCall = document.getElementById('btn_type_call');
+            const btnPut = document.getElementById('btn_type_put');
+            if (btnCall && btnPut) {
+                btnCall.classList.toggle('active', optType === 'C');
+                btnPut.classList.toggle('active', optType === 'P');
+            }
+
+            // 5. Sync Dropdown & Quick Pills
+            const dropdown = document.getElementById('trade_strike_dropdown');
+            if (dropdown && dropdown.value !== strike.toString()) {
+                dropdown.value = strike;
+            }
+            renderQuickStrikePills();
+
+            // 6. Order Book Mid Prices
+            const obMark = document.getElementById('ob_mark_price');
+            if (obMark) obMark.innerText = prem.toFixed(1);
+
+            const obLtp = document.getElementById('ob_ltp_price');
+            if (obLtp) obLtp.innerText = `LTP ${(prem * 0.998).toFixed(1)}`;
 
             // Ladder
-            document.getElementById('ob_a_1').innerText = (prem * 1.005).toFixed(1);
-            document.getElementById('ob_a_2').innerText = (prem * 1.010).toFixed(1);
-            document.getElementById('ob_a_3').innerText = (prem * 1.015).toFixed(1);
-            document.getElementById('ob_a_4').innerText = (prem * 1.020).toFixed(1);
-            document.getElementById('ob_a_5').innerText = (prem * 1.025).toFixed(1);
+            for (let i = 1; i <= 5; i++) {
+                const askEl = document.getElementById(`ob_a_${i}`);
+                if (askEl) askEl.innerText = (prem * (1 + 0.005 * i)).toFixed(1);
+                const bidEl = document.getElementById(`ob_b_${i}`);
+                if (bidEl) bidEl.innerText = (prem * (1 - 0.005 * i)).toFixed(1);
+            }
 
-            document.getElementById('ob_b_1').innerText = (prem * 0.995).toFixed(1);
-            document.getElementById('ob_b_2').innerText = (prem * 0.990).toFixed(1);
-            document.getElementById('ob_b_3').innerText = (prem * 0.985).toFixed(1);
-            document.getElementById('ob_b_4').innerText = (prem * 0.980).toFixed(1);
-            document.getElementById('ob_b_5').innerText = (prem * 0.975).toFixed(1);
+            // 7. Sync CTA Submit Button
+            const submitBtn = document.getElementById('btn_submit_cockpit_order');
+            if (submitBtn) {
+                if (activeContract.side === 'BUY') {
+                    submitBtn.innerText = optType === 'C' ? 'Buy / Long Call (CE)' : 'Buy / Long Put (PE)';
+                } else {
+                    submitBtn.innerText = optType === 'C' ? 'Sell / Short Call (CE)' : 'Sell / Short Put (PE)';
+                }
+            }
+
+            // 8. Re-render Option Chain Table Selection Highlight
+            renderCoinDCXOptionChain();
 
             onFormChange();
-            switchSubTab('TRADE');
+
+            if (!keepTab) {
+                switchSubTab('TRADE');
+                showCoinDCXToast(`🎯 Selected: ${contractName} | Mark: $${prem.toFixed(2)}`);
+            }
         }
 
         function setOrderSide(side) {
@@ -2693,11 +3158,14 @@
         // =========================================================================
         window.addEventListener('DOMContentLoaded', () => {
             document.body.setAttribute('data-theme', currentTheme);
-            document.getElementById('btn_theme_toggle').innerText = currentTheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+            const themeBtn = document.getElementById('btn_theme_toggle');
+            if (themeBtn) themeBtn.innerText = currentTheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
             
             updateWalletDisplay();
+            populateStrikeDropdown();
+            renderQuickStrikePills();
             renderCoinDCXOptionChain();
-            selectOptionContract(84000, 'C');
+            selectOptionContract(84000, 'C', true);
             renderPositionsView();
 
             // Connect WebSocket stream
