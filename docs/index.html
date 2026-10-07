@@ -2066,23 +2066,23 @@
             </div>
         </div>
 
-        <!-- MODULE C: 🎮 CHART BATTLE & MULTI-TIMEFRAME ARENA (GAME) -->
+        <!-- MODULE C: 🎮 SMART MONEY & LIQUIDITY CONCEPTS ARENA (GAME) -->
         <div id="screen_game">
             
-            <!-- 1. ARENA TOP TOOLBAR (STAGES, MTF, INDICATORS, REWARD STATS) -->
+            <!-- 1. ARENA TOP TOOLBAR (SMC STAGES, ASSET, MTF, SMC VISUAL LAYERS, PAST SCROLL CONTROLS) -->
             <div class="game-top-toolbar">
                 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                    <!-- 3 Difficulty Tiers / Stages -->
+                    <!-- 3 SMC Difficulty Tiers / Stages -->
                     <div style="display:flex; align-items:center; gap:4px;">
-                        <span style="font-size:10.5px; color:var(--text-faint); font-weight:700;">STAGE:</span>
+                        <span style="font-size:10.5px; color:var(--text-faint); font-weight:700;">SMC STAGE:</span>
                         <button class="stage-pill-btn active beginner" id="btn_stage_beginner" onclick="setGameStage('BEGINNER')">
-                            🟢 Beginner (आसान)
+                            🟢 Beginner (BSL / SSL Sweeps)
                         </button>
                         <button class="stage-pill-btn intermediate" id="btn_stage_intermediate" onclick="setGameStage('INTERMEDIATE')">
-                            🟡 Intermediate (मध्यम)
+                            🟡 Intermediate (FVG & Order Blocks)
                         </button>
                         <button class="stage-pill-btn advanced" id="btn_stage_advanced" onclick="setGameStage('ADVANCED')">
-                            🔴 Advanced (कठिन)
+                            🔴 Advanced (HTF Raid + LTF CHoCH)
                         </button>
                     </div>
 
@@ -2098,48 +2098,57 @@
                     <!-- Multi-Timeframe (MTF) Bar -->
                     <div style="display:flex; align-items:center; gap:3px;">
                         <span style="font-size:10.5px; color:var(--text-faint); font-weight:700;">MTF:</span>
-                        <button class="mtf-btn" id="mtf_1d" onclick="setGameMTF('1d')">1D</button>
-                        <button class="mtf-btn active" id="mtf_1h" onclick="setGameMTF('1h')">1H</button>
-                        <button class="mtf-btn" id="mtf_15m" onclick="setGameMTF('15m')">15M</button>
-                        <button class="mtf-btn" id="mtf_5m" onclick="setGameMTF('5m')">5M</button>
-                        <button class="mtf-btn" id="mtf_1m" onclick="setGameMTF('1m')">1M</button>
+                        <button class="mtf-btn" id="mtf_1d" onclick="setGameMTF('1d')">1D HTF</button>
+                        <button class="mtf-btn active" id="mtf_1h" onclick="setGameMTF('1h')">1H Swing</button>
+                        <button class="mtf-btn" id="mtf_15m" onclick="setGameMTF('15m')">15M Setup</button>
+                        <button class="mtf-btn" id="mtf_5m" onclick="setGameMTF('5m')">5M Entry</button>
+                        <button class="mtf-btn" id="mtf_1m" onclick="setGameMTF('1m')">1M Micro</button>
                     </div>
 
-                    <!-- Indicators Toggles -->
+                    <!-- SMC Liquidity Overlays Toggles -->
                     <div style="display:flex; align-items:center; gap:3px;">
-                        <button class="indicator-toggle-btn active" id="btn_ind_ema" onclick="toggleGameIndicator('ema')">EMA 20</button>
-                        <button class="indicator-toggle-btn active" id="btn_ind_sma" onclick="toggleGameIndicator('sma')">SMA 50</button>
-                        <button class="indicator-toggle-btn active" id="btn_ind_rsi" onclick="toggleGameIndicator('rsi')">RSI 14</button>
-                        <button class="indicator-toggle-btn active" id="btn_ind_sr" onclick="toggleGameIndicator('sr')">Key S/R</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_bsl_ssl" onclick="toggleGameSMC('bsl_ssl')">🎯 BSL / SSL</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_ob" onclick="toggleGameSMC('ob')">📦 Order Blocks</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_fvg" onclick="toggleGameSMC('fvg')">⚡ FVG Imbalances</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_choch" onclick="toggleGameSMC('choch')">🔄 CHoCH / BOS</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_eq" onclick="toggleGameSMC('eq')">⚖️ 50% Eq</button>
                     </div>
 
-                    <!-- Next Chart Generator -->
-                    <button class="btn-ui-action" onclick="loadNewGameScenario()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800;" title="Fetch new real historical chart challenge">
-                        🎲 Next Chart / नया चार्ट
+                    <!-- Next Chart Challenge -->
+                    <button class="btn-ui-action" onclick="loadNewGameScenario()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800;" title="Fetch new real historical market scenario">
+                        🎲 Next Real Chart / नया चार्ट
                     </button>
                 </div>
             </div>
 
-            <!-- 2. ARENA MAIN GRID (CHART & RSI ON LEFT, PREDICTION & STATS ON RIGHT) -->
-            <div class="game-grid-layout">
+            <!-- 2. ARENA MAIN GRID -->
+            <div class="game-grid-layout" style="height:calc(100% - 46px);">
                 
-                <!-- LEFT: MULTI-TIMEFRAME INTERACTIVE CANVAS CHART & RSI -->
+                <!-- LEFT: MULTI-TIMEFRAME FULLY DRAGGABLE & ZOOMABLE SMC CANVAS CHART -->
                 <div class="game-chart-section">
-                    <!-- Top Chart Status & Crosshair Bar -->
+                    <!-- Top Chart Status & Navigation Bar -->
                     <div class="game-chart-meta-bar">
                         <div style="display:flex; align-items:center; gap:8px;">
                             <b id="game_scenario_asset_title" style="font-size:12px; color:var(--text-main);">BTCUSDT (1H)</b>
-                            <span class="moneyness-chip" id="game_scenario_tag_badge" style="background:var(--cdx-green-bg); color:var(--cdx-green); font-size:10px;">BEGINNER LEVEL</span>
+                            <span class="moneyness-chip" id="game_scenario_tag_badge" style="background:var(--cdx-green-bg); color:var(--cdx-green); font-size:10px;">BEGINNER LIQUIDITY</span>
                             <span style="font-family:'JetBrains Mono'; font-weight:800; color:var(--cdx-orange);" id="game_cutoff_price">$64,250.00</span>
                         </div>
 
-                        <!-- Live Cursor OHLCV Readout -->
-                        <div style="font-family:'JetBrains Mono'; font-size:10.5px; color:var(--text-muted); display:flex; gap:8px;" id="game_crosshair_ohlc">
+                        <!-- Chart Navigation & Pan Controls -->
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <button class="btn-ui-action" onclick="scrollGameChart(-20)" title="Scroll back into past price action">◀◀ Past History (पिछला चार्ट)</button>
+                            <button class="btn-ui-action" onclick="scrollGameChart(20)" title="Scroll forward">Forward ▶▶</button>
+                            <button class="btn-ui-action" onclick="zoomGameChart(-10)" title="Zoom in">🔍 +</button>
+                            <button class="btn-ui-action" onclick="zoomGameChart(10)" title="Zoom out">🔍 -</button>
+                            <button class="btn-ui-action" onclick="resetGameChartOffset()" style="color:var(--cdx-blue); border-color:var(--cdx-blue);" title="Jump back to present decision point">⚡ Decision Point</button>
+                        </div>
+
+                        <!-- Live Cursor Readout -->
+                        <div style="font-family:'JetBrains Mono'; font-size:10.5px; color:var(--text-muted); display:flex; gap:6px;" id="game_crosshair_ohlc">
                             <span>O: <b id="gh_open">-</b></span>
                             <span>H: <b id="gh_high">-</b></span>
                             <span>L: <b id="gh_low">-</b></span>
                             <span>C: <b id="gh_close">-</b></span>
-                            <span>Vol: <b id="gh_vol">-</b></span>
                         </div>
 
                         <!-- Live Simulation Floating PnL & Status Badge -->
@@ -2148,18 +2157,18 @@
                         </div>
                     </div>
 
-                    <!-- Main Candlestick Canvas -->
-                    <div class="game-canvas-wrapper" id="game_canvas_container">
+                    <!-- Main Drag & Zoom SMC Candlestick Canvas -->
+                    <div class="game-canvas-wrapper" id="game_canvas_container" style="cursor:grab; user-select:none;">
                         <canvas id="game_candle_canvas"></canvas>
-                    </div>
-
-                    <!-- Sub-Chart: RSI 14 Canvas -->
-                    <div class="game-rsi-wrapper" id="game_rsi_container">
-                        <canvas id="game_rsi_canvas"></canvas>
+                        
+                        <!-- Pan / Drag Floating Instructions -->
+                        <div style="position:absolute; bottom:8px; left:12px; pointer-events:none; background:rgba(14,20,32,0.85); padding:4px 10px; border-radius:6px; font-size:10.5px; color:var(--text-muted); border:1px solid var(--border-ui);">
+                            🖱️ <b>Drag horizontally to explore past history</b> | <b>Scroll wheel to Zoom</b>
+                        </div>
                     </div>
                 </div>
 
-                <!-- RIGHT: PREDICTION TERMINAL, RISK SETUP & GAMIFICATION STATS -->
+                <!-- RIGHT: SMC PREDICTION TERMINAL & LIQUIDITY ANALYSIS -->
                 <div class="game-prediction-sidebar">
                     
                     <!-- Player XP & Streak Profile Card -->
@@ -2167,7 +2176,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div style="display:flex; align-items:center; gap:6px;">
                                 <span style="font-size:16px;">⭐</span>
-                                <b style="font-size:12px;" id="game_player_rank">Level 1: Novice Chartist</b>
+                                <b style="font-size:12px;" id="game_player_rank">Level 1: SMC Novice</b>
                             </div>
                             <span style="font-size:11.5px; font-weight:800; color:var(--cdx-orange);" id="game_player_streak">🔥 0 Streak</span>
                         </div>
@@ -2175,7 +2184,7 @@
                         <!-- XP Bar -->
                         <div>
                             <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:2px;">
-                                <span>XP Progress</span>
+                                <span>SMC Mastery XP</span>
                                 <span id="game_xp_label">0 / 300 XP</span>
                             </div>
                             <div style="background:var(--border-ui); height:6px; border-radius:3px; overflow:hidden;">
@@ -2190,52 +2199,52 @@
                         </div>
                     </div>
 
-                    <!-- Scenario Intelligence Brief & MTF Clues -->
+                    <!-- Scenario Intelligence Brief & SMC Clues -->
                     <div class="scenario-clue-card">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:11px; font-weight:800; color:var(--cdx-blue);">📊 MARKET ANALYSIS BRIEF</span>
-                            <span style="font-size:10px; color:var(--text-muted);" id="game_scenario_date">Real Historical Event</span>
+                            <span style="font-size:11px; font-weight:800; color:var(--cdx-blue);">🎯 LIQUIDITY & MARKET STRUCTURE BRIEF</span>
+                            <span style="font-size:10px; color:var(--text-muted);" id="game_scenario_date">Real Market Period</span>
                         </div>
                         <p id="game_scenario_desc" style="font-size:11.5px; line-height:1.45; color:var(--text-main); margin:0;">
-                            Loading market scenario...
+                            Loading liquidity scenario...
                         </p>
                         <div style="font-size:10.5px; color:var(--text-muted); background:var(--bg-surface-secondary); padding:6px 8px; border-radius:4px; margin-top:2px;" id="game_scenario_clues">
-                            💡 <b>Pro Tip:</b> Check 1D & 1H timeframes above to confirm multi-timeframe trend alignment before predicting!
+                            💡 <b>SMC Tip:</b> Drag the chart to see where old Buy-Side & Sell-Side liquidity pools were left unmitigated!
                         </div>
                     </div>
 
-                    <!-- Prediction Action Terminal -->
+                    <!-- Prediction Action Terminal (SMC Liquidity Direction) -->
                     <div style="background:var(--bg-surface); border:1px solid var(--border-ui); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-                        <span style="font-size:11px; font-weight:800; color:var(--text-muted);">SELECT YOUR PREDICTION:</span>
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted);">SMART MONEY DIRECTION (PREDICTION):</span>
                         
                         <div class="predict-btn-row">
                             <button class="predict-choice-btn selected bullish" id="btn_pred_bullish" onclick="selectGamePrediction('BULLISH')">
                                 <span style="font-size:16px;">🚀</span>
-                                <span>BULLISH</span>
-                                <span style="font-size:9.5px; color:var(--cdx-green);">Long / Buy</span>
+                                <span>UP (BUY)</span>
+                                <span style="font-size:9.5px; color:var(--cdx-green);">Hunt BSL Above</span>
                             </button>
                             <button class="predict-choice-btn bearish" id="btn_pred_bearish" onclick="selectGamePrediction('BEARISH')">
                                 <span style="font-size:16px;">📉</span>
-                                <span>BEARISH</span>
-                                <span style="font-size:9.5px; color:var(--cdx-red);">Short / Sell</span>
+                                <span>DOWN (SELL)</span>
+                                <span style="font-size:9.5px; color:var(--cdx-red);">Hunt SSL Below</span>
                             </button>
                             <button class="predict-choice-btn range" id="btn_pred_range" onclick="selectGamePrediction('RANGE')">
                                 <span style="font-size:16px;">⚖️</span>
-                                <span>CHOPPY</span>
-                                <span style="font-size:9.5px; color:var(--cdx-orange);">No Trade</span>
+                                <span>INDUCEMENT</span>
+                                <span style="font-size:9.5px; color:var(--cdx-orange);">Chop / Wait</span>
                             </button>
                         </div>
 
                         <!-- Take Profit & Stop Loss Sliders -->
                         <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
                             <div style="display:flex; justify-content:space-between; font-size:10.5px;">
-                                <span style="color:var(--text-muted);">Target TP:</span>
+                                <span style="color:var(--text-muted);">Liquidity Target (TP):</span>
                                 <b style="color:var(--cdx-green);" id="game_tp_display">+4.0% ($66,820)</b>
                             </div>
                             <input type="range" class="coindcx-range-slider" id="slider_game_tp" min="1" max="15" step="0.5" value="4" oninput="onGameRiskChange()">
 
                             <div style="display:flex; justify-content:space-between; font-size:10.5px; margin-top:2px;">
-                                <span style="color:var(--text-muted);">Stop Loss SL:</span>
+                                <span style="color:var(--text-muted);">Invalidation SL (Below Sweep):</span>
                                 <b style="color:var(--cdx-red);" id="game_sl_display">-2.0% ($62,965)</b>
                             </div>
                             <input type="range" class="coindcx-range-slider" id="slider_game_sl" min="0.5" max="8" step="0.5" value="2" oninput="onGameRiskChange()">
@@ -2248,18 +2257,19 @@
 
                         <!-- Big CTA Submit Button -->
                         <button class="coindcx-cta-submit buy" id="btn_submit_prediction" onclick="submitGamePrediction()" style="margin-top:4px; font-size:12.5px; padding:10px;">
-                            ⚡ Lock Prediction & Play Candles (प्रेडिक्शन करें)
+                            ⚡ Lock Prediction & Play Candles (प्रेडिक्शन लॉक करें)
                         </button>
                     </div>
 
                     <!-- Unlocked Trophy Badges Strip -->
                     <div style="background:var(--bg-surface); border:1px solid var(--border-ui); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:4px;">
-                        <span style="font-size:10px; font-weight:800; color:var(--text-muted);">ACHIEVEMENT TROPHY BADGES:</span>
+                        <span style="font-size:10px; font-weight:800; color:var(--text-muted);">SMC TROPHY BADGES:</span>
                         <div class="badge-gallery-strip" id="game_badges_container">
-                            <span class="badge-chip unlocked" title="First correct prediction">🎯 Sniper Entry</span>
+                            <span class="badge-chip unlocked" title="First correct prediction">🎯 Liquidity Sniper</span>
                             <span class="badge-chip" id="badge_streak_3" title="Win 3 in a row">🔥 3x Streak</span>
-                            <span class="badge-chip" id="badge_divergence" title="Master RSI Divergence">⚡ Divergence Hunter</span>
-                            <span class="badge-chip" id="badge_advanced" title="Win an Advanced Stage battle">👑 Elite Chartist</span>
+                            <span class="badge-chip" id="badge_fvg" title="Master Fair Value Gaps">⚡ FVG Master</span>
+                            <span class="badge-chip" id="badge_ob" title="Master Order Blocks">📦 OB Defender</span>
+                            <span class="badge-chip" id="badge_advanced" title="Master HTF Raid + LTF CHoCH">👑 Smart Money King</span>
                         </div>
                     </div>
 
@@ -3875,18 +3885,27 @@
 
 
         // =========================================================================
-        // 🎮 CHART ARENA GAME ENGINE & MULTI-TIMEFRAME PREDICTION SIMULATOR
+        // 🎮 SMART MONEY & LIQUIDITY CONCEPTS (SMC / ICT) GAME ENGINE
         // =========================================================================
         let gameStage = 'BEGINNER'; // 'BEGINNER', 'INTERMEDIATE', 'ADVANCED'
         let gameAsset = 'BTCUSDT'; // 'BTCUSDT', 'ETHUSDT', 'SOLUSDT'
         let gameMTF = '1h'; // '1d', '1h', '15m', '5m', '1m'
-        let gameIndicators = { ema: true, sma: true, rsi: true, sr: true };
+        let gameSMC = { bsl_ssl: true, ob: true, fvg: true, choch: true, eq: true };
         let gamePrediction = 'BULLISH'; // 'BULLISH', 'BEARISH', 'RANGE'
         let gameIsRevealed = false;
         let gameIsSimulating = false;
         let gameSimInterval = null;
-        let gameVisibleIndex = 55;
-        let gameTotalCandles = 85;
+        let gameVisibleIndex = 140; // Decision cutoff index in deep history
+        let gameTotalCandles = 200; // Deep historical candle length
+
+        // Pan & Zoom viewport controls
+        let chartViewport = {
+            candlesPerView: 55, // How many candles visible on screen (zoom level)
+            viewEndIndex: 140,   // Rightmost candle index shown on screen
+            isDragging: false,
+            dragStartX: 0,
+            dragStartEndIndex: 140
+        };
 
         let gamePlayerStats = {
             xp: parseInt(localStorage.getItem('cdx_game_xp') || '0'),
@@ -3897,218 +3916,240 @@
         };
 
         let currentScenario = null;
-        let mtfDataCache = {}; // stores 1d, 1h, 15m, 5m, 1m candles for current scenario
+        let mtfDataCache = {}; // stores 1d, 1h, 15m, 5m, 1m candles (200+ candles each)
+        let activeKlines = []; // currently selected MTF klines
 
-        // 12 Real-World Historical Market Scenarios
-        const HISTORICAL_SCENARIOS = [
-            // --- 🟢 STAGE 1: BEGINNER (Clear Trends, S/R Bounces, Simple Breakouts) ---
+        // 12 Realistic Smart Money Concepts (ICT / SMC) Scenarios
+        const SMC_SCENARIOS = [
+            // --- 🟢 STAGE 1: BEGINNER (BSL / SSL Sweeps, Clean Order Blocks, Simple Reversals) ---
             {
-                id: 'sc_beg_1',
+                id: 'smc_beg_1',
                 stage: 'BEGINNER',
                 asset: 'BTCUSDT',
-                title: 'Bitcoin ETF Inflow Bull Flag Breakout (2024)',
-                date: 'Feb 2024 (Institutional Momentum)',
-                desc: 'Bitcoin consolidated in a tight upward Bull Flag after a 12% impulse leg. Price is testing the upper resistance boundary with rising volume and healthy moving average support.',
-                clue: '💡 <b>Clue:</b> Look at the 1D trend (Bullish) and 1H Bull Flag. When price holds above 20 EMA with rising volume, upside continuation probability is over 75%.',
-                basePrice: 51200,
+                title: 'Equal Lows (EQL) Sell-Side Liquidity Sweep & Retest',
+                date: 'Clean SSL Raid & Rapid Reclaim',
+                desc: 'Retail stop losses gathered below two equal lows (EQL) at $62,400. Smart Money created a rapid wick down to sweep all Sell-Side Liquidity (SSL) and immediately reclaimed the range with a massive Bullish Order Block (+OB).',
+                clue: '🎯 <b>SMC Setup:</b> Sell-Side Liquidity (SSL) below equal lows was completely raided. Price is now retesting the Bullish Order Block (+OB). Target is the Buy-Side Liquidity (BSL) resting above recent swing highs!',
+                basePrice: 62400,
                 correctOutcome: 'BULLISH',
-                tpPct: 4.5,
-                slPct: 2.0,
-                trendDelta: 0.048,
-                explanation: '✅ <b>Bullish Breakout Confirmed:</b> The Bull Flag broke out cleanly with strong institutional volume. 20 EMA provided rock-solid dynamic support, driving price straight to target TP!'
+                tpPct: 4.8,
+                slPct: 1.8,
+                trendDelta: 0.052,
+                smcSetup: { bsl: 65400, ssl: 62100, obType: 'BULLISH', obPrice: 62500, fvgPrice: 63100 },
+                explanation: '✅ <b>SSL Sweep to BSL Expansion:</b> Smart Money grabbed the sell stops below $62,400 to fill their massive long positions. Price expanded aggressively straight into the Buy-Side Liquidity pool ($65,400)!'
             },
             {
-                id: 'sc_beg_2',
+                id: 'smc_beg_2',
                 stage: 'BEGINNER',
                 asset: 'ETHUSDT',
-                title: 'Ethereum Double Bottom Demand Zone Retest',
-                date: 'Aug 2023 (Major Support Bounce)',
-                desc: 'Ethereum created a distinct W-pattern (Double Bottom) at the major $1,600 psychological demand zone. A bullish pin bar formed at support while RSI climbed out of oversold territory.',
-                clue: '💡 <b>Clue:</b> A Double Bottom with long rejection wicks at key support is a high-conviction reversal pattern.',
-                basePrice: 1620,
-                correctOutcome: 'BULLISH',
-                tpPct: 5.0,
-                slPct: 2.2,
-                trendDelta: 0.056,
-                explanation: '✅ <b>Double Bottom Surge:</b> Buyers aggressively defended the demand zone. The neckline breakout triggered short liquidations, driving ETH rapidly upwards!'
-            },
-            {
-                id: 'sc_beg_3',
-                stage: 'BEGINNER',
-                asset: 'SOLUSDT',
-                title: 'Solana Ascending Triangle Breakout',
-                date: 'Nov 2023 (Breakout Phase)',
-                desc: 'Solana created higher lows compressing against a flat $58.00 horizontal resistance level, forming a textbook Ascending Triangle on 1H and 1D timeframes.',
-                clue: '💡 <b>Clue:</b> Ascending Triangles show aggressive buyers stepping in at higher prices, preparing to blow through the ceiling.',
-                basePrice: 57.5,
-                correctOutcome: 'BULLISH',
-                tpPct: 6.0,
-                slPct: 2.5,
-                trendDelta: 0.072,
-                explanation: '✅ <b>Textbook Triangle Breakout:</b> The $58.00 ceiling shattered on 3x normal volume. SOL entered price discovery mode with continuous green candles!'
-            },
-            {
-                id: 'sc_beg_4',
-                stage: 'BEGINNER',
-                asset: 'BTCUSDT',
-                title: 'Bitcoin Clean Head & Shoulders Breakdown',
-                date: 'Nov 2021 (All-Time High Reversal)',
-                desc: 'After hitting new highs, Bitcoin formed a classic Head & Shoulders pattern. The Right Shoulder formed on declining buyer volume and price is now testing the horizontal neckline.',
-                clue: '💡 <b>Clue:</b> Declining volume on the Right Shoulder combined with an EMA bearish cross signals buyer exhaustion.',
-                basePrice: 65400,
-                correctOutcome: 'BEARISH',
-                tpPct: 4.8,
-                slPct: 2.0,
-                trendDelta: -0.052,
-                explanation: '✅ <b>Bearish Breakdown:</b> The neckline failed to hold, unleashing cascading market sell orders as stop-losses triggered below support.'
-            },
-
-            // --- 🟡 STAGE 2: INTERMEDIATE (RSI Divergence, Consolidation & Fakeouts) ---
-            {
-                id: 'sc_int_1',
-                stage: 'INTERMEDIATE',
-                asset: 'BTCUSDT',
-                title: 'Bearish RSI Divergence at Range High ($69,000)',
-                date: 'March 2024 (Blow-off Top Test)',
-                desc: 'Bitcoin pushed to a Higher High on the price chart, but the 14-period RSI printed a distinct Lower High (Bearish Divergence) on both 1H and 4H timeframes. Open interest is overheated.',
-                clue: '💡 <b>Clue:</b> Regular Bearish Divergence near key resistance indicates momentum is fading despite higher prices. High likelihood of a mean reversion pullback.',
-                basePrice: 68900,
+                title: 'Buy-Side Liquidity (BSL) Sweep & Rejection at Old Highs',
+                date: 'BSL Purge at Key Resistance',
+                desc: 'Ethereum pushed above prominent swing highs to sweep Buy-Side Liquidity (BSL). Rather than holding above, the candle left a massive upper wick and closed back inside the range with heavy institutional selling.',
+                clue: '🎯 <b>SMC Setup:</b> BSL was swept with a rejection wick. A Bearish Order Block (-OB) has formed. Price is primed to hunt the unprotected Sell-Side Liquidity (SSL) resting below the range lows.',
+                basePrice: 2680,
                 correctOutcome: 'BEARISH',
                 tpPct: 5.2,
-                slPct: 2.4,
-                trendDelta: -0.060,
-                explanation: '✅ <b>RSI Divergence Flush:</b> The divergence played out with ruthless precision! Exhausted buyers failed to absorb limit sell orders, causing a swift 6% pullback to the 50 SMA.'
-            },
-            {
-                id: 'sc_int_2',
-                stage: 'INTERMEDIATE',
-                asset: 'ETHUSDT',
-                title: 'Wyckoff Spring & False Breakdown Reclaim',
-                date: 'Oct 2023 (Smart Money Accumulation)',
-                desc: 'Ethereum wicked below the multi-week support range to sweep retail stop losses, but immediately printed an aggressive V-shape reclaim candle back into the range on massive volume.',
-                clue: '💡 <b>Clue:</b> A quick stop sweep followed by an immediate reclaim is a classic Wyckoff "Spring" or Liquidity Grab before a massive markup.',
-                basePrice: 1780,
-                correctOutcome: 'BULLISH',
-                tpPct: 5.5,
-                slPct: 2.2,
-                trendDelta: 0.068,
-                explanation: '✅ <b>Wyckoff Spring Markup:</b> Trapped breakout bears were forced to buy back at market prices, fueling an explosive 7% short squeeze rally!'
-            },
-            {
-                id: 'sc_int_3',
-                stage: 'INTERMEDIATE',
-                asset: 'SOLUSDT',
-                title: 'Solana Hidden Bullish Divergence on 1D/1H Pullback',
-                date: 'Jan 2024 (Trend Continuation Setup)',
-                desc: 'During a strong macro uptrend, SOL pulled back to the 50 SMA. Price formed a Higher Low while RSI plunged to a Lower Low (Hidden Bullish Divergence), indicating strong trend continuation.',
-                clue: '💡 <b>Clue:</b> Hidden Bullish Divergence during an established uptrend is one of the highest win-rate trend continuation signals.',
-                basePrice: 94.0,
-                correctOutcome: 'BULLISH',
-                tpPct: 6.5,
-                slPct: 2.8,
-                trendDelta: 0.082,
-                explanation: '✅ <b>Trend Continuation Blast:</b> Buyers loaded up at the 50 SMA. The hidden divergence sparked a powerful leg up, crushing all resistance levels.'
-            },
-            {
-                id: 'sc_int_4',
-                stage: 'INTERMEDIATE',
-                asset: 'BTCUSDT',
-                title: 'Range Squeeze & Multi-Day Chop Consolidation',
-                date: 'Aug 2023 (Low Volatility Range)',
-                desc: 'Bitcoin volume has dried up to record lows. Price is oscillating in an ultra-tight $400 band between two immovable order blocks. Bollinger Bands are tightly constricted.',
-                clue: '💡 <b>Clue:</b> When price is in the middle of a dead sideways range with flat EMAs, taking directional trades carries high chop risk.',
-                basePrice: 29400,
-                correctOutcome: 'RANGE',
-                tpPct: 2.5,
                 slPct: 2.0,
-                trendDelta: 0.004,
-                explanation: '✅ <b>Range Discipline Rewarded:</b> Price stayed completely choppy and sideways for the next 24 hours. Waiting on the sidelines was the most profitable decision!'
-            },
-
-            // --- 🔴 STAGE 3: ADVANCED (Liquidity Cascades, Stop Hunts & Macro Shocks) ---
-            {
-                id: 'sc_adv_1',
-                stage: 'ADVANCED',
-                asset: 'BTCUSDT',
-                title: 'March 2020 Cascading Long Liquidation Flash Crash',
-                date: 'March 2020 (Black Swan Liquidity Vacuum)',
-                desc: 'Global macro panic triggered margin calls across all derivative exchanges. Order books became paper-thin as long positions liquidated in a violent cascade. Support levels vanish.',
-                clue: '💡 <b>Clue:</b> When liquidations feed on themselves and order book depth evaporates, support levels offer zero protection until open interest is completely flushed.',
-                basePrice: 7800,
-                correctOutcome: 'BEARISH',
-                tpPct: 8.5,
-                slPct: 3.5,
-                trendDelta: -0.145,
-                explanation: '✅ <b>Cascading Liquidation Flush:</b> Price plunged violently as over $1 Billion in leveraged longs were liquidated in minutes before finding ultimate capitulation!'
+                trendDelta: -0.055,
+                smcSetup: { bsl: 2740, ssl: 2540, obType: 'BEARISH', obPrice: 2710, fvgPrice: 2650 },
+                explanation: '✅ <b>BSL Purge & Downward Delivery:</b> Trapped breakout buyers provided the exit liquidity for institutional short sellers. Price delivered swiftly downward to sweep the Sell-Side Liquidity below $2,550!'
             },
             {
-                id: 'sc_adv_2',
-                stage: 'ADVANCED',
-                asset: 'ETHUSDT',
-                title: 'May 2021 Leverage Flush & Rapid V-Reversal',
-                date: 'May 2021 (Extreme Volatility Wipeout)',
-                desc: 'A massive 25% wick down swept months of liquidity into the 200 EMA on the Daily chart. On the 1-minute and 5-minute charts, extreme volume exhaustion pin bars are forming.',
-                clue: '💡 <b>Clue:</b> Check 1D vs 1M MTF. When a flash dump hits major 200 EMA with record volume climaxes, aggressive smart money accumulation creates rapid V-shape bounces.',
-                basePrice: 2450,
-                correctOutcome: 'BULLISH',
-                tpPct: 9.0,
-                slPct: 4.0,
-                trendDelta: 0.125,
-                explanation: '✅ <b>Epic V-Shape Bounce:</b> The liquidity wick was instantly bought up by institutional buyers. A legendary 12%+ bounce rewarded traders who spotted the volume climax!'
-            },
-            {
-                id: 'sc_adv_3',
-                stage: 'ADVANCED',
+                id: 'smc_beg_3',
+                stage: 'BEGINNER',
                 asset: 'SOLUSDT',
-                title: 'FTX Contagion Squeeze & False Rebound Trap',
-                date: 'Nov 2022 (Systemic Panic & Dead Cat Bounce)',
-                desc: 'Following bad headlines, SOL bounced weakly into resistance on low volume before stalling out below the 20 EMA. Retail was buying the dip while whales unloaded into liquidity.',
-                clue: '💡 <b>Clue:</b> A weak low-volume bounce during fundamental solvency panic is a textbook "Dead Cat Bounce" bull trap.',
-                basePrice: 18.5,
-                correctOutcome: 'BEARISH',
-                tpPct: 8.0,
-                slPct: 3.2,
-                trendDelta: -0.115,
-                explanation: '✅ <b>Bull Trap Rejected:</b> The dead cat bounce failed immediately at the 20 EMA. Aggressive shorting drove price straight through previous lows!'
-            },
-            {
-                id: 'sc_adv_4',
-                stage: 'ADVANCED',
-                asset: 'BTCUSDT',
-                title: 'Post-Halving Macro S/R Flip & Institutional Accumulation',
-                date: 'May 2024 (Macro Resistance Flip)',
-                desc: 'Bitcoin spent 4 weeks breaking out of previous All-Time High resistance and is now conducting a slow, low-volatility retest of the old ceiling to turn it into floor support.',
-                clue: '💡 <b>Clue:</b> Previous major resistance holding as support with declining sell volume on 1D confirms an institutional S/R flip.',
-                basePrice: 63800,
+                title: 'Bullish Fair Value Gap (FVG) Mitigation',
+                date: 'Imbalance Fill & Structure Continuation',
+                desc: 'Following an impulsive break of structure (BOS), Solana left an unfilled 3-candle Fair Value Gap (BISI Imbalance). Price has slowly pulled back into the FVG zone to rebalance price before expanding.',
+                clue: '🎯 <b>SMC Setup:</b> Price is mitigating a clean Fair Value Gap (FVG) in the Discount zone. Institutional buy orders are waiting inside the imbalance to propel price higher.',
+                basePrice: 142.0,
                 correctOutcome: 'BULLISH',
                 tpPct: 6.0,
                 slPct: 2.2,
-                trendDelta: 0.075,
-                explanation: '✅ <b>Perfect S/R Flip:</b> The old resistance successfully turned into unbreakable support! Bitcoin rallied aggressively into new highs!'
+                trendDelta: 0.065,
+                smcSetup: { bsl: 152.0, ssl: 138.5, obType: 'BULLISH', obPrice: 140.5, fvgPrice: 142.0 },
+                explanation: '✅ <b>FVG Mitigation Complete:</b> The imbalance was perfectly filled to the tick! Strong institutional buying pressure immediately resumed the structural uptrend to clear all BSL.'
+            },
+            {
+                id: 'smc_beg_4',
+                stage: 'BEGINNER',
+                asset: 'BTCUSDT',
+                title: 'Clean 1H Bullish Order Block (+OB) Defense',
+                date: 'Institutional Footprint Defense',
+                desc: 'The last bearish down-candle prior to a violent 8% expansion left a validated Bullish Order Block (+OB). Price has pulled back smoothly on diminishing volume to test the 50% mean threshold of the Order Block.',
+                clue: '🎯 <b>SMC Setup:</b> Order Blocks represent where banks accumulated positions. Testing the Mean Threshold (50% of the OB body) with low volume offers an optimal high-probability long entry.',
+                basePrice: 63800,
+                correctOutcome: 'BULLISH',
+                tpPct: 4.5,
+                slPct: 1.8,
+                trendDelta: 0.048,
+                smcSetup: { bsl: 66800, ssl: 63200, obType: 'BULLISH', obPrice: 63800, fvgPrice: 64400 },
+                explanation: '✅ <b>Order Block Reaction:</b> Institutional limit buy orders defended the +OB mean threshold flawlessly! Price surged to new swing highs without ever threatening the invalidation level.'
+            },
+
+            // --- 🟡 STAGE 2: INTERMEDIATE (Multi-Timeframe CHoCH, Inducement Traps, OTE Discount) ---
+            {
+                id: 'smc_int_1',
+                stage: 'INTERMEDIATE',
+                asset: 'BTCUSDT',
+                title: '1D Liquidity Sweep with 15M Change of Character (CHoCH)',
+                date: 'HTF Sweep ➔ LTF Market Structure Shift',
+                desc: 'On the 1D chart, Bitcoin swept major Sell-Side Liquidity. Dropping down to the 15M timeframe reveals an aggressive Change of Character (CHoCH) breaking the last lower high, leaving a fresh Fair Value Gap.',
+                clue: '🎯 <b>SMC Setup:</b> Multi-Timeframe Confluence! HTF Liquidity Sweep + LTF CHoCH is the golden signature of Smart Money reversal. Target is the internal Buy-Side Liquidity resting above.',
+                basePrice: 58900,
+                correctOutcome: 'BULLISH',
+                tpPct: 5.5,
+                slPct: 2.0,
+                trendDelta: 0.062,
+                smcSetup: { bsl: 62400, ssl: 58200, obType: 'BULLISH', obPrice: 58800, fvgPrice: 59400 },
+                explanation: '✅ <b>CHoCH Confirmation Delivered:</b> The 15M CHoCH confirmed that smart money flipped from distribution to accumulation. Price respected the LTF FVG and exploded higher to take out all HTF targets!'
+            },
+            {
+                id: 'smc_int_2',
+                stage: 'INTERMEDIATE',
+                asset: 'ETHUSDT',
+                title: 'Bearish FVG Mitigation after Inducement (IDM) Trap',
+                date: 'Liquidity Engineering & Institutional Delivery',
+                desc: 'Smart money engineered an obvious retail support level (Inducement). Retail buyers rushed in on a minor bounce, but price ran directly into a premium Bearish Order Block (-OB) and Fair Value Gap (SIBI).',
+                clue: '🎯 <b>SMC Setup:</b> Early buyers were baited into the Inducement (IDM). With price tapping the Bearish FVG in the Premium zone, the real move is downward to hunt the newly formed retail stop pool.',
+                basePrice: 2540,
+                correctOutcome: 'BEARISH',
+                tpPct: 5.0,
+                slPct: 2.0,
+                trendDelta: -0.058,
+                smcSetup: { bsl: 2620, ssl: 2410, obType: 'BEARISH', obPrice: 2560, fvgPrice: 2540 },
+                explanation: '✅ <b>Inducement Trap Triggered:</b> The Bearish FVG rejected price instantly. The engineered retail liquidity below $2,480 was ruthlessly purged as sell stops cascaded!'
+            },
+            {
+                id: 'smc_int_3',
+                stage: 'INTERMEDIATE',
+                asset: 'SOLUSDT',
+                title: 'Discount Zone Optimal Trade Entry (OTE 61.8% - 78.6%)',
+                date: 'Fibonacci Equilibrium & Liquidity Retracement',
+                desc: 'Following a massive 15% displacement leg up that broke structure (BOS), SOL has retraced past the 50% Equilibrium into deep Discount (61.8% - 78.6% OTE zone), overlapping a pristine Bullish Order Block.',
+                clue: '🎯 <b>SMC Setup:</b> Smart Money only buys at wholesale prices (Discount Zone below 50% Equilibrium). Buying inside the OTE zone with +OB confluence offers maximum risk-to-reward.',
+                basePrice: 128.5,
+                correctOutcome: 'BULLISH',
+                tpPct: 7.0,
+                slPct: 2.4,
+                trendDelta: 0.078,
+                smcSetup: { bsl: 140.0, ssl: 124.0, obType: 'BULLISH', obPrice: 127.0, fvgPrice: 130.0 },
+                explanation: '✅ <b>Optimal Trade Entry Perfection:</b> Price tapped the 70.5% OTE level right at the Bullish Order Block and launched into an aggressive expansion to target the $140 BSL!'
+            },
+            {
+                id: 'smc_int_4',
+                stage: 'INTERMEDIATE',
+                asset: 'BTCUSDT',
+                title: 'Asia Session High/Low Liquidity Sweep (Judas Swing)',
+                date: 'London Open Manipulation & Liquidity Raid',
+                desc: 'During Asia session, a tight consolidation created Equal Highs and Equal Lows. At London open, price violently spiked above the Asia High to trigger buy stops (Judas Swing) before leaving a heavy rejection wick.',
+                clue: '🎯 <b>SMC Setup:</b> Classic ICT Judas Swing! The sweep of the Asia High at session open is a liquidity grab designed to trap breakout traders before reversing to target the Asia Low (SSL).',
+                basePrice: 67200,
+                correctOutcome: 'BEARISH',
+                tpPct: 4.8,
+                slPct: 1.8,
+                trendDelta: -0.050,
+                smcSetup: { bsl: 67800, ssl: 65400, obType: 'BEARISH', obPrice: 67500, fvgPrice: 67000 },
+                explanation: '✅ <b>Judas Swing Reversal:</b> The fake breakout trapped late buyers. Price reversed violently and expanded through the Asia Low, delivering maximum profit to short sellers!'
+            },
+
+            // --- 🔴 STAGE 3: ADVANCED (HTF Raids, Complex Liquidity Manipulation & Breaker Blocks) ---
+            {
+                id: 'smc_adv_1',
+                stage: 'ADVANCED',
+                asset: 'BTCUSDT',
+                title: 'Daily SSL Raid followed by 1M Micro CHoCH & FVG Expansion',
+                date: 'Macro Liquidity Vacuum to Micro Sniper Entry',
+                desc: 'Bitcoin completed a multi-week Daily Sell-Side Liquidity raid below $54,000. On the 1M micro chart, an aggressive V-shape displacement candle created an immediate Change of Character and a massive BISI gap.',
+                clue: '🎯 <b>SMC Setup:</b> Look at 1D vs 1M MTF! When a macro daily liquidity pool is purged, the 1M / 5M micro CHoCH gives the sniper entry with minimal risk and astronomical risk-reward.',
+                basePrice: 53800,
+                correctOutcome: 'BULLISH',
+                tpPct: 8.5,
+                slPct: 2.5,
+                trendDelta: 0.095,
+                smcSetup: { bsl: 59000, ssl: 52800, obType: 'BULLISH', obPrice: 53600, fvgPrice: 54500 },
+                explanation: '✅ <b>Macro to Micro SMC Masterclass:</b> The 1M sniper entry caught the exact tick of the macro reversal. Price delivered an epic 9.5% expansion straight into HTF Buy-Side Liquidity!'
+            },
+            {
+                id: 'smc_adv_2',
+                stage: 'ADVANCED',
+                asset: 'ETHUSDT',
+                title: 'Equal Highs (EQH) Liquidity Purge & Institutional Mitigation',
+                date: 'Triple Top Liquidity Trap & Distribution',
+                desc: 'Three prominent swing highs (Triple Top / EQH) sat undisturbed at $3,500 with massive buy-stop liquidity. Smart Money pushed price violently past the highs by $40 to purge all stops before slamming price back down.',
+                clue: '🎯 <b>SMC Setup:</b> Equal Highs (EQH) are the ultimate liquidity magnet. Once the buy stops are purged, smart money has zero reason to keep price elevated and will deliver to the opposite SSL pool.',
+                basePrice: 3480,
+                correctOutcome: 'BEARISH',
+                tpPct: 7.5,
+                slPct: 2.2,
+                trendDelta: -0.082,
+                smcSetup: { bsl: 3540, ssl: 3220, obType: 'BEARISH', obPrice: 3510, fvgPrice: 3450 },
+                explanation: '✅ <b>EQH Purge Complete:</b> With all buy-stop liquidity consumed, price collapsed like a stone, slicing through all internal supports to sweep the major Sell-Side Liquidity below $3,250!'
+            },
+            {
+                id: 'smc_adv_3',
+                stage: 'ADVANCED',
+                asset: 'SOLUSDT',
+                title: 'News Wick Liquidity Grab & Immediate Order Block Squeeze',
+                date: 'Volatility Injection & Smart Money Re-accumulation',
+                desc: 'High-impact news injected extreme volatility, producing a 10% wick down that swept months of structural liquidity into a HTF Bullish Order Block. The candle body closed fully in the upper 20% range.',
+                clue: '🎯 <b>SMC Setup:</b> News is used by algorithms solely to deliver price into HTF liquidity pools. A long wick retesting a HTF +OB with a strong closed body signals aggressive institutional accumulation.',
+                basePrice: 112.0,
+                correctOutcome: 'BULLISH',
+                tpPct: 9.0,
+                slPct: 2.8,
+                trendDelta: 0.105,
+                smcSetup: { bsl: 125.0, ssl: 104.0, obType: 'BULLISH', obPrice: 110.0, fvgPrice: 115.0 },
+                explanation: '✅ <b>News Liquidity Absorption:</b> Smart Money absorbed all panic sell orders at the HTF Order Block. The subsequent short squeeze was violent and unrelenting, rewarding SMC traders!'
+            },
+            {
+                id: 'smc_adv_4',
+                stage: 'ADVANCED',
+                asset: 'BTCUSDT',
+                title: 'Macro Breaker Block S/R Flip with Volume Imbalance Fill',
+                date: 'Failed Order Block Transformed into Institutional Breaker',
+                desc: 'An old bullish order block was violently broken during a previous downtrend, transforming it into a high-conviction Bearish Breaker Block. Price has now pulled back to test the underside of the Breaker with an unfilled volume imbalance.',
+                clue: '🎯 <b>SMC Setup:</b> Breaker Blocks occur when a failed Order Block turns into an insurmountable resistance/support zone. Look for the rejection at the Breaker mitigation to hunt discount SSL.',
+                basePrice: 65200,
+                correctOutcome: 'BEARISH',
+                tpPct: 6.5,
+                slPct: 2.0,
+                trendDelta: -0.072,
+                smcSetup: { bsl: 66200, ssl: 60800, obType: 'BEARISH', obPrice: 65500, fvgPrice: 64800 },
+                explanation: '✅ <b>Breaker Block S/R Flip:</b> The Breaker Block acted as a titanium ceiling. Price rejected cleanly from the mitigation level and continued its macro bearish delivery!'
             }
         ];
 
         // -------------------------------------------------------------------------
-        // Real-world MTF Candlestick Dataset Generator & Binance API Loader
+        // Deep Historical Candlestick Generator (200+ candles per timeframe)
         // -------------------------------------------------------------------------
-        function generateScenarioCandles(basePrice, trendDelta, count = 85) {
+        function generateDeepSMCCandles(basePrice, trendDelta, count = 200) {
             const candles = [];
-            let cur = basePrice;
+            let cur = basePrice * (1 - (trendDelta * 0.4));
             const now = Date.now() - (count * 3600 * 1000);
 
             for (let i = 0; i < count; i++) {
-                const isPreCutoff = i < 55;
-                const stepTrend = isPreCutoff 
-                    ? (Math.sin(i / 6) * 0.003) + (trendDelta * 0.15 / 55)
-                    : (trendDelta * 0.85 / (count - 55));
+                const isPreCutoff = i < 140; // 140 historical candles visible before cutoff
                 
-                const noise = (Math.random() - 0.48) * 0.012;
+                // Realistic SMC market structure waves (Swing Highs, Swing Lows, Liquidity Pools)
+                const wave = Math.sin(i / 8) * 0.008 + Math.cos(i / 14) * 0.005;
+                const stepTrend = isPreCutoff 
+                    ? wave + (trendDelta * 0.2 / 140)
+                    : (trendDelta * 0.8 / (count - 140));
+
+                const noise = (Math.random() - 0.49) * 0.009;
                 const deltaPct = stepTrend + noise;
                 const open = cur;
                 const close = open * (1 + deltaPct);
-                const high = Math.max(open, close) * (1 + Math.random() * 0.006);
-                const low = Math.min(open, close) * (1 - Math.random() * 0.006);
-                const vol = Math.abs(close - open) * (100 + Math.random() * 200) + 50;
+                
+                // Occasional liquidity wicks
+                const hasWick = (i % 12 === 0);
+                const highWick = hasWick ? 0.015 : 0.004;
+                const lowWick = hasWick ? 0.015 : 0.004;
+
+                const high = Math.max(open, close) * (1 + Math.random() * highWick);
+                const low = Math.min(open, close) * (1 - Math.random() * lowWick);
+                const vol = Math.abs(close - open) * (120 + Math.random() * 250) + 60;
 
                 candles.push({
                     time: now + (i * 3600 * 1000),
@@ -4116,41 +4157,22 @@
                     high: high,
                     low: low,
                     close: close,
-                    volume: vol
+                    volume: vol,
+                    isSweep: hasWick
                 });
                 cur = close;
             }
             return candles;
         }
 
-        function buildMTFDatasets(basePrice, trendDelta) {
+        function buildDeepMTFDatasets(basePrice, trendDelta) {
             return {
-                '1d': generateScenarioCandles(basePrice * 0.92, trendDelta * 1.5, 60),
-                '1h': generateScenarioCandles(basePrice, trendDelta, 85),
-                '15m': generateScenarioCandles(basePrice * 0.995, trendDelta * 0.8, 90),
-                '5m': generateScenarioCandles(basePrice, trendDelta * 0.6, 90),
-                '1m': generateScenarioCandles(basePrice, trendDelta * 0.4, 90)
+                '1d': generateDeepSMCCandles(basePrice * 0.94, trendDelta * 1.3, 160),
+                '1h': generateDeepSMCCandles(basePrice, trendDelta, 200),
+                '15m': generateDeepSMCCandles(basePrice * 0.998, trendDelta * 0.8, 200),
+                '5m': generateDeepSMCCandles(basePrice * 0.999, trendDelta * 0.6, 200),
+                '1m': generateDeepSMCCandles(basePrice, trendDelta * 0.4, 200)
             };
-        }
-
-        async function fetchRealBinanceHistoricalKlines(sym, interval, endTime) {
-            try {
-                const url = `https://api.binance.com/api/v3/klines?symbol=${sym}&interval=${interval}&limit=90&endTime=${endTime}`;
-                const resp = await fetch(url);
-                if (!resp.ok) return null;
-                const data = await resp.json();
-                if (!Array.isArray(data) || data.length < 30) return null;
-                return data.map(d => ({
-                    time: d[0],
-                    open: parseFloat(d[1]),
-                    high: parseFloat(d[2]),
-                    low: parseFloat(d[3]),
-                    close: parseFloat(d[4]),
-                    volume: parseFloat(d[5])
-                }));
-            } catch (e) {
-                return null;
-            }
         }
 
         // -------------------------------------------------------------------------
@@ -4161,38 +4183,39 @@
             if (!currentScenario) {
                 loadNewGameScenario();
             } else {
-                renderGameChart();
-                renderGameRSI();
+                renderGameSMCChart();
             }
-            setupGameCanvasInteractions();
+            setupGameCanvasPanAndZoom();
         }
 
         function loadNewGameScenario() {
             if (gameIsSimulating) return;
 
-            // Filter scenarios by stage and asset
-            let filtered = HISTORICAL_SCENARIOS.filter(s => s.stage === gameStage);
-            if (filtered.length === 0) filtered = HISTORICAL_SCENARIOS;
+            let filtered = SMC_SCENARIOS.filter(s => s.stage === gameStage);
+            if (filtered.length === 0) filtered = SMC_SCENARIOS;
 
-            // Pick random scenario
             const sc = filtered[Math.floor(Math.random() * filtered.length)];
             currentScenario = sc;
             gameAsset = sc.asset;
             gameMTF = '1h';
             gameIsRevealed = false;
             gameIsSimulating = false;
-            gameVisibleIndex = 55;
-            gameTotalCandles = 85;
+            gameVisibleIndex = 140;
+            gameTotalCandles = 200;
 
-            // Generate multi-timeframe candle datasets
-            mtfDataCache = buildMTFDatasets(sc.basePrice, sc.trendDelta);
+            // Reset viewport to decision cutoff
+            chartViewport.candlesPerView = 55;
+            chartViewport.viewEndIndex = 140;
+
+            // Generate 200+ candles per timeframe
+            mtfDataCache = buildDeepMTFDatasets(sc.basePrice, sc.trendDelta);
             activeKlines = mtfDataCache[gameMTF];
 
-            // Update UI elements
+            // Update UI
             document.getElementById('game_scenario_asset_title').innerText = `${sc.asset} (${gameMTF.toUpperCase()})`;
             
             const badgeEl = document.getElementById('game_scenario_tag_badge');
-            badgeEl.innerText = `${sc.stage} LEVEL`;
+            badgeEl.innerText = `${sc.stage} LIQUIDITY`;
             badgeEl.style.background = sc.stage === 'BEGINNER' ? 'var(--cdx-green-bg)' : (sc.stage === 'INTERMEDIATE' ? 'var(--cdx-orange-bg)' : 'var(--cdx-red-bg)');
             badgeEl.style.color = sc.stage === 'BEGINNER' ? 'var(--cdx-green)' : (sc.stage === 'INTERMEDIATE' ? 'var(--cdx-orange)' : 'var(--cdx-red)');
 
@@ -4202,16 +4225,14 @@
             document.getElementById('game_scenario_desc').innerText = `${sc.title}: ${sc.desc}`;
             document.getElementById('game_scenario_clues').innerHTML = sc.clue;
 
-            // Reset Prediction Buttons
-            selectGamePrediction('BULLISH');
+            selectGamePrediction(sc.correctOutcome === 'BEARISH' ? 'BEARISH' : 'BULLISH');
             document.getElementById('slider_game_tp').value = sc.tpPct;
             document.getElementById('slider_game_sl').value = sc.slPct;
             onGameRiskChange();
 
-            // Re-enable submit button
             const submitBtn = document.getElementById('btn_submit_prediction');
             submitBtn.disabled = false;
-            submitBtn.innerText = '⚡ Lock Prediction & Play Candles (प्रेडिक्शन करें)';
+            submitBtn.innerText = '⚡ Lock Prediction & Play Candles (प्रेडिक्शन लॉक करें)';
             submitBtn.className = 'coindcx-cta-submit buy';
 
             const pnlBadge = document.getElementById('game_sim_pnl_badge');
@@ -4228,12 +4249,94 @@
                 if (b) b.classList.toggle('active', m === gameMTF);
             });
 
-            renderGameChart();
-            renderGameRSI();
+            renderGameSMCChart();
         }
 
         // -------------------------------------------------------------------------
-        // Multi-Timeframe & Indicator Handlers
+        // Pan, Scroll & Zoom Controls (Explore Past History)
+        // -------------------------------------------------------------------------
+        function scrollGameChart(deltaCandles) {
+            const minEnd = chartViewport.candlesPerView;
+            const maxEnd = gameIsRevealed ? activeKlines.length : gameVisibleIndex;
+            chartViewport.viewEndIndex = Math.max(minEnd, Math.min(maxEnd, chartViewport.viewEndIndex + deltaCandles));
+            renderGameSMCChart();
+        }
+
+        function zoomGameChart(delta) {
+            chartViewport.candlesPerView = Math.max(25, Math.min(120, chartViewport.candlesPerView + delta));
+            chartViewport.viewEndIndex = Math.max(chartViewport.candlesPerView, chartViewport.viewEndIndex);
+            renderGameSMCChart();
+        }
+
+        function resetGameChartOffset() {
+            chartViewport.viewEndIndex = gameIsRevealed ? activeKlines.length : gameVisibleIndex;
+            renderGameSMCChart();
+        }
+
+        function setupGameCanvasPanAndZoom() {
+            const container = document.getElementById('game_canvas_container');
+            const canvas = document.getElementById('game_candle_canvas');
+            if (!container || !canvas) return;
+
+            // Mouse Drag / Pan Left-Right
+            container.addEventListener('mousedown', (e) => {
+                chartViewport.isDragging = true;
+                chartViewport.dragStartX = e.clientX;
+                chartViewport.dragStartEndIndex = chartViewport.viewEndIndex;
+                container.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!chartViewport.isDragging || !activeKlines || activeKlines.length === 0) return;
+                const rect = canvas.getBoundingClientRect();
+                const deltaX = e.clientX - chartViewport.dragStartX;
+                const candleWidthPx = (rect.width - 65) / chartViewport.candlesPerView;
+                const deltaCandles = Math.round(deltaX / candleWidthPx);
+
+                const minEnd = chartViewport.candlesPerView;
+                const maxEnd = gameIsRevealed ? activeKlines.length : gameVisibleIndex;
+                chartViewport.viewEndIndex = Math.max(minEnd, Math.min(maxEnd, chartViewport.dragStartEndIndex - deltaCandles));
+                renderGameSMCChart();
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (chartViewport.isDragging) {
+                    chartViewport.isDragging = false;
+                    container.style.cursor = 'grab';
+                }
+            });
+
+            // Mouse Wheel Zoom In / Out
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 5 : -5;
+                zoomGameChart(delta);
+            }, { passive: false });
+
+            // Crosshair Readout
+            canvas.addEventListener('mousemove', (e) => {
+                if (!activeKlines || activeKlines.length === 0) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const chartW = rect.width - 65;
+
+                const startIdx = Math.max(0, chartViewport.viewEndIndex - chartViewport.candlesPerView);
+                const candleWidth = chartW / chartViewport.candlesPerView;
+                const hoveredOffset = Math.floor(mouseX / candleWidth);
+                const targetIdx = Math.min(chartViewport.viewEndIndex - 1, Math.max(startIdx, startIdx + hoveredOffset));
+
+                const c = activeKlines[targetIdx];
+                if (c) {
+                    document.getElementById('gh_open').innerText = `$${c.open.toFixed(1)}`;
+                    document.getElementById('gh_high').innerText = `$${c.high.toFixed(1)}`;
+                    document.getElementById('gh_low').innerText = `$${c.low.toFixed(1)}`;
+                    document.getElementById('gh_close').innerText = `$${c.close.toFixed(1)}`;
+                }
+            });
+        }
+
+        // -------------------------------------------------------------------------
+        // Smart Money Overlays & Navigation Handlers
         // -------------------------------------------------------------------------
         function setGameStage(stage) {
             gameStage = stage;
@@ -4271,16 +4374,14 @@
                 document.getElementById('game_scenario_asset_title').innerText = `${currentScenario.asset} (${mtf.toUpperCase()})`;
             }
 
-            renderGameChart();
-            renderGameRSI();
+            renderGameSMCChart();
         }
 
-        function toggleGameIndicator(ind) {
-            gameIndicators[ind] = !gameIndicators[ind];
-            const btn = document.getElementById(`btn_ind_${ind}`);
-            if (btn) btn.classList.toggle('active', gameIndicators[ind]);
-            renderGameChart();
-            renderGameRSI();
+        function toggleGameSMC(layer) {
+            gameSMC[layer] = !gameSMC[layer];
+            const btn = document.getElementById(`btn_ind_${layer}`);
+            if (btn) btn.classList.toggle('active', gameSMC[layer]);
+            renderGameSMCChart();
         }
 
         function selectGamePrediction(pred) {
@@ -4296,13 +4397,13 @@
 
             if (pred === 'BULLISH') {
                 btnBull.className = 'predict-choice-btn selected bullish';
-                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit buy'; submitBtn.innerText = '🚀 Lock Bullish Prediction (Long / Buy)'; }
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit buy'; submitBtn.innerText = '🚀 Lock UP / Hunt BSL Prediction (Buy / Long)'; }
             } else if (pred === 'BEARISH') {
                 btnBear.className = 'predict-choice-btn selected bearish';
-                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit sell'; submitBtn.innerText = '📉 Lock Bearish Prediction (Short / Sell)'; }
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit sell'; submitBtn.innerText = '📉 Lock DOWN / Hunt SSL Prediction (Short / Sell)'; }
             } else {
                 btnRange.className = 'predict-choice-btn selected range';
-                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit'; submitBtn.style.background = 'var(--cdx-orange)'; submitBtn.innerText = '⚖️ Lock Sideways / No Trade Prediction'; }
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit'; submitBtn.style.background = 'var(--cdx-orange)'; submitBtn.innerText = '⚖️ Lock Inducement / Range (Wait for Sweep)'; }
             }
             onGameRiskChange();
         }
@@ -4322,76 +4423,13 @@
 
             const rr = (tp / sl).toFixed(1);
             document.getElementById('game_rr_ratio').innerText = `1 : ${rr}`;
-            renderGameChart();
+            renderGameSMCChart();
         }
 
         // -------------------------------------------------------------------------
-        // Technical Indicators Calculator (EMA, SMA, RSI)
+        // Canvas Rendering Engine (Smart Money Concepts & Liquidity Visualization)
         // -------------------------------------------------------------------------
-        function calculateEMA(candles, period) {
-            const k = 2 / (period + 1);
-            const emaArray = [];
-            let ema = candles[0].close;
-            emaArray.push(ema);
-
-            for (let i = 1; i < candles.length; i++) {
-                ema = (candles[i].close * k) + (ema * (1 - k));
-                emaArray.push(ema);
-            }
-            return emaArray;
-        }
-
-        function calculateSMA(candles, period) {
-            const smaArray = [];
-            for (let i = 0; i < candles.length; i++) {
-                if (i < period - 1) {
-                    smaArray.push(null);
-                } else {
-                    let sum = 0;
-                    for (let j = i - period + 1; j <= i; j++) sum += candles[j].close;
-                    smaArray.push(sum / period);
-                }
-            }
-            return smaArray;
-        }
-
-        function calculateRSIArray(candles, period = 14) {
-            const rsiArray = [];
-            if (candles.length < period) return candles.map(() => 50);
-
-            let gains = 0, losses = 0;
-            for (let i = 1; i <= period; i++) {
-                const diff = candles[i].close - candles[i - 1].close;
-                if (diff >= 0) gains += diff;
-                else losses += Math.abs(diff);
-            }
-
-            let avgGain = gains / period;
-            let avgLoss = losses / period;
-            rsiArray.push(avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss))));
-
-            for (let i = period + 1; i < candles.length; i++) {
-                const diff = candles[i].close - candles[i - 1].close;
-                const gain = diff >= 0 ? diff : 0;
-                const loss = diff < 0 ? Math.abs(diff) : 0;
-
-                avgGain = ((avgGain * (period - 1)) + gain) / period;
-                avgLoss = ((avgLoss * (period - 1)) + loss) / period;
-
-                const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
-                const rsi = avgLoss === 0 ? 100 : 100 - (100 / (1 + rs));
-                rsiArray.push(rsi);
-            }
-
-            // Pad start
-            while (rsiArray.length < candles.length) rsiArray.unshift(50);
-            return rsiArray;
-        }
-
-        // -------------------------------------------------------------------------
-        // Canvas Rendering Engine (Candlesticks, Indicators, S/R & Decision Line)
-        // -------------------------------------------------------------------------
-        function renderGameChart() {
+        function renderGameSMCChart() {
             const canvas = document.getElementById('game_candle_canvas');
             if (!canvas || !activeKlines || activeKlines.length === 0) return;
             const ctx = canvas.getContext('2d');
@@ -4406,37 +4444,39 @@
             const H = rect.height;
             ctx.clearRect(0, 0, W, H);
 
-            // Determine visible candles (mystery cutoff if not revealed)
-            const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
-            const visibleCandles = activeKlines.slice(0, countToRender);
-            if (visibleCandles.length === 0) return;
+            // Viewport calculations for smooth dragging & zooming
+            const visibleEnd = Math.min(chartViewport.viewEndIndex, gameIsRevealed ? activeKlines.length : gameVisibleIndex);
+            const visibleStart = Math.max(0, visibleEnd - chartViewport.candlesPerView);
+            const viewCandles = activeKlines.slice(visibleStart, visibleEnd);
+            if (viewCandles.length === 0) return;
 
-            // Min / Max Price & Volume
+            // Compute Min / Max Price in visible window
             let minP = Infinity, maxP = -Infinity, maxVol = 0;
-            visibleCandles.forEach(c => {
+            viewCandles.forEach(c => {
                 if (c.low < minP) minP = c.low;
                 if (c.high > maxP) maxP = c.high;
                 if (c.volume > maxVol) maxVol = c.volume;
             });
 
-            const pPadding = (maxP - minP) * 0.08;
+            const pPadding = (maxP - minP) * 0.12;
             minP -= pPadding;
             maxP += pPadding;
 
-            const rightMargin = 65;
-            const bottomMargin = 20;
+            const rightMargin = 68;
+            const bottomMargin = 22;
             const chartW = W - rightMargin;
             const chartH = H - bottomMargin;
 
             const priceToY = (p) => chartH - ((p - minP) / (maxP - minP)) * chartH;
-            const idxToX = (idx) => (idx / (gameTotalCandles - 1)) * chartW;
+            const candleWidth = chartW / chartViewport.candlesPerView;
+            const barW = Math.max(3, candleWidth * 0.70);
 
-            // 1. Draw Grid Lines
+            // 1. Draw Grid Lines & Price Axis
             ctx.strokeStyle = currentTheme === 'dark' ? '#1E293B' : '#E2E8F0';
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 3]);
 
-            const gridSteps = 5;
+            const gridSteps = 6;
             for (let i = 0; i <= gridSteps; i++) {
                 const p = minP + (i / gridSteps) * (maxP - minP);
                 const y = priceToY(p);
@@ -4445,47 +4485,118 @@
                 ctx.lineTo(chartW, y);
                 ctx.stroke();
 
-                // Y-axis price label
                 ctx.fillStyle = currentTheme === 'dark' ? '#64748B' : '#94A3B8';
                 ctx.font = '10px JetBrains Mono';
                 ctx.fillText(`$${p.toLocaleString('en-US', {maximumFractionDigits:1})}`, chartW + 6, y + 3);
             }
             ctx.setLineDash([]);
 
-            // 2. Draw Support / Resistance Key Level Lines
-            if (gameIndicators.sr && visibleCandles.length > 20) {
-                const sLevel = minP + (maxP - minP) * 0.28;
-                const rLevel = minP + (maxP - minP) * 0.72;
+            // 2. SMC Overlay: 50% Equilibrium Zone (Discount vs Premium)
+            if (gameSMC.eq) {
+                const eqPrice = minP + (maxP - minP) * 0.50;
+                const eqY = priceToY(eqPrice);
 
-                // Support line (Green dashed)
-                ctx.strokeStyle = 'rgba(0, 194, 136, 0.45)';
-                ctx.lineWidth = 1.5;
-                ctx.setLineDash([6, 4]);
+                ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([4, 4]);
                 ctx.beginPath();
-                ctx.moveTo(0, priceToY(sLevel));
-                ctx.lineTo(chartW, priceToY(sLevel));
+                ctx.moveTo(0, eqY);
+                ctx.lineTo(chartW, eqY);
                 ctx.stroke();
-                ctx.fillStyle = '#00C288';
-                ctx.font = 'bold 9.5px JetBrains Mono';
-                ctx.fillText(`KEY SUPPORT $${sLevel.toFixed(0)}`, 10, priceToY(sLevel) - 4);
-
-                // Resistance line (Red dashed)
-                ctx.strokeStyle = 'rgba(246, 70, 93, 0.45)';
-                ctx.beginPath();
-                ctx.moveTo(0, priceToY(rLevel));
-                ctx.lineTo(chartW, priceToY(rLevel));
-                ctx.stroke();
-                ctx.fillStyle = '#F6465D';
-                ctx.fillText(`KEY RESISTANCE $${rLevel.toFixed(0)}`, 10, priceToY(rLevel) - 4);
                 ctx.setLineDash([]);
+
+                ctx.fillStyle = 'rgba(246, 70, 93, 0.04)';
+                ctx.fillRect(0, 0, chartW, eqY); // Premium zone (Reddish)
+
+                ctx.fillStyle = 'rgba(0, 194, 136, 0.04)';
+                ctx.fillRect(0, eqY, chartW, chartH - eqY); // Discount zone (Greenish)
+
+                ctx.fillStyle = '#94A3B8';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText('⚖️ EQUILIBRIUM (50%)', 10, eqY - 4);
+                ctx.fillStyle = 'rgba(246, 70, 93, 0.7)';
+                ctx.fillText('🔴 PREMIUM (Sell Zone)', 10, 16);
+                ctx.fillStyle = 'rgba(0, 194, 136, 0.7)';
+                ctx.fillText('🟢 DISCOUNT (Buy Zone)', 10, chartH - 6);
             }
 
-            // 3. Draw Volume Sub-bars
-            const volH = chartH * 0.22;
-            const barW = Math.max(2, (chartW / gameTotalCandles) * 0.65);
+            // 3. SMC Overlay: Order Blocks (OB) & Fair Value Gaps (FVG)
+            if (gameSMC.ob && currentScenario && currentScenario.smcSetup) {
+                const setup = currentScenario.smcSetup;
+                const obY = priceToY(setup.obPrice);
+                const obHeight = Math.abs(priceToY(setup.obPrice * 1.012) - obY);
 
-            visibleCandles.forEach((c, idx) => {
-                const x = idxToX(idx);
+                if (setup.obType === 'BULLISH') {
+                    ctx.fillStyle = 'rgba(0, 194, 136, 0.16)';
+                    ctx.strokeStyle = 'rgba(0, 194, 136, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.fillRect(0, obY - obHeight, chartW, obHeight);
+                    ctx.strokeRect(0, obY - obHeight, chartW, obHeight);
+
+                    ctx.fillStyle = '#00C288';
+                    ctx.font = 'bold 9.5px JetBrains Mono';
+                    ctx.fillText('📦 BULLISH ORDER BLOCK (+OB)', 14, obY - 4);
+                } else {
+                    ctx.fillStyle = 'rgba(246, 70, 93, 0.16)';
+                    ctx.strokeStyle = 'rgba(246, 70, 93, 0.6)';
+                    ctx.lineWidth = 1;
+                    ctx.fillRect(0, obY, chartW, obHeight);
+                    ctx.strokeRect(0, obY, chartW, obHeight);
+
+                    ctx.fillStyle = '#F6465D';
+                    ctx.font = 'bold 9.5px JetBrains Mono';
+                    ctx.fillText('📦 BEARISH ORDER BLOCK (-OB)', 14, obY + 12);
+                }
+            }
+
+            if (gameSMC.fvg && currentScenario && currentScenario.smcSetup) {
+                const fvgY = priceToY(currentScenario.smcSetup.fvgPrice);
+                const fvgH = 14;
+                ctx.fillStyle = 'rgba(139, 92, 246, 0.18)';
+                ctx.strokeStyle = '#8B5CF6';
+                ctx.lineWidth = 1;
+                ctx.fillRect(chartW * 0.25, fvgY - fvgH / 2, chartW * 0.75, fvgH);
+                ctx.strokeRect(chartW * 0.25, fvgY - fvgH / 2, chartW * 0.75, fvgH);
+
+                ctx.fillStyle = '#A78BFA';
+                ctx.font = 'bold 9px JetBrains Mono';
+                ctx.fillText('⚡ FAIR VALUE GAP (FVG)', chartW * 0.28, fvgY + 3);
+            }
+
+            // 4. SMC Overlay: BSL (Buy-Side Liquidity) & SSL (Sell-Side Liquidity) Pools
+            if (gameSMC.bsl_ssl && currentScenario && currentScenario.smcSetup) {
+                const bslY = priceToY(currentScenario.smcSetup.bsl);
+                const sslY = priceToY(currentScenario.smcSetup.ssl);
+
+                // Buy-Side Liquidity line (Top)
+                ctx.strokeStyle = '#FA4A29';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 3]);
+                ctx.beginPath();
+                ctx.moveTo(0, bslY);
+                ctx.lineTo(chartW, bslY);
+                ctx.stroke();
+
+                ctx.fillStyle = '#FA4A29';
+                ctx.font = 'bold 10px JetBrains Mono';
+                ctx.fillText(`$$$ BUY-SIDE LIQUIDITY (BSL) $${currentScenario.smcSetup.bsl}`, chartW - 240, bslY - 5);
+
+                // Sell-Side Liquidity line (Bottom)
+                ctx.strokeStyle = '#3B82F6';
+                ctx.beginPath();
+                ctx.moveTo(0, sslY);
+                ctx.lineTo(chartW, sslY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#3B82F6';
+                ctx.fillText(`$$$ SELL-SIDE LIQUIDITY (SSL) $${currentScenario.smcSetup.ssl}`, chartW - 240, sslY + 12);
+            }
+
+            // 5. Draw Volume Sub-bars
+            const volH = chartH * 0.18;
+            viewCandles.forEach((c, idx) => {
+                const x = idx * candleWidth + (candleWidth / 2);
                 const isGreen = c.close >= c.open;
                 const vBarH = (c.volume / (maxVol || 1)) * volH;
                 const vY = chartH - vBarH;
@@ -4494,9 +4605,9 @@
                 ctx.fillRect(x - barW / 2, vY, barW, vBarH);
             });
 
-            // 4. Draw Candlesticks (Wicks & Bodies)
-            visibleCandles.forEach((c, idx) => {
-                const x = idxToX(idx);
+            // 6. Draw Candlesticks (Wicks & Bodies)
+            viewCandles.forEach((c, idx) => {
+                const x = idx * candleWidth + (candleWidth / 2);
                 const isGreen = c.close >= c.open;
                 const color = isGreen ? '#00C288' : '#F6465D';
 
@@ -4516,169 +4627,34 @@
 
                 ctx.fillStyle = color;
                 ctx.fillRect(x - barW / 2, topY, barW, bodyH);
+
+                // Highlight Liquidity Sweeps
+                if (c.isSweep && gameSMC.bsl_ssl) {
+                    ctx.fillStyle = '#F59E0B';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.fillText('✖ SWEEP', x - 18, isGreen ? priceToY(c.low) + 12 : priceToY(c.high) - 6);
+                }
             });
 
-            // 5. Draw EMA 20 & SMA 50
-            if (gameIndicators.ema && visibleCandles.length > 5) {
-                const ema = calculateEMA(visibleCandles, 20);
-                ctx.strokeStyle = '#00D2FF';
-                ctx.lineWidth = 1.8;
+            // 7. Draw Mystery Decision Point Cutoff Line (if visible in current window)
+            const cutoffAbsoluteIdx = 139;
+            if (cutoffAbsoluteIdx >= visibleStart && cutoffAbsoluteIdx < visibleEnd) {
+                const cutoffWindowIdx = cutoffAbsoluteIdx - visibleStart;
+                const cutoffX = cutoffWindowIdx * candleWidth + (candleWidth / 2);
+
+                ctx.strokeStyle = '#FA4A29';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
                 ctx.beginPath();
-                ema.forEach((v, idx) => {
-                    const x = idxToX(idx);
-                    const y = priceToY(v);
-                    if (idx === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                });
+                ctx.moveTo(cutoffX, 0);
+                ctx.lineTo(cutoffX, chartH);
                 ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#FA4A29';
+                ctx.font = 'bold 10.5px JetBrains Mono';
+                ctx.fillText('⚡ DECISION CUTOFF POINT', cutoffX - 65, 16);
             }
-
-            if (gameIndicators.sma && visibleCandles.length > 15) {
-                const sma = calculateSMA(visibleCandles, 50);
-                ctx.strokeStyle = '#F59E0B';
-                ctx.lineWidth = 1.8;
-                ctx.beginPath();
-                let started = false;
-                sma.forEach((v, idx) => {
-                    if (v !== null) {
-                        const x = idxToX(idx);
-                        const y = priceToY(v);
-                        if (!started) { ctx.moveTo(x, y); started = true; }
-                        else ctx.lineTo(x, y);
-                    }
-                });
-                ctx.stroke();
-            }
-
-            // 6. Draw Mystery Cutoff Vertical Line (Decision Point)
-            const cutoffX = idxToX(54);
-            ctx.strokeStyle = '#FA4A29';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(cutoffX, 0);
-            ctx.lineTo(cutoffX, chartH);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Cutoff Badge
-            ctx.fillStyle = '#FA4A29';
-            ctx.font = 'bold 10px JetBrains Mono';
-            ctx.fillText('⚡ DECISION POINT', cutoffX - 52, 16);
-
-            // Shaded Future zone if not revealed
-            if (!gameIsRevealed && countToRender <= 55) {
-                ctx.fillStyle = currentTheme === 'dark' ? 'rgba(14, 20, 32, 0.65)' : 'rgba(240, 244, 248, 0.65)';
-                ctx.fillRect(cutoffX, 0, chartW - cutoffX, chartH);
-
-                ctx.fillStyle = currentTheme === 'dark' ? '#94A3B8' : '#64748B';
-                ctx.font = 'bold 12px JetBrains Mono';
-                ctx.fillText('🔒 MYSTERY FUTURE CANDLES', cutoffX + 20, chartH / 2);
-                ctx.font = '10px sans-serif';
-                ctx.fillText('Predict the outcome to unlock simulation', cutoffX + 20, (chartH / 2) + 18);
-            }
-        }
-
-        function renderGameRSI() {
-            const canvas = document.getElementById('game_rsi_canvas');
-            if (!canvas || !activeKlines || activeKlines.length === 0) return;
-            const ctx = canvas.getContext('2d');
-
-            const container = document.getElementById('game_rsi_container');
-            const rect = container.getBoundingClientRect();
-            canvas.width = rect.width * window.devicePixelRatio;
-            canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
-            const W = rect.width;
-            const H = rect.height;
-            ctx.clearRect(0, 0, W, H);
-
-            const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
-            const visibleCandles = activeKlines.slice(0, countToRender);
-            if (visibleCandles.length < 5) return;
-
-            const rsiValues = calculateRSIArray(visibleCandles, 14);
-            const chartW = W - 65;
-            const idxToX = (idx) => (idx / (gameTotalCandles - 1)) * chartW;
-            const rsiToY = (val) => H - ((val / 100) * H);
-
-            // 1. Draw 70 Overbought & 30 Oversold Zones
-            const y70 = rsiToY(70);
-            const y30 = rsiToY(30);
-
-            ctx.fillStyle = currentTheme === 'dark' ? 'rgba(139, 92, 246, 0.05)' : 'rgba(139, 92, 246, 0.08)';
-            ctx.fillRect(0, y70, chartW, y30 - y70);
-
-            // Lines
-            ctx.strokeStyle = '#F6465D';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([3, 3]);
-            ctx.beginPath();
-            ctx.moveTo(0, y70);
-            ctx.lineTo(chartW, y70);
-            ctx.stroke();
-
-            ctx.strokeStyle = '#00C288';
-            ctx.beginPath();
-            ctx.moveTo(0, y30);
-            ctx.lineTo(chartW, y30);
-            ctx.stroke();
-
-            ctx.strokeStyle = currentTheme === 'dark' ? '#334155' : '#CBD5E1';
-            ctx.beginPath();
-            ctx.moveTo(0, rsiToY(50));
-            ctx.lineTo(chartW, rsiToY(50));
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Labels
-            ctx.font = '9px JetBrains Mono';
-            ctx.fillStyle = '#F6465D';
-            ctx.fillText('70 OB', chartW + 6, y70 + 3);
-            ctx.fillStyle = '#00C288';
-            ctx.fillText('30 OS', chartW + 6, y30 + 3);
-
-            // 2. Draw RSI Curve
-            ctx.strokeStyle = '#8B5CF6';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            rsiValues.forEach((val, idx) => {
-                const x = idxToX(idx);
-                const y = rsiToY(val);
-                if (idx === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-
-            // Label
-            const lastRSI = rsiValues[rsiValues.length - 1];
-            ctx.fillStyle = '#8B5CF6';
-            ctx.font = 'bold 10px JetBrains Mono';
-            ctx.fillText(`RSI (14): ${lastRSI.toFixed(1)}`, 10, 14);
-        }
-
-        function setupGameCanvasInteractions() {
-            const canvas = document.getElementById('game_candle_canvas');
-            if (!canvas) return;
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!activeKlines || activeKlines.length === 0) return;
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const chartW = rect.width - 65;
-
-                const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
-                const idx = Math.min(countToRender - 1, Math.max(0, Math.round((mouseX / chartW) * (gameTotalCandles - 1))));
-                const c = activeKlines[idx];
-                if (!c) return;
-
-                document.getElementById('gh_open').innerText = `$${c.open.toFixed(1)}`;
-                document.getElementById('gh_high').innerText = `$${c.high.toFixed(1)}`;
-                document.getElementById('gh_low').innerText = `$${c.low.toFixed(1)}`;
-                document.getElementById('gh_close').innerText = `$${c.close.toFixed(1)}`;
-                document.getElementById('gh_vol').innerText = c.volume.toFixed(0);
-            });
         }
 
         // -------------------------------------------------------------------------
@@ -4690,7 +4666,7 @@
             gameIsSimulating = true;
             const submitBtn = document.getElementById('btn_submit_prediction');
             submitBtn.disabled = true;
-            submitBtn.innerText = '⏳ Simulating Future Candlesticks...';
+            submitBtn.innerText = '⏳ Delivering Liquidity Simulation...';
 
             const pnlBadge = document.getElementById('game_sim_pnl_badge');
             if (pnlBadge) {
@@ -4702,23 +4678,20 @@
 
             const entryCandle = activeKlines[gameVisibleIndex - 1];
             const entryPrice = entryCandle.close;
-            const tpPct = parseFloat(document.getElementById('slider_game_tp').value) || 4.0;
-            const slPct = parseFloat(document.getElementById('slider_game_sl').value) || 2.0;
 
             // Start step-by-step playback
             gameSimInterval = setInterval(() => {
                 if (gameVisibleIndex < activeKlines.length) {
                     gameVisibleIndex++;
+                    chartViewport.viewEndIndex = gameVisibleIndex;
                     const curCandle = activeKlines[gameVisibleIndex - 1];
                     
-                    // Calculate live simulation PnL
                     let pnlPct = 0;
                     if (gamePrediction === 'BULLISH') {
                         pnlPct = ((curCandle.close - entryPrice) / entryPrice) * 100;
                     } else if (gamePrediction === 'BEARISH') {
                         pnlPct = ((entryPrice - curCandle.close) / entryPrice) * 100;
                     } else {
-                        // Range prediction wins if price stays within +- 2.5%
                         const drift = Math.abs(curCandle.close - entryPrice) / entryPrice * 100;
                         pnlPct = drift < 2.5 ? 2.5 - drift : -drift;
                     }
@@ -4730,16 +4703,14 @@
                         pnlBadge.style.color = isWin ? 'var(--cdx-green)' : 'var(--cdx-red)';
                     }
 
-                    renderGameChart();
-                    renderGameRSI();
+                    renderGameSMCChart();
                 } else {
-                    // Playback finished
                     clearInterval(gameSimInterval);
                     gameIsSimulating = false;
                     gameIsRevealed = true;
                     evaluateGameRound();
                 }
-            }, 75);
+            }, 70);
         }
 
         function evaluateGameRound() {
@@ -4751,25 +4722,22 @@
                 gamePlayerStats.wins++;
                 gamePlayerStats.streak++;
                 
-                // Base XP by Stage
-                let baseXP = sc.stage === 'BEGINNER' ? 100 : (sc.stage === 'INTERMEDIATE' ? 250 : 500);
-                const streakMultiplier = Math.min(3, 1 + (gamePlayerStats.streak * 0.2));
+                let baseXP = sc.stage === 'BEGINNER' ? 120 : (sc.stage === 'INTERMEDIATE' ? 300 : 600);
+                const streakMultiplier = Math.min(3, 1 + (gamePlayerStats.streak * 0.25));
                 const totalXP = Math.round(baseXP * streakMultiplier);
                 gamePlayerStats.xp += totalXP;
 
-                // Random Virtual Cash Reward (+₹5,000 to +₹50,000)
-                const cashTiers = sc.stage === 'BEGINNER' ? [5000, 8000, 10000] : (sc.stage === 'INTERMEDIATE' ? [15000, 20000, 30000] : [35000, 45000, 50000]);
+                const cashTiers = sc.stage === 'BEGINNER' ? [6000, 10000, 15000] : (sc.stage === 'INTERMEDIATE' ? [18000, 25000, 35000] : [40000, 48000, 50000]);
                 const prizeCash = cashTiers[Math.floor(Math.random() * cashTiers.length)];
 
-                // Add to virtual paper balance
                 userBalance += prizeCash;
                 localStorage.setItem('delta_paper_balance', userBalance.toString());
                 updateWalletDisplay();
 
-                // Unlock Badges
                 if (gamePlayerStats.streak >= 3 && !gamePlayerStats.badges.includes('streak_3')) gamePlayerStats.badges.push('streak_3');
-                if (sc.stage === 'INTERMEDIATE' && !gamePlayerStats.badges.includes('divergence')) gamePlayerStats.badges.push('divergence');
-                if (sc.stage === 'ADVANCED' && !gamePlayerStats.badges.includes('elite')) gamePlayerStats.badges.push('elite');
+                if (sc.stage === 'INTERMEDIATE' && !gamePlayerStats.badges.includes('fvg')) gamePlayerStats.badges.push('fvg');
+                if (sc.stage === 'INTERMEDIATE' && !gamePlayerStats.badges.includes('ob')) gamePlayerStats.badges.push('ob');
+                if (sc.stage === 'ADVANCED' && !gamePlayerStats.badges.includes('advanced')) gamePlayerStats.badges.push('advanced');
 
                 savePlayerStats();
                 updateGamePlayerHUD();
@@ -4779,7 +4747,7 @@
                 gamePlayerStats.streak = 0;
                 savePlayerStats();
                 updateGamePlayerHUD();
-                showLootRewardModal(false, sc.trendDelta * 100, 0, 25, sc.explanation);
+                showLootRewardModal(false, sc.trendDelta * 100, 0, 30, sc.explanation);
             }
         }
 
@@ -4797,7 +4765,7 @@
             const xpInLevel = xp % 300;
             const pct = (xpInLevel / 300) * 100;
 
-            const ranks = ['Novice Chartist', 'S/R Apprentice', 'Pattern Hunter', 'MTF Strategist', 'Divergence Master', 'Crypto Titan'];
+            const ranks = ['SMC Novice', 'Liquidity Apprentice', 'Order Block Hunter', 'FVG Specialist', 'CHoCH Master', 'Smart Money Titan'];
             const rankTitle = ranks[Math.min(ranks.length - 1, level - 1)];
 
             const rankEl = document.getElementById('game_player_rank');
@@ -4822,10 +4790,12 @@
             // Badges
             const bStreak = document.getElementById('badge_streak_3');
             if (bStreak) bStreak.classList.toggle('unlocked', gamePlayerStats.badges.includes('streak_3'));
-            const bDiv = document.getElementById('badge_divergence');
-            if (bDiv) bDiv.classList.toggle('unlocked', gamePlayerStats.badges.includes('divergence'));
+            const bFvg = document.getElementById('badge_fvg');
+            if (bFvg) bFvg.classList.toggle('unlocked', gamePlayerStats.badges.includes('fvg'));
+            const bOb = document.getElementById('badge_ob');
+            if (bOb) bOb.classList.toggle('unlocked', gamePlayerStats.badges.includes('ob'));
             const bAdv = document.getElementById('badge_advanced');
-            if (bAdv) bAdv.classList.toggle('unlocked', gamePlayerStats.badges.includes('elite'));
+            if (bAdv) bAdv.classList.toggle('unlocked', gamePlayerStats.badges.includes('advanced'));
         }
 
         // -------------------------------------------------------------------------
@@ -4843,7 +4813,7 @@
             const expEl = document.getElementById('loot_explanation_text');
 
             if (isWin) {
-                badge.innerText = `🎉 PREDICTION WON (${deltaPct >= 0 ? '+' : ''}${deltaPct.toFixed(1)}% TARGET HIT)`;
+                badge.innerText = `🎉 LIQUIDITY TARGET HIT (${deltaPct >= 0 ? '+' : ''}${deltaPct.toFixed(1)}% PROFIT)`;
                 badge.style.background = 'var(--cdx-green-bg)';
                 badge.style.color = 'var(--cdx-green)';
                 chest.innerText = '🎁✨';
@@ -4851,11 +4821,11 @@
                 cashEl.style.color = 'var(--cdx-green)';
                 xpEl.innerText = `+${xpGained} XP (${gamePlayerStats.streak}x Streak Bonus!)`;
             } else {
-                badge.innerText = `❌ PREDICTION MISSED (ANALYSIS LESSON)`;
+                badge.innerText = `❌ LIQUIDITY SWEEP MISSED (ANALYSIS LESSON)`;
                 badge.style.background = 'var(--cdx-red-bg)';
                 badge.style.color = 'var(--cdx-red)';
                 chest.innerText = '🛡️';
-                cashEl.innerText = '₹0.00 (Try next chart!)';
+                cashEl.innerText = '₹0.00 (Explore past history on next chart!)';
                 cashEl.style.color = 'var(--text-muted)';
                 xpEl.innerText = `+${xpGained} XP (Participation)`;
             }
@@ -4876,7 +4846,7 @@
             loadNewGameScenario();
         }
 
-        // =========================================================================
+// =========================================================================
         // Futures TradingView Chart Loader
         // =========================================================================
         function loadTradingViewChart() {
