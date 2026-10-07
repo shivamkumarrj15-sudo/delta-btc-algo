@@ -1269,6 +1269,233 @@
             animation: popIn 0.2s ease-out;
         }
         @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =============================================================
+           GAME ARENA (CHART BATTLE & MULTI-TIMEFRAME SIMULATOR)
+           ============================================================= */
+        #screen_game {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-main);
+        }
+        .game-top-toolbar {
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-ui);
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+        .stage-pill-btn {
+            border: 1px solid var(--border-ui);
+            background: var(--bg-surface-secondary);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stage-pill-btn.active.beginner {
+            background: rgba(0, 194, 136, 0.18);
+            border-color: var(--cdx-green);
+            color: var(--cdx-green);
+        }
+        .stage-pill-btn.active.intermediate {
+            background: rgba(245, 158, 11, 0.18);
+            border-color: var(--cdx-orange);
+            color: var(--cdx-orange);
+        }
+        .stage-pill-btn.active.advanced {
+            background: rgba(246, 70, 93, 0.18);
+            border-color: var(--cdx-red);
+            color: var(--cdx-red);
+        }
+        .mtf-btn {
+            border: 1px solid var(--border-ui);
+            background: var(--bg-surface-secondary);
+            color: var(--text-muted);
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.15s;
+        }
+        .mtf-btn.active {
+            background: var(--cdx-blue);
+            border-color: var(--cdx-blue);
+            color: #FFFFFF;
+        }
+        .indicator-toggle-btn {
+            border: 1px solid var(--border-ui);
+            background: var(--bg-surface-secondary);
+            color: var(--text-muted);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .indicator-toggle-btn.active {
+            background: rgba(139, 92, 246, 0.18);
+            border-color: #8B5CF6;
+            color: #A78BFA;
+        }
+        .game-grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            height: calc(100% - 46px);
+            width: 100%;
+            overflow: hidden;
+        }
+        @media (max-width: 900px) {
+            .game-grid-layout {
+                grid-template-columns: 1fr;
+                overflow-y: auto;
+            }
+        }
+        .game-chart-section {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-ui);
+            overflow: hidden;
+            position: relative;
+            background: var(--chart-bg);
+        }
+        .game-chart-meta-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 12px;
+            border-bottom: 1px solid var(--border-ui);
+            background: var(--bg-surface);
+            font-size: 11px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .game-canvas-wrapper {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 260px;
+        }
+        .game-rsi-wrapper {
+            height: 95px;
+            border-top: 1px solid var(--border-ui);
+            position: relative;
+            background: var(--bg-surface-secondary);
+            flex-shrink: 0;
+        }
+        .game-prediction-sidebar {
+            background: var(--header-bg);
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .scenario-clue-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-left: 4px solid var(--cdx-blue);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .predict-choice-btn {
+            border: 1px solid var(--border-ui);
+            background: var(--bg-surface-secondary);
+            color: var(--text-main);
+            padding: 8px 4px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: all 0.15s;
+        }
+        .predict-choice-btn:hover { border-color: var(--text-muted); }
+        .predict-choice-btn.selected.bullish {
+            background: var(--cdx-green-bg);
+            border-color: var(--cdx-green);
+            color: var(--cdx-green);
+            box-shadow: 0 0 10px rgba(0, 194, 136, 0.25);
+        }
+        .predict-choice-btn.selected.bearish {
+            background: var(--cdx-red-bg);
+            border-color: var(--cdx-red);
+            color: var(--cdx-red);
+            box-shadow: 0 0 10px rgba(246, 70, 93, 0.25);
+        }
+        .predict-choice-btn.selected.range {
+            background: var(--cdx-orange-bg);
+            border-color: var(--cdx-orange);
+            color: var(--cdx-orange);
+            box-shadow: 0 0 10px rgba(250, 74, 41, 0.25);
+        }
+        .game-loot-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .game-loot-modal-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .badge-chip {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 6px;
+            border-radius: 5px;
+            background: var(--bg-surface-tertiary);
+            border: 1px solid var(--border-ui);
+            color: var(--text-muted);
+        }
+        .badge-chip.unlocked {
+            background: rgba(139, 92, 246, 0.18);
+            border-color: #8B5CF6;
+            color: #A78BFA;
+        }
     </style>
 </head>
 <body data-theme="dark">
@@ -1289,6 +1516,9 @@
                 </button>
                 <button class="nav-btn" id="main_tab_futures" onclick="switchMainTab('FUTURES')">
                     📈 Futures Cockpit
+                </button>
+                <button class="nav-btn" id="main_tab_game" onclick="switchMainTab('GAME')" style="background:linear-gradient(135deg, rgba(139,92,246,0.15), rgba(250,74,41,0.15)); border:1px solid rgba(139,92,246,0.3);">
+                    🎮 Chart Arena (Game)
                 </button>
             </div>
         </div>
@@ -1836,6 +2066,209 @@
             </div>
         </div>
 
+        <!-- MODULE C: 🎮 CHART BATTLE & MULTI-TIMEFRAME ARENA (GAME) -->
+        <div id="screen_game">
+            
+            <!-- 1. ARENA TOP TOOLBAR (STAGES, MTF, INDICATORS, REWARD STATS) -->
+            <div class="game-top-toolbar">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <!-- 3 Difficulty Tiers / Stages -->
+                    <div style="display:flex; align-items:center; gap:4px;">
+                        <span style="font-size:10.5px; color:var(--text-faint); font-weight:700;">STAGE:</span>
+                        <button class="stage-pill-btn active beginner" id="btn_stage_beginner" onclick="setGameStage('BEGINNER')">
+                            🟢 Beginner (आसान)
+                        </button>
+                        <button class="stage-pill-btn intermediate" id="btn_stage_intermediate" onclick="setGameStage('INTERMEDIATE')">
+                            🟡 Intermediate (मध्यम)
+                        </button>
+                        <button class="stage-pill-btn advanced" id="btn_stage_advanced" onclick="setGameStage('ADVANCED')">
+                            🔴 Advanced (कठिन)
+                        </button>
+                    </div>
+
+                    <!-- Asset Switcher -->
+                    <div style="display:flex; align-items:center; gap:4px; margin-left:6px;">
+                        <button class="mtf-btn active" id="btn_game_asset_btc" onclick="setGameAsset('BTCUSDT')">₿ BTC</button>
+                        <button class="mtf-btn" id="btn_game_asset_eth" onclick="setGameAsset('ETHUSDT')">Ξ ETH</button>
+                        <button class="mtf-btn" id="btn_game_asset_sol" onclick="setGameAsset('SOLUSDT')">◎ SOL</button>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <!-- Multi-Timeframe (MTF) Bar -->
+                    <div style="display:flex; align-items:center; gap:3px;">
+                        <span style="font-size:10.5px; color:var(--text-faint); font-weight:700;">MTF:</span>
+                        <button class="mtf-btn" id="mtf_1d" onclick="setGameMTF('1d')">1D</button>
+                        <button class="mtf-btn active" id="mtf_1h" onclick="setGameMTF('1h')">1H</button>
+                        <button class="mtf-btn" id="mtf_15m" onclick="setGameMTF('15m')">15M</button>
+                        <button class="mtf-btn" id="mtf_5m" onclick="setGameMTF('5m')">5M</button>
+                        <button class="mtf-btn" id="mtf_1m" onclick="setGameMTF('1m')">1M</button>
+                    </div>
+
+                    <!-- Indicators Toggles -->
+                    <div style="display:flex; align-items:center; gap:3px;">
+                        <button class="indicator-toggle-btn active" id="btn_ind_ema" onclick="toggleGameIndicator('ema')">EMA 20</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_sma" onclick="toggleGameIndicator('sma')">SMA 50</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_rsi" onclick="toggleGameIndicator('rsi')">RSI 14</button>
+                        <button class="indicator-toggle-btn active" id="btn_ind_sr" onclick="toggleGameIndicator('sr')">Key S/R</button>
+                    </div>
+
+                    <!-- Next Chart Generator -->
+                    <button class="btn-ui-action" onclick="loadNewGameScenario()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800;" title="Fetch new real historical chart challenge">
+                        🎲 Next Chart / नया चार्ट
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. ARENA MAIN GRID (CHART & RSI ON LEFT, PREDICTION & STATS ON RIGHT) -->
+            <div class="game-grid-layout">
+                
+                <!-- LEFT: MULTI-TIMEFRAME INTERACTIVE CANVAS CHART & RSI -->
+                <div class="game-chart-section">
+                    <!-- Top Chart Status & Crosshair Bar -->
+                    <div class="game-chart-meta-bar">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <b id="game_scenario_asset_title" style="font-size:12px; color:var(--text-main);">BTCUSDT (1H)</b>
+                            <span class="moneyness-chip" id="game_scenario_tag_badge" style="background:var(--cdx-green-bg); color:var(--cdx-green); font-size:10px;">BEGINNER LEVEL</span>
+                            <span style="font-family:'JetBrains Mono'; font-weight:800; color:var(--cdx-orange);" id="game_cutoff_price">$64,250.00</span>
+                        </div>
+
+                        <!-- Live Cursor OHLCV Readout -->
+                        <div style="font-family:'JetBrains Mono'; font-size:10.5px; color:var(--text-muted); display:flex; gap:8px;" id="game_crosshair_ohlc">
+                            <span>O: <b id="gh_open">-</b></span>
+                            <span>H: <b id="gh_high">-</b></span>
+                            <span>L: <b id="gh_low">-</b></span>
+                            <span>C: <b id="gh_close">-</b></span>
+                            <span>Vol: <b id="gh_vol">-</b></span>
+                        </div>
+
+                        <!-- Live Simulation Floating PnL & Status Badge -->
+                        <div id="game_sim_pnl_badge" style="display:none; font-family:'JetBrains Mono'; font-weight:800; font-size:11.5px; padding:2px 8px; border-radius:4px;">
+                            Live Sim: +$0.00
+                        </div>
+                    </div>
+
+                    <!-- Main Candlestick Canvas -->
+                    <div class="game-canvas-wrapper" id="game_canvas_container">
+                        <canvas id="game_candle_canvas"></canvas>
+                    </div>
+
+                    <!-- Sub-Chart: RSI 14 Canvas -->
+                    <div class="game-rsi-wrapper" id="game_rsi_container">
+                        <canvas id="game_rsi_canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- RIGHT: PREDICTION TERMINAL, RISK SETUP & GAMIFICATION STATS -->
+                <div class="game-prediction-sidebar">
+                    
+                    <!-- Player XP & Streak Profile Card -->
+                    <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="font-size:16px;">⭐</span>
+                                <b style="font-size:12px;" id="game_player_rank">Level 1: Novice Chartist</b>
+                            </div>
+                            <span style="font-size:11.5px; font-weight:800; color:var(--cdx-orange);" id="game_player_streak">🔥 0 Streak</span>
+                        </div>
+
+                        <!-- XP Bar -->
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:2px;">
+                                <span>XP Progress</span>
+                                <span id="game_xp_label">0 / 300 XP</span>
+                            </div>
+                            <div style="background:var(--border-ui); height:6px; border-radius:3px; overflow:hidden;">
+                                <div id="game_xp_bar" style="width:0%; height:100%; background:linear-gradient(90deg, #8B5CF6, #00C288); transition:width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Win/Loss Counter -->
+                        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border-ui); padding-top:4px;">
+                            <span>Score: <b style="color:var(--text-main);" id="game_score_text">0 Wins / 0 Total</b></span>
+                            <span>Win Rate: <b style="color:var(--cdx-green);" id="game_winrate_text">0%</b></span>
+                        </div>
+                    </div>
+
+                    <!-- Scenario Intelligence Brief & MTF Clues -->
+                    <div class="scenario-clue-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:11px; font-weight:800; color:var(--cdx-blue);">📊 MARKET ANALYSIS BRIEF</span>
+                            <span style="font-size:10px; color:var(--text-muted);" id="game_scenario_date">Real Historical Event</span>
+                        </div>
+                        <p id="game_scenario_desc" style="font-size:11.5px; line-height:1.45; color:var(--text-main); margin:0;">
+                            Loading market scenario...
+                        </p>
+                        <div style="font-size:10.5px; color:var(--text-muted); background:var(--bg-surface-secondary); padding:6px 8px; border-radius:4px; margin-top:2px;" id="game_scenario_clues">
+                            💡 <b>Pro Tip:</b> Check 1D & 1H timeframes above to confirm multi-timeframe trend alignment before predicting!
+                        </div>
+                    </div>
+
+                    <!-- Prediction Action Terminal -->
+                    <div style="background:var(--bg-surface); border:1px solid var(--border-ui); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted);">SELECT YOUR PREDICTION:</span>
+                        
+                        <div class="predict-btn-row">
+                            <button class="predict-choice-btn selected bullish" id="btn_pred_bullish" onclick="selectGamePrediction('BULLISH')">
+                                <span style="font-size:16px;">🚀</span>
+                                <span>BULLISH</span>
+                                <span style="font-size:9.5px; color:var(--cdx-green);">Long / Buy</span>
+                            </button>
+                            <button class="predict-choice-btn bearish" id="btn_pred_bearish" onclick="selectGamePrediction('BEARISH')">
+                                <span style="font-size:16px;">📉</span>
+                                <span>BEARISH</span>
+                                <span style="font-size:9.5px; color:var(--cdx-red);">Short / Sell</span>
+                            </button>
+                            <button class="predict-choice-btn range" id="btn_pred_range" onclick="selectGamePrediction('RANGE')">
+                                <span style="font-size:16px;">⚖️</span>
+                                <span>CHOPPY</span>
+                                <span style="font-size:9.5px; color:var(--cdx-orange);">No Trade</span>
+                            </button>
+                        </div>
+
+                        <!-- Take Profit & Stop Loss Sliders -->
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+                            <div style="display:flex; justify-content:space-between; font-size:10.5px;">
+                                <span style="color:var(--text-muted);">Target TP:</span>
+                                <b style="color:var(--cdx-green);" id="game_tp_display">+4.0% ($66,820)</b>
+                            </div>
+                            <input type="range" class="coindcx-range-slider" id="slider_game_tp" min="1" max="15" step="0.5" value="4" oninput="onGameRiskChange()">
+
+                            <div style="display:flex; justify-content:space-between; font-size:10.5px; margin-top:2px;">
+                                <span style="color:var(--text-muted);">Stop Loss SL:</span>
+                                <b style="color:var(--cdx-red);" id="game_sl_display">-2.0% ($62,965)</b>
+                            </div>
+                            <input type="range" class="coindcx-range-slider" id="slider_game_sl" min="0.5" max="8" step="0.5" value="2" oninput="onGameRiskChange()">
+                            
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-faint); margin-top:2px;">
+                                <span>Risk:Reward Ratio:</span>
+                                <b style="color:var(--cdx-orange);" id="game_rr_ratio">1 : 2.0</b>
+                            </div>
+                        </div>
+
+                        <!-- Big CTA Submit Button -->
+                        <button class="coindcx-cta-submit buy" id="btn_submit_prediction" onclick="submitGamePrediction()" style="margin-top:4px; font-size:12.5px; padding:10px;">
+                            ⚡ Lock Prediction & Play Candles (प्रेडिक्शन करें)
+                        </button>
+                    </div>
+
+                    <!-- Unlocked Trophy Badges Strip -->
+                    <div style="background:var(--bg-surface); border:1px solid var(--border-ui); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:4px;">
+                        <span style="font-size:10px; font-weight:800; color:var(--text-muted);">ACHIEVEMENT TROPHY BADGES:</span>
+                        <div class="badge-gallery-strip" id="game_badges_container">
+                            <span class="badge-chip unlocked" title="First correct prediction">🎯 Sniper Entry</span>
+                            <span class="badge-chip" id="badge_streak_3" title="Win 3 in a row">🔥 3x Streak</span>
+                            <span class="badge-chip" id="badge_divergence" title="Master RSI Divergence">⚡ Divergence Hunter</span>
+                            <span class="badge-chip" id="badge_advanced" title="Win an Advanced Stage battle">👑 Elite Chartist</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
     <!-- 6. STICKY BOTTOM BALANCE BAR -->
@@ -1865,9 +2298,53 @@
             <div class="bottom-tab-icon">🎯</div>
             <div>Options</div>
         </div>
-        <div class="bottom-tab-link" onclick="switchSubTab('POSITIONS')">
-            <div class="bottom-tab-icon">💼</div>
-            <div>Portfolio</div>
+        <div class="bottom-tab-link" id="bnav_game" onclick="switchMainTab('GAME')">
+            <div class="fno-badge" style="background:#8B5CF6;">GAME</div>
+            <div class="bottom-tab-icon">🎮</div>
+            <div>Arena</div>
+        </div>
+    </div>
+
+    <!-- 8. MYSTERY LOOT & PREDICTION RESULT MODAL -->
+    <div class="game-loot-modal-overlay" id="game_loot_modal">
+        <div class="game-loot-modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="moneyness-chip" id="loot_result_badge" style="background:var(--cdx-green-bg); color:var(--cdx-green); font-size:12px; font-weight:900;">
+                    🎉 PREDICTION WON (+4.2% PROFIT)
+                </span>
+                <button onclick="closeLootModal()" style="background:transparent; border:none; color:var(--text-muted); font-size:16px; cursor:pointer; font-weight:800;">✕</button>
+            </div>
+
+            <div class="loot-chest-anim" id="loot_chest_icon">🎁</div>
+
+            <!-- Reward Summary Box -->
+            <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:var(--text-muted);">Virtual Cash Prize Added:</span>
+                    <b style="font-family:'JetBrains Mono'; font-size:14px; color:var(--cdx-green);" id="loot_cash_reward">+₹15,000.00 ($178)</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:var(--text-muted);">XP Gained:</span>
+                    <b style="font-family:'JetBrains Mono'; font-size:13px; color:var(--cdx-orange);" id="loot_xp_reward">+250 XP (2x Streak Bonus!)</b>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:var(--text-muted);">New Wallet Margin:</span>
+                    <b style="font-family:'JetBrains Mono'; font-size:13px; color:var(--text-main);" id="loot_new_balance">₹8,55,000.00</b>
+                </div>
+            </div>
+
+            <!-- Deep Algo / Technical Breakdown -->
+            <div style="background:var(--bg-surface-secondary); border-left:4px solid var(--cdx-blue); border-radius:6px; padding:10px 12px;">
+                <b style="font-size:11.5px; color:var(--cdx-blue);">🧠 PRO TECHNICAL BREAKDOWN:</b>
+                <p id="loot_explanation_text" style="font-size:11.5px; color:var(--text-main); line-height:1.45; margin:4px 0 0 0;">
+                    Price completed a clean Bull Flag retest with expanding volume on the 1H timeframe. RSI stayed above 50, confirming strong buyer momentum before blasting through resistance.
+                </p>
+            </div>
+
+            <!-- Action Button -->
+            <button class="coindcx-cta-submit buy" onclick="nextGameRoundFromModal()" style="font-size:13px; padding:12px;">
+                🎲 Next Chart Battle / अगला चार्ट खेलें ➔
+            </button>
         </div>
     </div>
 
@@ -2249,34 +2726,41 @@
         function switchMainTab(tab) {
             const scrOpt = document.getElementById('screen_options');
             const scrFut = document.getElementById('screen_futures');
+            const scrGame = document.getElementById('screen_game');
             const navOpt = document.getElementById('main_tab_options');
             const navFut = document.getElementById('main_tab_futures');
+            const navGame = document.getElementById('main_tab_game');
             const bnavOpt = document.getElementById('bnav_options');
             const bnavFut = document.getElementById('bnav_futures');
+            const bnavGame = document.getElementById('bnav_game');
             const expBar = document.getElementById('expiry_bar_wrapper');
 
+            [navOpt, navFut, navGame].forEach(n => { if (n) n.classList.remove('active'); });
+            [bnavOpt, bnavFut, bnavGame].forEach(b => { if (b) b.classList.remove('active'); });
+            [scrOpt, scrFut, scrGame].forEach(s => { if (s) s.style.display = 'none'; });
+
             if (tab === 'OPTIONS') {
-                scrOpt.style.display = 'flex';
-                scrFut.style.display = 'none';
-                navOpt.classList.add('active');
-                navFut.classList.remove('active');
-                bnavOpt.classList.add('active');
-                bnavFut.classList.remove('active');
+                if (scrOpt) scrOpt.style.display = 'flex';
+                if (navOpt) navOpt.classList.add('active');
+                if (bnavOpt) bnavOpt.classList.add('active');
                 if (expBar) expBar.style.display = 'flex';
                 renderCoinDCXOptionChain();
-            } else {
-                scrOpt.style.display = 'none';
-                scrFut.style.display = 'flex';
-                navFut.classList.add('active');
-                navOpt.classList.remove('active');
-                bnavFut.classList.add('active');
-                bnavOpt.classList.remove('active');
+            } else if (tab === 'FUTURES') {
+                if (scrFut) scrFut.style.display = 'flex';
+                if (navFut) navFut.classList.add('active');
+                if (bnavFut) bnavFut.classList.add('active');
                 if (expBar) expBar.style.display = 'none';
                 document.getElementById('tv_symbol_text').innerText = `BINANCE:${currentSymbol}USDT.P`;
                 document.getElementById('fut_price_input').value = spotPrices[currentSymbol];
                 onFuturesFormChange();
                 renderFuturesChartPnlHUD();
                 loadTradingViewChart();
+            } else if (tab === 'GAME') {
+                if (scrGame) scrGame.style.display = 'flex';
+                if (navGame) navGame.classList.add('active');
+                if (bnavGame) bnavGame.classList.add('active');
+                if (expBar) expBar.style.display = 'none';
+                initChartGameArena();
             }
         }
 
@@ -3387,6 +3871,1009 @@
             });
             html += '</div>';
             container.innerHTML = html;
+        }
+
+
+        // =========================================================================
+        // 🎮 CHART ARENA GAME ENGINE & MULTI-TIMEFRAME PREDICTION SIMULATOR
+        // =========================================================================
+        let gameStage = 'BEGINNER'; // 'BEGINNER', 'INTERMEDIATE', 'ADVANCED'
+        let gameAsset = 'BTCUSDT'; // 'BTCUSDT', 'ETHUSDT', 'SOLUSDT'
+        let gameMTF = '1h'; // '1d', '1h', '15m', '5m', '1m'
+        let gameIndicators = { ema: true, sma: true, rsi: true, sr: true };
+        let gamePrediction = 'BULLISH'; // 'BULLISH', 'BEARISH', 'RANGE'
+        let gameIsRevealed = false;
+        let gameIsSimulating = false;
+        let gameSimInterval = null;
+        let gameVisibleIndex = 55;
+        let gameTotalCandles = 85;
+
+        let gamePlayerStats = {
+            xp: parseInt(localStorage.getItem('cdx_game_xp') || '0'),
+            streak: parseInt(localStorage.getItem('cdx_game_streak') || '0'),
+            wins: parseInt(localStorage.getItem('cdx_game_wins') || '0'),
+            total: parseInt(localStorage.getItem('cdx_game_total') || '0'),
+            badges: JSON.parse(localStorage.getItem('cdx_game_badges') || '["sniper"]')
+        };
+
+        let currentScenario = null;
+        let mtfDataCache = {}; // stores 1d, 1h, 15m, 5m, 1m candles for current scenario
+
+        // 12 Real-World Historical Market Scenarios
+        const HISTORICAL_SCENARIOS = [
+            // --- 🟢 STAGE 1: BEGINNER (Clear Trends, S/R Bounces, Simple Breakouts) ---
+            {
+                id: 'sc_beg_1',
+                stage: 'BEGINNER',
+                asset: 'BTCUSDT',
+                title: 'Bitcoin ETF Inflow Bull Flag Breakout (2024)',
+                date: 'Feb 2024 (Institutional Momentum)',
+                desc: 'Bitcoin consolidated in a tight upward Bull Flag after a 12% impulse leg. Price is testing the upper resistance boundary with rising volume and healthy moving average support.',
+                clue: '💡 <b>Clue:</b> Look at the 1D trend (Bullish) and 1H Bull Flag. When price holds above 20 EMA with rising volume, upside continuation probability is over 75%.',
+                basePrice: 51200,
+                correctOutcome: 'BULLISH',
+                tpPct: 4.5,
+                slPct: 2.0,
+                trendDelta: 0.048,
+                explanation: '✅ <b>Bullish Breakout Confirmed:</b> The Bull Flag broke out cleanly with strong institutional volume. 20 EMA provided rock-solid dynamic support, driving price straight to target TP!'
+            },
+            {
+                id: 'sc_beg_2',
+                stage: 'BEGINNER',
+                asset: 'ETHUSDT',
+                title: 'Ethereum Double Bottom Demand Zone Retest',
+                date: 'Aug 2023 (Major Support Bounce)',
+                desc: 'Ethereum created a distinct W-pattern (Double Bottom) at the major $1,600 psychological demand zone. A bullish pin bar formed at support while RSI climbed out of oversold territory.',
+                clue: '💡 <b>Clue:</b> A Double Bottom with long rejection wicks at key support is a high-conviction reversal pattern.',
+                basePrice: 1620,
+                correctOutcome: 'BULLISH',
+                tpPct: 5.0,
+                slPct: 2.2,
+                trendDelta: 0.056,
+                explanation: '✅ <b>Double Bottom Surge:</b> Buyers aggressively defended the demand zone. The neckline breakout triggered short liquidations, driving ETH rapidly upwards!'
+            },
+            {
+                id: 'sc_beg_3',
+                stage: 'BEGINNER',
+                asset: 'SOLUSDT',
+                title: 'Solana Ascending Triangle Breakout',
+                date: 'Nov 2023 (Breakout Phase)',
+                desc: 'Solana created higher lows compressing against a flat $58.00 horizontal resistance level, forming a textbook Ascending Triangle on 1H and 1D timeframes.',
+                clue: '💡 <b>Clue:</b> Ascending Triangles show aggressive buyers stepping in at higher prices, preparing to blow through the ceiling.',
+                basePrice: 57.5,
+                correctOutcome: 'BULLISH',
+                tpPct: 6.0,
+                slPct: 2.5,
+                trendDelta: 0.072,
+                explanation: '✅ <b>Textbook Triangle Breakout:</b> The $58.00 ceiling shattered on 3x normal volume. SOL entered price discovery mode with continuous green candles!'
+            },
+            {
+                id: 'sc_beg_4',
+                stage: 'BEGINNER',
+                asset: 'BTCUSDT',
+                title: 'Bitcoin Clean Head & Shoulders Breakdown',
+                date: 'Nov 2021 (All-Time High Reversal)',
+                desc: 'After hitting new highs, Bitcoin formed a classic Head & Shoulders pattern. The Right Shoulder formed on declining buyer volume and price is now testing the horizontal neckline.',
+                clue: '💡 <b>Clue:</b> Declining volume on the Right Shoulder combined with an EMA bearish cross signals buyer exhaustion.',
+                basePrice: 65400,
+                correctOutcome: 'BEARISH',
+                tpPct: 4.8,
+                slPct: 2.0,
+                trendDelta: -0.052,
+                explanation: '✅ <b>Bearish Breakdown:</b> The neckline failed to hold, unleashing cascading market sell orders as stop-losses triggered below support.'
+            },
+
+            // --- 🟡 STAGE 2: INTERMEDIATE (RSI Divergence, Consolidation & Fakeouts) ---
+            {
+                id: 'sc_int_1',
+                stage: 'INTERMEDIATE',
+                asset: 'BTCUSDT',
+                title: 'Bearish RSI Divergence at Range High ($69,000)',
+                date: 'March 2024 (Blow-off Top Test)',
+                desc: 'Bitcoin pushed to a Higher High on the price chart, but the 14-period RSI printed a distinct Lower High (Bearish Divergence) on both 1H and 4H timeframes. Open interest is overheated.',
+                clue: '💡 <b>Clue:</b> Regular Bearish Divergence near key resistance indicates momentum is fading despite higher prices. High likelihood of a mean reversion pullback.',
+                basePrice: 68900,
+                correctOutcome: 'BEARISH',
+                tpPct: 5.2,
+                slPct: 2.4,
+                trendDelta: -0.060,
+                explanation: '✅ <b>RSI Divergence Flush:</b> The divergence played out with ruthless precision! Exhausted buyers failed to absorb limit sell orders, causing a swift 6% pullback to the 50 SMA.'
+            },
+            {
+                id: 'sc_int_2',
+                stage: 'INTERMEDIATE',
+                asset: 'ETHUSDT',
+                title: 'Wyckoff Spring & False Breakdown Reclaim',
+                date: 'Oct 2023 (Smart Money Accumulation)',
+                desc: 'Ethereum wicked below the multi-week support range to sweep retail stop losses, but immediately printed an aggressive V-shape reclaim candle back into the range on massive volume.',
+                clue: '💡 <b>Clue:</b> A quick stop sweep followed by an immediate reclaim is a classic Wyckoff "Spring" or Liquidity Grab before a massive markup.',
+                basePrice: 1780,
+                correctOutcome: 'BULLISH',
+                tpPct: 5.5,
+                slPct: 2.2,
+                trendDelta: 0.068,
+                explanation: '✅ <b>Wyckoff Spring Markup:</b> Trapped breakout bears were forced to buy back at market prices, fueling an explosive 7% short squeeze rally!'
+            },
+            {
+                id: 'sc_int_3',
+                stage: 'INTERMEDIATE',
+                asset: 'SOLUSDT',
+                title: 'Solana Hidden Bullish Divergence on 1D/1H Pullback',
+                date: 'Jan 2024 (Trend Continuation Setup)',
+                desc: 'During a strong macro uptrend, SOL pulled back to the 50 SMA. Price formed a Higher Low while RSI plunged to a Lower Low (Hidden Bullish Divergence), indicating strong trend continuation.',
+                clue: '💡 <b>Clue:</b> Hidden Bullish Divergence during an established uptrend is one of the highest win-rate trend continuation signals.',
+                basePrice: 94.0,
+                correctOutcome: 'BULLISH',
+                tpPct: 6.5,
+                slPct: 2.8,
+                trendDelta: 0.082,
+                explanation: '✅ <b>Trend Continuation Blast:</b> Buyers loaded up at the 50 SMA. The hidden divergence sparked a powerful leg up, crushing all resistance levels.'
+            },
+            {
+                id: 'sc_int_4',
+                stage: 'INTERMEDIATE',
+                asset: 'BTCUSDT',
+                title: 'Range Squeeze & Multi-Day Chop Consolidation',
+                date: 'Aug 2023 (Low Volatility Range)',
+                desc: 'Bitcoin volume has dried up to record lows. Price is oscillating in an ultra-tight $400 band between two immovable order blocks. Bollinger Bands are tightly constricted.',
+                clue: '💡 <b>Clue:</b> When price is in the middle of a dead sideways range with flat EMAs, taking directional trades carries high chop risk.',
+                basePrice: 29400,
+                correctOutcome: 'RANGE',
+                tpPct: 2.5,
+                slPct: 2.0,
+                trendDelta: 0.004,
+                explanation: '✅ <b>Range Discipline Rewarded:</b> Price stayed completely choppy and sideways for the next 24 hours. Waiting on the sidelines was the most profitable decision!'
+            },
+
+            // --- 🔴 STAGE 3: ADVANCED (Liquidity Cascades, Stop Hunts & Macro Shocks) ---
+            {
+                id: 'sc_adv_1',
+                stage: 'ADVANCED',
+                asset: 'BTCUSDT',
+                title: 'March 2020 Cascading Long Liquidation Flash Crash',
+                date: 'March 2020 (Black Swan Liquidity Vacuum)',
+                desc: 'Global macro panic triggered margin calls across all derivative exchanges. Order books became paper-thin as long positions liquidated in a violent cascade. Support levels vanish.',
+                clue: '💡 <b>Clue:</b> When liquidations feed on themselves and order book depth evaporates, support levels offer zero protection until open interest is completely flushed.',
+                basePrice: 7800,
+                correctOutcome: 'BEARISH',
+                tpPct: 8.5,
+                slPct: 3.5,
+                trendDelta: -0.145,
+                explanation: '✅ <b>Cascading Liquidation Flush:</b> Price plunged violently as over $1 Billion in leveraged longs were liquidated in minutes before finding ultimate capitulation!'
+            },
+            {
+                id: 'sc_adv_2',
+                stage: 'ADVANCED',
+                asset: 'ETHUSDT',
+                title: 'May 2021 Leverage Flush & Rapid V-Reversal',
+                date: 'May 2021 (Extreme Volatility Wipeout)',
+                desc: 'A massive 25% wick down swept months of liquidity into the 200 EMA on the Daily chart. On the 1-minute and 5-minute charts, extreme volume exhaustion pin bars are forming.',
+                clue: '💡 <b>Clue:</b> Check 1D vs 1M MTF. When a flash dump hits major 200 EMA with record volume climaxes, aggressive smart money accumulation creates rapid V-shape bounces.',
+                basePrice: 2450,
+                correctOutcome: 'BULLISH',
+                tpPct: 9.0,
+                slPct: 4.0,
+                trendDelta: 0.125,
+                explanation: '✅ <b>Epic V-Shape Bounce:</b> The liquidity wick was instantly bought up by institutional buyers. A legendary 12%+ bounce rewarded traders who spotted the volume climax!'
+            },
+            {
+                id: 'sc_adv_3',
+                stage: 'ADVANCED',
+                asset: 'SOLUSDT',
+                title: 'FTX Contagion Squeeze & False Rebound Trap',
+                date: 'Nov 2022 (Systemic Panic & Dead Cat Bounce)',
+                desc: 'Following bad headlines, SOL bounced weakly into resistance on low volume before stalling out below the 20 EMA. Retail was buying the dip while whales unloaded into liquidity.',
+                clue: '💡 <b>Clue:</b> A weak low-volume bounce during fundamental solvency panic is a textbook "Dead Cat Bounce" bull trap.',
+                basePrice: 18.5,
+                correctOutcome: 'BEARISH',
+                tpPct: 8.0,
+                slPct: 3.2,
+                trendDelta: -0.115,
+                explanation: '✅ <b>Bull Trap Rejected:</b> The dead cat bounce failed immediately at the 20 EMA. Aggressive shorting drove price straight through previous lows!'
+            },
+            {
+                id: 'sc_adv_4',
+                stage: 'ADVANCED',
+                asset: 'BTCUSDT',
+                title: 'Post-Halving Macro S/R Flip & Institutional Accumulation',
+                date: 'May 2024 (Macro Resistance Flip)',
+                desc: 'Bitcoin spent 4 weeks breaking out of previous All-Time High resistance and is now conducting a slow, low-volatility retest of the old ceiling to turn it into floor support.',
+                clue: '💡 <b>Clue:</b> Previous major resistance holding as support with declining sell volume on 1D confirms an institutional S/R flip.',
+                basePrice: 63800,
+                correctOutcome: 'BULLISH',
+                tpPct: 6.0,
+                slPct: 2.2,
+                trendDelta: 0.075,
+                explanation: '✅ <b>Perfect S/R Flip:</b> The old resistance successfully turned into unbreakable support! Bitcoin rallied aggressively into new highs!'
+            }
+        ];
+
+        // -------------------------------------------------------------------------
+        // Real-world MTF Candlestick Dataset Generator & Binance API Loader
+        // -------------------------------------------------------------------------
+        function generateScenarioCandles(basePrice, trendDelta, count = 85) {
+            const candles = [];
+            let cur = basePrice;
+            const now = Date.now() - (count * 3600 * 1000);
+
+            for (let i = 0; i < count; i++) {
+                const isPreCutoff = i < 55;
+                const stepTrend = isPreCutoff 
+                    ? (Math.sin(i / 6) * 0.003) + (trendDelta * 0.15 / 55)
+                    : (trendDelta * 0.85 / (count - 55));
+                
+                const noise = (Math.random() - 0.48) * 0.012;
+                const deltaPct = stepTrend + noise;
+                const open = cur;
+                const close = open * (1 + deltaPct);
+                const high = Math.max(open, close) * (1 + Math.random() * 0.006);
+                const low = Math.min(open, close) * (1 - Math.random() * 0.006);
+                const vol = Math.abs(close - open) * (100 + Math.random() * 200) + 50;
+
+                candles.push({
+                    time: now + (i * 3600 * 1000),
+                    open: open,
+                    high: high,
+                    low: low,
+                    close: close,
+                    volume: vol
+                });
+                cur = close;
+            }
+            return candles;
+        }
+
+        function buildMTFDatasets(basePrice, trendDelta) {
+            return {
+                '1d': generateScenarioCandles(basePrice * 0.92, trendDelta * 1.5, 60),
+                '1h': generateScenarioCandles(basePrice, trendDelta, 85),
+                '15m': generateScenarioCandles(basePrice * 0.995, trendDelta * 0.8, 90),
+                '5m': generateScenarioCandles(basePrice, trendDelta * 0.6, 90),
+                '1m': generateScenarioCandles(basePrice, trendDelta * 0.4, 90)
+            };
+        }
+
+        async function fetchRealBinanceHistoricalKlines(sym, interval, endTime) {
+            try {
+                const url = `https://api.binance.com/api/v3/klines?symbol=${sym}&interval=${interval}&limit=90&endTime=${endTime}`;
+                const resp = await fetch(url);
+                if (!resp.ok) return null;
+                const data = await resp.json();
+                if (!Array.isArray(data) || data.length < 30) return null;
+                return data.map(d => ({
+                    time: d[0],
+                    open: parseFloat(d[1]),
+                    high: parseFloat(d[2]),
+                    low: parseFloat(d[3]),
+                    close: parseFloat(d[4]),
+                    volume: parseFloat(d[5])
+                }));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // Game Initialization & Scenario Setup
+        // -------------------------------------------------------------------------
+        function initChartGameArena() {
+            updateGamePlayerHUD();
+            if (!currentScenario) {
+                loadNewGameScenario();
+            } else {
+                renderGameChart();
+                renderGameRSI();
+            }
+            setupGameCanvasInteractions();
+        }
+
+        function loadNewGameScenario() {
+            if (gameIsSimulating) return;
+
+            // Filter scenarios by stage and asset
+            let filtered = HISTORICAL_SCENARIOS.filter(s => s.stage === gameStage);
+            if (filtered.length === 0) filtered = HISTORICAL_SCENARIOS;
+
+            // Pick random scenario
+            const sc = filtered[Math.floor(Math.random() * filtered.length)];
+            currentScenario = sc;
+            gameAsset = sc.asset;
+            gameMTF = '1h';
+            gameIsRevealed = false;
+            gameIsSimulating = false;
+            gameVisibleIndex = 55;
+            gameTotalCandles = 85;
+
+            // Generate multi-timeframe candle datasets
+            mtfDataCache = buildMTFDatasets(sc.basePrice, sc.trendDelta);
+            activeKlines = mtfDataCache[gameMTF];
+
+            // Update UI elements
+            document.getElementById('game_scenario_asset_title').innerText = `${sc.asset} (${gameMTF.toUpperCase()})`;
+            
+            const badgeEl = document.getElementById('game_scenario_tag_badge');
+            badgeEl.innerText = `${sc.stage} LEVEL`;
+            badgeEl.style.background = sc.stage === 'BEGINNER' ? 'var(--cdx-green-bg)' : (sc.stage === 'INTERMEDIATE' ? 'var(--cdx-orange-bg)' : 'var(--cdx-red-bg)');
+            badgeEl.style.color = sc.stage === 'BEGINNER' ? 'var(--cdx-green)' : (sc.stage === 'INTERMEDIATE' ? 'var(--cdx-orange)' : 'var(--cdx-red)');
+
+            const cutoffCandle = activeKlines[gameVisibleIndex - 1] || activeKlines[0];
+            document.getElementById('game_cutoff_price').innerText = `$${cutoffCandle.close.toLocaleString('en-US', {maximumFractionDigits:2})}`;
+            document.getElementById('game_scenario_date').innerText = sc.date;
+            document.getElementById('game_scenario_desc').innerText = `${sc.title}: ${sc.desc}`;
+            document.getElementById('game_scenario_clues').innerHTML = sc.clue;
+
+            // Reset Prediction Buttons
+            selectGamePrediction('BULLISH');
+            document.getElementById('slider_game_tp').value = sc.tpPct;
+            document.getElementById('slider_game_sl').value = sc.slPct;
+            onGameRiskChange();
+
+            // Re-enable submit button
+            const submitBtn = document.getElementById('btn_submit_prediction');
+            submitBtn.disabled = false;
+            submitBtn.innerText = '⚡ Lock Prediction & Play Candles (प्रेडिक्शन करें)';
+            submitBtn.className = 'coindcx-cta-submit buy';
+
+            const pnlBadge = document.getElementById('game_sim_pnl_badge');
+            if (pnlBadge) pnlBadge.style.display = 'none';
+
+            // Sync Asset & MTF buttons
+            ['btc', 'eth', 'sol'].forEach(a => {
+                const b = document.getElementById(`btn_game_asset_${a}`);
+                if (b) b.classList.toggle('active', sc.asset.toLowerCase().startsWith(a));
+            });
+
+            ['1d', '1h', '15m', '5m', '1m'].forEach(m => {
+                const b = document.getElementById(`mtf_${m}`);
+                if (b) b.classList.toggle('active', m === gameMTF);
+            });
+
+            renderGameChart();
+            renderGameRSI();
+        }
+
+        // -------------------------------------------------------------------------
+        // Multi-Timeframe & Indicator Handlers
+        // -------------------------------------------------------------------------
+        function setGameStage(stage) {
+            gameStage = stage;
+            ['beginner', 'intermediate', 'advanced'].forEach(s => {
+                const b = document.getElementById(`btn_stage_${s}`);
+                if (b) {
+                    b.classList.remove('active', 'beginner', 'intermediate', 'advanced');
+                    if (s === stage.toLowerCase()) b.classList.add('active', s);
+                }
+            });
+            loadNewGameScenario();
+        }
+
+        function setGameAsset(asset) {
+            gameAsset = asset;
+            ['btc', 'eth', 'sol'].forEach(a => {
+                const b = document.getElementById(`btn_game_asset_${a}`);
+                if (b) b.classList.toggle('active', asset.toLowerCase().startsWith(a));
+            });
+            loadNewGameScenario();
+        }
+
+        function setGameMTF(mtf) {
+            gameMTF = mtf;
+            ['1d', '1h', '15m', '5m', '1m'].forEach(m => {
+                const b = document.getElementById(`mtf_${m}`);
+                if (b) b.classList.toggle('active', m === mtf);
+            });
+
+            if (mtfDataCache[mtf]) {
+                activeKlines = mtfDataCache[mtf];
+            }
+
+            if (currentScenario) {
+                document.getElementById('game_scenario_asset_title').innerText = `${currentScenario.asset} (${mtf.toUpperCase()})`;
+            }
+
+            renderGameChart();
+            renderGameRSI();
+        }
+
+        function toggleGameIndicator(ind) {
+            gameIndicators[ind] = !gameIndicators[ind];
+            const btn = document.getElementById(`btn_ind_${ind}`);
+            if (btn) btn.classList.toggle('active', gameIndicators[ind]);
+            renderGameChart();
+            renderGameRSI();
+        }
+
+        function selectGamePrediction(pred) {
+            gamePrediction = pred;
+            const btnBull = document.getElementById('btn_pred_bullish');
+            const btnBear = document.getElementById('btn_pred_bearish');
+            const btnRange = document.getElementById('btn_pred_range');
+            const submitBtn = document.getElementById('btn_submit_prediction');
+
+            btnBull.className = 'predict-choice-btn';
+            btnBear.className = 'predict-choice-btn';
+            btnRange.className = 'predict-choice-btn';
+
+            if (pred === 'BULLISH') {
+                btnBull.className = 'predict-choice-btn selected bullish';
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit buy'; submitBtn.innerText = '🚀 Lock Bullish Prediction (Long / Buy)'; }
+            } else if (pred === 'BEARISH') {
+                btnBear.className = 'predict-choice-btn selected bearish';
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit sell'; submitBtn.innerText = '📉 Lock Bearish Prediction (Short / Sell)'; }
+            } else {
+                btnRange.className = 'predict-choice-btn selected range';
+                if (submitBtn) { submitBtn.className = 'coindcx-cta-submit'; submitBtn.style.background = 'var(--cdx-orange)'; submitBtn.innerText = '⚖️ Lock Sideways / No Trade Prediction'; }
+            }
+            onGameRiskChange();
+        }
+
+        function onGameRiskChange() {
+            const tp = parseFloat(document.getElementById('slider_game_tp').value) || 4.0;
+            const sl = parseFloat(document.getElementById('slider_game_sl').value) || 2.0;
+
+            const cutoffCandle = activeKlines ? (activeKlines[gameVisibleIndex - 1] || activeKlines[0]) : { close: 64000 };
+            const entryPrice = cutoffCandle.close;
+
+            const tpPrice = gamePrediction === 'BEARISH' ? entryPrice * (1 - tp / 100) : entryPrice * (1 + tp / 100);
+            const slPrice = gamePrediction === 'BEARISH' ? entryPrice * (1 + sl / 100) : entryPrice * (1 - sl / 100);
+
+            document.getElementById('game_tp_display').innerText = `+${tp.toFixed(1)}% ($${tpPrice.toLocaleString('en-US', {maximumFractionDigits:1})})`;
+            document.getElementById('game_sl_display').innerText = `-${sl.toFixed(1)}% ($${slPrice.toLocaleString('en-US', {maximumFractionDigits:1})})`;
+
+            const rr = (tp / sl).toFixed(1);
+            document.getElementById('game_rr_ratio').innerText = `1 : ${rr}`;
+            renderGameChart();
+        }
+
+        // -------------------------------------------------------------------------
+        // Technical Indicators Calculator (EMA, SMA, RSI)
+        // -------------------------------------------------------------------------
+        function calculateEMA(candles, period) {
+            const k = 2 / (period + 1);
+            const emaArray = [];
+            let ema = candles[0].close;
+            emaArray.push(ema);
+
+            for (let i = 1; i < candles.length; i++) {
+                ema = (candles[i].close * k) + (ema * (1 - k));
+                emaArray.push(ema);
+            }
+            return emaArray;
+        }
+
+        function calculateSMA(candles, period) {
+            const smaArray = [];
+            for (let i = 0; i < candles.length; i++) {
+                if (i < period - 1) {
+                    smaArray.push(null);
+                } else {
+                    let sum = 0;
+                    for (let j = i - period + 1; j <= i; j++) sum += candles[j].close;
+                    smaArray.push(sum / period);
+                }
+            }
+            return smaArray;
+        }
+
+        function calculateRSIArray(candles, period = 14) {
+            const rsiArray = [];
+            if (candles.length < period) return candles.map(() => 50);
+
+            let gains = 0, losses = 0;
+            for (let i = 1; i <= period; i++) {
+                const diff = candles[i].close - candles[i - 1].close;
+                if (diff >= 0) gains += diff;
+                else losses += Math.abs(diff);
+            }
+
+            let avgGain = gains / period;
+            let avgLoss = losses / period;
+            rsiArray.push(avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss))));
+
+            for (let i = period + 1; i < candles.length; i++) {
+                const diff = candles[i].close - candles[i - 1].close;
+                const gain = diff >= 0 ? diff : 0;
+                const loss = diff < 0 ? Math.abs(diff) : 0;
+
+                avgGain = ((avgGain * (period - 1)) + gain) / period;
+                avgLoss = ((avgLoss * (period - 1)) + loss) / period;
+
+                const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
+                const rsi = avgLoss === 0 ? 100 : 100 - (100 / (1 + rs));
+                rsiArray.push(rsi);
+            }
+
+            // Pad start
+            while (rsiArray.length < candles.length) rsiArray.unshift(50);
+            return rsiArray;
+        }
+
+        // -------------------------------------------------------------------------
+        // Canvas Rendering Engine (Candlesticks, Indicators, S/R & Decision Line)
+        // -------------------------------------------------------------------------
+        function renderGameChart() {
+            const canvas = document.getElementById('game_candle_canvas');
+            if (!canvas || !activeKlines || activeKlines.length === 0) return;
+            const ctx = canvas.getContext('2d');
+
+            const container = document.getElementById('game_canvas_container');
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const W = rect.width;
+            const H = rect.height;
+            ctx.clearRect(0, 0, W, H);
+
+            // Determine visible candles (mystery cutoff if not revealed)
+            const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
+            const visibleCandles = activeKlines.slice(0, countToRender);
+            if (visibleCandles.length === 0) return;
+
+            // Min / Max Price & Volume
+            let minP = Infinity, maxP = -Infinity, maxVol = 0;
+            visibleCandles.forEach(c => {
+                if (c.low < minP) minP = c.low;
+                if (c.high > maxP) maxP = c.high;
+                if (c.volume > maxVol) maxVol = c.volume;
+            });
+
+            const pPadding = (maxP - minP) * 0.08;
+            minP -= pPadding;
+            maxP += pPadding;
+
+            const rightMargin = 65;
+            const bottomMargin = 20;
+            const chartW = W - rightMargin;
+            const chartH = H - bottomMargin;
+
+            const priceToY = (p) => chartH - ((p - minP) / (maxP - minP)) * chartH;
+            const idxToX = (idx) => (idx / (gameTotalCandles - 1)) * chartW;
+
+            // 1. Draw Grid Lines
+            ctx.strokeStyle = currentTheme === 'dark' ? '#1E293B' : '#E2E8F0';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+
+            const gridSteps = 5;
+            for (let i = 0; i <= gridSteps; i++) {
+                const p = minP + (i / gridSteps) * (maxP - minP);
+                const y = priceToY(p);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(chartW, y);
+                ctx.stroke();
+
+                // Y-axis price label
+                ctx.fillStyle = currentTheme === 'dark' ? '#64748B' : '#94A3B8';
+                ctx.font = '10px JetBrains Mono';
+                ctx.fillText(`$${p.toLocaleString('en-US', {maximumFractionDigits:1})}`, chartW + 6, y + 3);
+            }
+            ctx.setLineDash([]);
+
+            // 2. Draw Support / Resistance Key Level Lines
+            if (gameIndicators.sr && visibleCandles.length > 20) {
+                const sLevel = minP + (maxP - minP) * 0.28;
+                const rLevel = minP + (maxP - minP) * 0.72;
+
+                // Support line (Green dashed)
+                ctx.strokeStyle = 'rgba(0, 194, 136, 0.45)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(0, priceToY(sLevel));
+                ctx.lineTo(chartW, priceToY(sLevel));
+                ctx.stroke();
+                ctx.fillStyle = '#00C288';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText(`KEY SUPPORT $${sLevel.toFixed(0)}`, 10, priceToY(sLevel) - 4);
+
+                // Resistance line (Red dashed)
+                ctx.strokeStyle = 'rgba(246, 70, 93, 0.45)';
+                ctx.beginPath();
+                ctx.moveTo(0, priceToY(rLevel));
+                ctx.lineTo(chartW, priceToY(rLevel));
+                ctx.stroke();
+                ctx.fillStyle = '#F6465D';
+                ctx.fillText(`KEY RESISTANCE $${rLevel.toFixed(0)}`, 10, priceToY(rLevel) - 4);
+                ctx.setLineDash([]);
+            }
+
+            // 3. Draw Volume Sub-bars
+            const volH = chartH * 0.22;
+            const barW = Math.max(2, (chartW / gameTotalCandles) * 0.65);
+
+            visibleCandles.forEach((c, idx) => {
+                const x = idxToX(idx);
+                const isGreen = c.close >= c.open;
+                const vBarH = (c.volume / (maxVol || 1)) * volH;
+                const vY = chartH - vBarH;
+
+                ctx.fillStyle = isGreen ? 'rgba(0, 194, 136, 0.22)' : 'rgba(246, 70, 93, 0.22)';
+                ctx.fillRect(x - barW / 2, vY, barW, vBarH);
+            });
+
+            // 4. Draw Candlesticks (Wicks & Bodies)
+            visibleCandles.forEach((c, idx) => {
+                const x = idxToX(idx);
+                const isGreen = c.close >= c.open;
+                const color = isGreen ? '#00C288' : '#F6465D';
+
+                // Wick
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x, priceToY(c.high));
+                ctx.lineTo(x, priceToY(c.low));
+                ctx.stroke();
+
+                // Body
+                const yOpen = priceToY(c.open);
+                const yClose = priceToY(c.close);
+                const topY = Math.min(yOpen, yClose);
+                const bodyH = Math.max(2, Math.abs(yOpen - yClose));
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x - barW / 2, topY, barW, bodyH);
+            });
+
+            // 5. Draw EMA 20 & SMA 50
+            if (gameIndicators.ema && visibleCandles.length > 5) {
+                const ema = calculateEMA(visibleCandles, 20);
+                ctx.strokeStyle = '#00D2FF';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ema.forEach((v, idx) => {
+                    const x = idxToX(idx);
+                    const y = priceToY(v);
+                    if (idx === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
+
+            if (gameIndicators.sma && visibleCandles.length > 15) {
+                const sma = calculateSMA(visibleCandles, 50);
+                ctx.strokeStyle = '#F59E0B';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                let started = false;
+                sma.forEach((v, idx) => {
+                    if (v !== null) {
+                        const x = idxToX(idx);
+                        const y = priceToY(v);
+                        if (!started) { ctx.moveTo(x, y); started = true; }
+                        else ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+            }
+
+            // 6. Draw Mystery Cutoff Vertical Line (Decision Point)
+            const cutoffX = idxToX(54);
+            ctx.strokeStyle = '#FA4A29';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cutoffX, 0);
+            ctx.lineTo(cutoffX, chartH);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Cutoff Badge
+            ctx.fillStyle = '#FA4A29';
+            ctx.font = 'bold 10px JetBrains Mono';
+            ctx.fillText('⚡ DECISION POINT', cutoffX - 52, 16);
+
+            // Shaded Future zone if not revealed
+            if (!gameIsRevealed && countToRender <= 55) {
+                ctx.fillStyle = currentTheme === 'dark' ? 'rgba(14, 20, 32, 0.65)' : 'rgba(240, 244, 248, 0.65)';
+                ctx.fillRect(cutoffX, 0, chartW - cutoffX, chartH);
+
+                ctx.fillStyle = currentTheme === 'dark' ? '#94A3B8' : '#64748B';
+                ctx.font = 'bold 12px JetBrains Mono';
+                ctx.fillText('🔒 MYSTERY FUTURE CANDLES', cutoffX + 20, chartH / 2);
+                ctx.font = '10px sans-serif';
+                ctx.fillText('Predict the outcome to unlock simulation', cutoffX + 20, (chartH / 2) + 18);
+            }
+        }
+
+        function renderGameRSI() {
+            const canvas = document.getElementById('game_rsi_canvas');
+            if (!canvas || !activeKlines || activeKlines.length === 0) return;
+            const ctx = canvas.getContext('2d');
+
+            const container = document.getElementById('game_rsi_container');
+            const rect = container.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const W = rect.width;
+            const H = rect.height;
+            ctx.clearRect(0, 0, W, H);
+
+            const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
+            const visibleCandles = activeKlines.slice(0, countToRender);
+            if (visibleCandles.length < 5) return;
+
+            const rsiValues = calculateRSIArray(visibleCandles, 14);
+            const chartW = W - 65;
+            const idxToX = (idx) => (idx / (gameTotalCandles - 1)) * chartW;
+            const rsiToY = (val) => H - ((val / 100) * H);
+
+            // 1. Draw 70 Overbought & 30 Oversold Zones
+            const y70 = rsiToY(70);
+            const y30 = rsiToY(30);
+
+            ctx.fillStyle = currentTheme === 'dark' ? 'rgba(139, 92, 246, 0.05)' : 'rgba(139, 92, 246, 0.08)';
+            ctx.fillRect(0, y70, chartW, y30 - y70);
+
+            // Lines
+            ctx.strokeStyle = '#F6465D';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(0, y70);
+            ctx.lineTo(chartW, y70);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#00C288';
+            ctx.beginPath();
+            ctx.moveTo(0, y30);
+            ctx.lineTo(chartW, y30);
+            ctx.stroke();
+
+            ctx.strokeStyle = currentTheme === 'dark' ? '#334155' : '#CBD5E1';
+            ctx.beginPath();
+            ctx.moveTo(0, rsiToY(50));
+            ctx.lineTo(chartW, rsiToY(50));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Labels
+            ctx.font = '9px JetBrains Mono';
+            ctx.fillStyle = '#F6465D';
+            ctx.fillText('70 OB', chartW + 6, y70 + 3);
+            ctx.fillStyle = '#00C288';
+            ctx.fillText('30 OS', chartW + 6, y30 + 3);
+
+            // 2. Draw RSI Curve
+            ctx.strokeStyle = '#8B5CF6';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            rsiValues.forEach((val, idx) => {
+                const x = idxToX(idx);
+                const y = rsiToY(val);
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Label
+            const lastRSI = rsiValues[rsiValues.length - 1];
+            ctx.fillStyle = '#8B5CF6';
+            ctx.font = 'bold 10px JetBrains Mono';
+            ctx.fillText(`RSI (14): ${lastRSI.toFixed(1)}`, 10, 14);
+        }
+
+        function setupGameCanvasInteractions() {
+            const canvas = document.getElementById('game_candle_canvas');
+            if (!canvas) return;
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!activeKlines || activeKlines.length === 0) return;
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const chartW = rect.width - 65;
+
+                const countToRender = gameIsRevealed ? activeKlines.length : Math.min(gameVisibleIndex, activeKlines.length);
+                const idx = Math.min(countToRender - 1, Math.max(0, Math.round((mouseX / chartW) * (gameTotalCandles - 1))));
+                const c = activeKlines[idx];
+                if (!c) return;
+
+                document.getElementById('gh_open').innerText = `$${c.open.toFixed(1)}`;
+                document.getElementById('gh_high').innerText = `$${c.high.toFixed(1)}`;
+                document.getElementById('gh_low').innerText = `$${c.low.toFixed(1)}`;
+                document.getElementById('gh_close').innerText = `$${c.close.toFixed(1)}`;
+                document.getElementById('gh_vol').innerText = c.volume.toFixed(0);
+            });
+        }
+
+        // -------------------------------------------------------------------------
+        // Prediction Execution & Smooth Animated Playback
+        // -------------------------------------------------------------------------
+        function submitGamePrediction() {
+            if (gameIsSimulating || gameIsRevealed || !currentScenario) return;
+
+            gameIsSimulating = true;
+            const submitBtn = document.getElementById('btn_submit_prediction');
+            submitBtn.disabled = true;
+            submitBtn.innerText = '⏳ Simulating Future Candlesticks...';
+
+            const pnlBadge = document.getElementById('game_sim_pnl_badge');
+            if (pnlBadge) {
+                pnlBadge.style.display = 'inline-block';
+                pnlBadge.innerText = 'Live Sim: +$0.00';
+                pnlBadge.style.background = 'var(--cdx-orange-bg)';
+                pnlBadge.style.color = 'var(--cdx-orange)';
+            }
+
+            const entryCandle = activeKlines[gameVisibleIndex - 1];
+            const entryPrice = entryCandle.close;
+            const tpPct = parseFloat(document.getElementById('slider_game_tp').value) || 4.0;
+            const slPct = parseFloat(document.getElementById('slider_game_sl').value) || 2.0;
+
+            // Start step-by-step playback
+            gameSimInterval = setInterval(() => {
+                if (gameVisibleIndex < activeKlines.length) {
+                    gameVisibleIndex++;
+                    const curCandle = activeKlines[gameVisibleIndex - 1];
+                    
+                    // Calculate live simulation PnL
+                    let pnlPct = 0;
+                    if (gamePrediction === 'BULLISH') {
+                        pnlPct = ((curCandle.close - entryPrice) / entryPrice) * 100;
+                    } else if (gamePrediction === 'BEARISH') {
+                        pnlPct = ((entryPrice - curCandle.close) / entryPrice) * 100;
+                    } else {
+                        // Range prediction wins if price stays within +- 2.5%
+                        const drift = Math.abs(curCandle.close - entryPrice) / entryPrice * 100;
+                        pnlPct = drift < 2.5 ? 2.5 - drift : -drift;
+                    }
+
+                    if (pnlBadge) {
+                        const isWin = pnlPct >= 0;
+                        pnlBadge.innerText = `Live Sim PnL: ${isWin ? '+' : ''}${pnlPct.toFixed(2)}%`;
+                        pnlBadge.style.background = isWin ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)';
+                        pnlBadge.style.color = isWin ? 'var(--cdx-green)' : 'var(--cdx-red)';
+                    }
+
+                    renderGameChart();
+                    renderGameRSI();
+                } else {
+                    // Playback finished
+                    clearInterval(gameSimInterval);
+                    gameIsSimulating = false;
+                    gameIsRevealed = true;
+                    evaluateGameRound();
+                }
+            }, 75);
+        }
+
+        function evaluateGameRound() {
+            const sc = currentScenario;
+            const isWin = (gamePrediction === sc.correctOutcome);
+
+            gamePlayerStats.total++;
+            if (isWin) {
+                gamePlayerStats.wins++;
+                gamePlayerStats.streak++;
+                
+                // Base XP by Stage
+                let baseXP = sc.stage === 'BEGINNER' ? 100 : (sc.stage === 'INTERMEDIATE' ? 250 : 500);
+                const streakMultiplier = Math.min(3, 1 + (gamePlayerStats.streak * 0.2));
+                const totalXP = Math.round(baseXP * streakMultiplier);
+                gamePlayerStats.xp += totalXP;
+
+                // Random Virtual Cash Reward (+₹5,000 to +₹50,000)
+                const cashTiers = sc.stage === 'BEGINNER' ? [5000, 8000, 10000] : (sc.stage === 'INTERMEDIATE' ? [15000, 20000, 30000] : [35000, 45000, 50000]);
+                const prizeCash = cashTiers[Math.floor(Math.random() * cashTiers.length)];
+
+                // Add to virtual paper balance
+                userBalance += prizeCash;
+                localStorage.setItem('delta_paper_balance', userBalance.toString());
+                updateWalletDisplay();
+
+                // Unlock Badges
+                if (gamePlayerStats.streak >= 3 && !gamePlayerStats.badges.includes('streak_3')) gamePlayerStats.badges.push('streak_3');
+                if (sc.stage === 'INTERMEDIATE' && !gamePlayerStats.badges.includes('divergence')) gamePlayerStats.badges.push('divergence');
+                if (sc.stage === 'ADVANCED' && !gamePlayerStats.badges.includes('elite')) gamePlayerStats.badges.push('elite');
+
+                savePlayerStats();
+                updateGamePlayerHUD();
+
+                showLootRewardModal(true, sc.trendDelta * 100, prizeCash, totalXP, sc.explanation);
+            } else {
+                gamePlayerStats.streak = 0;
+                savePlayerStats();
+                updateGamePlayerHUD();
+                showLootRewardModal(false, sc.trendDelta * 100, 0, 25, sc.explanation);
+            }
+        }
+
+        function savePlayerStats() {
+            localStorage.setItem('cdx_game_xp', gamePlayerStats.xp.toString());
+            localStorage.setItem('cdx_game_streak', gamePlayerStats.streak.toString());
+            localStorage.setItem('cdx_game_wins', gamePlayerStats.wins.toString());
+            localStorage.setItem('cdx_game_total', gamePlayerStats.total.toString());
+            localStorage.setItem('cdx_game_badges', JSON.stringify(gamePlayerStats.badges));
+        }
+
+        function updateGamePlayerHUD() {
+            const xp = gamePlayerStats.xp;
+            const level = Math.floor(xp / 300) + 1;
+            const xpInLevel = xp % 300;
+            const pct = (xpInLevel / 300) * 100;
+
+            const ranks = ['Novice Chartist', 'S/R Apprentice', 'Pattern Hunter', 'MTF Strategist', 'Divergence Master', 'Crypto Titan'];
+            const rankTitle = ranks[Math.min(ranks.length - 1, level - 1)];
+
+            const rankEl = document.getElementById('game_player_rank');
+            if (rankEl) rankEl.innerText = `Level ${level}: ${rankTitle}`;
+
+            const streakEl = document.getElementById('game_player_streak');
+            if (streakEl) streakEl.innerText = `🔥 ${gamePlayerStats.streak} Streak`;
+
+            const xpLbl = document.getElementById('game_xp_label');
+            if (xpLbl) xpLbl.innerText = `${xpInLevel} / 300 XP`;
+
+            const xpBar = document.getElementById('game_xp_bar');
+            if (xpBar) xpBar.style.width = `${pct}%`;
+
+            const scoreEl = document.getElementById('game_score_text');
+            if (scoreEl) scoreEl.innerText = `${gamePlayerStats.wins} Wins / ${gamePlayerStats.total} Total`;
+
+            const winRate = gamePlayerStats.total > 0 ? ((gamePlayerStats.wins / gamePlayerStats.total) * 100).toFixed(0) : 0;
+            const wrEl = document.getElementById('game_winrate_text');
+            if (wrEl) wrEl.innerText = `${winRate}%`;
+
+            // Badges
+            const bStreak = document.getElementById('badge_streak_3');
+            if (bStreak) bStreak.classList.toggle('unlocked', gamePlayerStats.badges.includes('streak_3'));
+            const bDiv = document.getElementById('badge_divergence');
+            if (bDiv) bDiv.classList.toggle('unlocked', gamePlayerStats.badges.includes('divergence'));
+            const bAdv = document.getElementById('badge_advanced');
+            if (bAdv) bAdv.classList.toggle('unlocked', gamePlayerStats.badges.includes('elite'));
+        }
+
+        // -------------------------------------------------------------------------
+        // Mystery Loot Reward Modal Controller
+        // -------------------------------------------------------------------------
+        function showLootRewardModal(isWin, deltaPct, prizeCash, xpGained, explanation) {
+            const modal = document.getElementById('game_loot_modal');
+            if (!modal) return;
+
+            const badge = document.getElementById('loot_result_badge');
+            const chest = document.getElementById('loot_chest_icon');
+            const cashEl = document.getElementById('loot_cash_reward');
+            const xpEl = document.getElementById('loot_xp_reward');
+            const balEl = document.getElementById('loot_new_balance');
+            const expEl = document.getElementById('loot_explanation_text');
+
+            if (isWin) {
+                badge.innerText = `🎉 PREDICTION WON (${deltaPct >= 0 ? '+' : ''}${deltaPct.toFixed(1)}% TARGET HIT)`;
+                badge.style.background = 'var(--cdx-green-bg)';
+                badge.style.color = 'var(--cdx-green)';
+                chest.innerText = '🎁✨';
+                cashEl.innerText = `+₹${prizeCash.toLocaleString('en-IN')}.00 (≈ $${(prizeCash / inrRate).toFixed(0)})`;
+                cashEl.style.color = 'var(--cdx-green)';
+                xpEl.innerText = `+${xpGained} XP (${gamePlayerStats.streak}x Streak Bonus!)`;
+            } else {
+                badge.innerText = `❌ PREDICTION MISSED (ANALYSIS LESSON)`;
+                badge.style.background = 'var(--cdx-red-bg)';
+                badge.style.color = 'var(--cdx-red)';
+                chest.innerText = '🛡️';
+                cashEl.innerText = '₹0.00 (Try next chart!)';
+                cashEl.style.color = 'var(--text-muted)';
+                xpEl.innerText = `+${xpGained} XP (Participation)`;
+            }
+
+            balEl.innerText = formatCurrency(userBalance);
+            expEl.innerHTML = explanation;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeLootModal() {
+            const modal = document.getElementById('game_loot_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function nextGameRoundFromModal() {
+            closeLootModal();
+            loadNewGameScenario();
         }
 
         // =========================================================================
