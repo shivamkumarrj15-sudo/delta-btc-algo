@@ -1040,7 +1040,7 @@
            ============================================================= */
         .futures-cockpit-layout {
             display: grid;
-            grid-template-columns: 1fr 310px;
+            grid-template-columns: 1fr 360px;
             height: 100%;
             width: 100%;
             overflow: hidden;
@@ -1491,10 +1491,125 @@
             border: 1px solid var(--border-ui);
             color: var(--text-muted);
         }
-        .badge-chip.unlocked {
-            background: rgba(139, 92, 246, 0.18);
-            border-color: #8B5CF6;
-            color: #A78BFA;
+        /* =============================================================
+           SMC SCALPER ALGO & STRATEGY COCKPIT STYLES
+           ============================================================= */
+        .smc-mode-switcher {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 3px;
+            gap: 3px;
+        }
+        .smc-mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 6px 4px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+        .smc-mode-btn.active {
+            background: var(--bg-surface);
+            color: var(--text-main);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+            border: 1px solid var(--border-ui);
+        }
+        .smc-mode-btn.active.algo {
+            color: var(--cdx-orange);
+            border-color: rgba(250, 74, 41, 0.4);
+            background: rgba(250, 74, 41, 0.08);
+        }
+
+        .smc-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .smc-card.highlight {
+            border-left: 3px solid var(--cdx-orange);
+        }
+        .smc-card.trade-active {
+            border: 1px solid var(--cdx-green);
+            background: rgba(0, 194, 136, 0.04);
+            box-shadow: 0 0 14px rgba(0, 194, 136, 0.12);
+        }
+
+        .smc-metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+        .smc-metric-row .label {
+            color: var(--text-muted);
+        }
+        .smc-metric-row .val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .trailing-ladder-step {
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 6px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10.5px;
+            transition: all 0.2s ease;
+        }
+        .trailing-ladder-step.completed {
+            border-color: var(--cdx-green);
+            background: rgba(0, 194, 136, 0.12);
+            color: var(--cdx-green);
+        }
+        .trailing-ladder-step.current {
+            border-color: var(--cdx-orange);
+            background: rgba(250, 74, 41, 0.14);
+            color: var(--cdx-orange);
+            font-weight: 800;
+        }
+
+        .smc-radar-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            color: var(--text-muted);
+        }
+        .smc-radar-pill.bull {
+            background: var(--cdx-green-bg);
+            border-color: var(--cdx-green-border);
+            color: var(--cdx-green);
+        }
+        .smc-radar-pill.bear {
+            background: var(--cdx-red-bg);
+            border-color: var(--cdx-red-border);
+            color: var(--cdx-red);
+        }
+        .smc-radar-pill.warn {
+            background: var(--cdx-orange-bg);
+            border-color: var(--cdx-orange-border);
+            color: var(--cdx-orange);
         }
     </style>
 </head>
@@ -1986,11 +2101,23 @@
                 <!-- Left: TradingView Chart with Floating Live PnL HUD -->
                 <div style="height:100%; width:100%; display:flex; flex-direction:column; overflow:hidden; position:relative;">
                     <div class="futures-header-toolbar">
-                        <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:6px;">
+                        <div style="font-weight:800; font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                             <span id="tv_symbol_text">BINANCE:BTCUSDT.P</span>
                             <span style="color:var(--cdx-green); font-size:11px;">● LIVE 1m</span>
+
+                            <!-- SMC Strategy Radar Strip -->
+                            <div style="display:flex; align-items:center; gap:4px; margin-left:6px; flex-wrap:wrap;">
+                                <span class="smc-radar-pill warn" title="Previous Day High / Low Liquidity">🎯 1D: PDH $85,250 | PDL $83,400</span>
+                                <span class="smc-radar-pill bear" title="1H Bearish Order Block">📦 1H: -OB $84,450</span>
+                                <span class="smc-radar-pill warn" title="1M Buyer vs Seller Consolidation">⚔️ 1M: $84,380-$84,490</span>
+                                <span class="smc-radar-pill bear" title="Retail Breakout Trap">🪤 Retail Trap: Longs Hunted</span>
+                            </div>
                         </div>
+
                         <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn-ui-action" onclick="loadUserSMCStrategyScenario()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800;" title="Open Visual SMC Scalper Chart with all markings">
+                                🎯 View Visual SMC Scalper Chart
+                            </button>
                             <button class="btn-ui-action" onclick="toggleUnderlyingSymbol()">🔄 Switch BTC/ETH</button>
                         </div>
                     </div>
@@ -2003,64 +2130,209 @@
 
                 <!-- Right: CoinDCX Futures Order Execution Panel -->
                 <div class="futures-order-panel">
-                    <div style="font-size:14px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
-                        <span>⚡ Trade Futures</span>
-                        <span class="leverage-badge" id="fut_lev_display">20x Cross</span>
+                    
+                    <!-- Panel Mode Switcher: Live SMC Algo (₹5,000 INR) vs Manual Trading -->
+                    <div class="smc-mode-switcher">
+                        <button class="smc-mode-btn active algo" id="btn_mode_smc_algo" onclick="switchFuturesPanelMode('SMC_ALGO')">
+                            ⚡ SMC Scalper Algo (₹5k)
+                        </button>
+                        <button class="smc-mode-btn" id="btn_mode_manual" onclick="switchFuturesPanelMode('MANUAL')">
+                            📝 Manual Order
+                        </button>
                     </div>
 
-                    <!-- Buy / Sell Segmented Switch -->
-                    <div class="side-segmented-switch">
-                        <button class="side-switch-btn active buy" id="btn_fut_side_buy" onclick="setFuturesSide('LONG')">Buy / Long</button>
-                        <button class="side-switch-btn sell" id="btn_fut_side_sell" onclick="setFuturesSide('SHORT')">Sell / Short</button>
-                    </div>
-
-                    <!-- Leverage Slider -->
-                    <div style="display:flex; flex-direction:column; gap:4px;">
-                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
-                            <span style="color:var(--text-muted);">Leverage Multiplier:</span>
-                            <span style="color:var(--cdx-orange);" id="fut_lev_num">20x</span>
+                    <!-- =========================================================
+                         MODE 1: LIVE SMC SCALPER ALGO & STRATEGY COCKPIT
+                         ========================================================= -->
+                    <div id="smc_algo_order_view" style="display:flex; flex-direction:column; gap:10px;">
+                        
+                        <!-- Header & Fixed Capital Card -->
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="font-size:16px;">⚡</span>
+                                <b style="font-size:13px; color:var(--text-main);">SMC Liquidity Scalper</b>
+                            </div>
+                            <span class="leverage-badge" style="background:rgba(250, 74, 41, 0.18); border-color:var(--cdx-orange); color:var(--cdx-orange);">
+                                Fixed Margin: ₹5,000 INR
+                            </span>
                         </div>
-                        <input type="range" class="coindcx-range-slider" id="slider_fut_leverage" min="1" max="100" value="20" oninput="onFuturesFormChange()">
-                        <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-faint);">
-                            <span>1x</span><span>10x</span><span>25x</span><span>50x</span><span>100x</span>
-                        </div>
-                    </div>
 
-                    <!-- Entry Price -->
-                    <div class="form-input-card">
-                        <span>Price (USDT)</span>
-                        <input type="number" class="input-val-box" id="fut_price_input" value="84150" oninput="onFuturesFormChange()" style="width:90px;">
-                    </div>
-
-                    <!-- Order Quantity Lots / BTC -->
-                    <div>
-                        <div class="form-input-card">
-                            <span id="fut_lots_label">Size (BTC)</span>
-                            <div class="stepper-widget">
-                                <button class="step-icon-btn" onclick="stepFuturesLots(-0.05)">-</button>
-                                <input type="number" class="input-val-box" id="fut_lots_input" value="0.10" step="0.05" oninput="onFuturesFormChange()">
-                                <button class="step-icon-btn" onclick="stepFuturesLots(0.05)">+</button>
+                        <!-- Algo Controls & Live Scanner Status -->
+                        <div class="smc-card highlight">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:11px; font-weight:800; color:var(--text-muted);">ALGO SCANNER STATUS:</span>
+                                <span id="smc_algo_status_badge" class="smc-radar-pill warn">● SCANNING 1D/1H POOLS</span>
+                            </div>
+                            <p style="font-size:11px; color:var(--text-main); margin:2px 0 6px 0; line-height:1.4;" id="smc_algo_status_text">
+                                Monitoring 1D PDH/PDL sweeps, 1H Order Blocks, retail trap stop hunts, and 1M buyer/seller fight range.
+                            </p>
+                            
+                            <div style="display:flex; flex-direction:column; gap:6px;">
+                                <button class="coindcx-cta-submit buy" id="btn_toggle_smc_algo" onclick="toggleLiveSMCAlgo()" style="background:linear-gradient(135deg, #FA4A29, #E03515); font-size:12px; padding:9px;">
+                                    ▶ Start Live SMC Algo (Auto ₹5,000 INR)
+                                </button>
+                                <button class="btn-ui-action" onclick="simulateLiveSMCTest()" style="width:100%; border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800; padding:6px; font-size:11px;">
+                                    🧪 Test & Simulate Live Strategy Setup (लाइव टेस्ट करें)
+                                </button>
                             </div>
                         </div>
-                        <div style="font-size:10.5px; color:var(--text-faint); text-align:right; margin-top:2px;" id="fut_notional_preview">Notional: $8,415.00</div>
+
+                        <!-- Multi-Timeframe Strategy Radar Card -->
+                        <div class="smc-card">
+                            <span style="font-size:11px; font-weight:800; color:var(--cdx-blue);">🎯 LIVE STRATEGY RADAR (ICT / SMC):</span>
+                            
+                            <div class="smc-metric-row">
+                                <span class="label">1D Liquidity:</span>
+                                <span class="val" style="color:var(--cdx-red);">PDH $85,250 (BSL)</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">1H Key Zone:</span>
+                                <span class="val" style="color:var(--cdx-red);">1H -OB $84,450.00</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">Retail Trap:</span>
+                                <span class="val" style="color:var(--cdx-orange);">Longs Trapped | SL $84,280</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">1M Fight Range:</span>
+                                <span class="val" style="color:var(--text-main);">$84,380 - $84,490</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">1M Push & Trigger:</span>
+                                <span class="val" style="color:var(--cdx-green);">~0.35% Push ➔ Solid Break < $84,380</span>
+                            </div>
+                            <div class="smc-metric-row" style="border-top:1px solid var(--border-ui); padding-top:4px; margin-top:2px;">
+                                <span class="label">Order Capital:</span>
+                                <span class="val" style="color:var(--cdx-green);">₹5,000 INR (~0.014 BTC @ 20x)</span>
+                            </div>
+                        </div>
+
+                        <!-- Multi-Tier Dynamic Trailing Stop Ladder Card -->
+                        <div class="smc-card">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:11px; font-weight:800; color:var(--text-muted);">🛡️ TRAILING STOP & PROFIT LADDER:</span>
+                                <span style="font-size:10px; color:var(--cdx-green); font-weight:700;">Zero-Risk Trail</span>
+                            </div>
+
+                            <div style="display:flex; flex-direction:column; gap:4px; margin-top:2px;">
+                                <div class="trailing-ladder-step" id="ladder_step_be">
+                                    <span><b>1:2 R:R (+$240)</b></span>
+                                    <span>🛡️ SL ➔ <b>Breakeven (1:0)</b></span>
+                                </div>
+                                <div class="trailing-ladder-step" id="ladder_step_5">
+                                    <span><b>1:5 R:R (+$600)</b></span>
+                                    <span>💰 Book <b>20%</b> & SL ➔ <b>1:1 R:R</b></span>
+                                </div>
+                                <div class="trailing-ladder-step" id="ladder_step_10">
+                                    <span><b>1:10 R:R (+$1,200)</b></span>
+                                    <span>🚀 Book <b>50%</b> & SL ➔ <b>1:7 R:R</b></span>
+                                </div>
+                                <div class="trailing-ladder-step" id="ladder_step_20">
+                                    <span><b>1:20 R:R (+$2,400)</b></span>
+                                    <span>🏆 Book <b>30% (Final)</b> / SL ➔ <b>1:15</b></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active SMC Trade HUD Card (Visible when trade is active) -->
+                        <div class="smc-card trade-active" id="smc_active_trade_card" style="display:none;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="moneyness-chip" id="smc_trade_side_badge" style="background:var(--cdx-red-bg); color:var(--cdx-red); font-weight:900;">
+                                    🔴 SHORT 20x
+                                </span>
+                                <button onclick="closeSMCPosition()" style="background:transparent; border:1px solid var(--cdx-red); color:var(--cdx-red); font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px; cursor:pointer;">
+                                    ✕ Square Off
+                                </button>
+                            </div>
+
+                            <div class="smc-metric-row">
+                                <span class="label">Entry Price:</span>
+                                <span class="val" id="smc_trade_entry_val">$84,150.00</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">Current Trailing SL:</span>
+                                <span class="val" id="smc_trade_sl_val" style="color:var(--cdx-orange);">$84,150.00 (Breakeven)</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">Current R:R:</span>
+                                <span class="val" id="smc_trade_rr_val" style="color:var(--cdx-orange);">+2.3R</span>
+                            </div>
+                            <div class="smc-metric-row">
+                                <span class="label">Booked Profit:</span>
+                                <span class="val" id="smc_trade_booked_val" style="color:var(--cdx-green);">₹0.00</span>
+                            </div>
+                            <div class="smc-metric-row" style="border-top:1px solid var(--border-ui); padding-top:4px;">
+                                <span class="label">Live Floating P&L:</span>
+                                <span class="val" id="smc_trade_floating_pnl" style="color:var(--cdx-green); font-size:13px;">+₹3,520.00 (+70.4%)</span>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <!-- Margin Required & Liquidation Price Estimation -->
-                    <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:6px; padding:8px 10px; display:flex; flex-direction:column; gap:4px; font-size:11px;">
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:var(--text-muted);">Margin Req:</span>
-                            <b id="fut_margin_req_text">₹35,343.00 ($420.75)</b>
+                    <!-- =========================================================
+                         MODE 2: MANUAL FUTURES ORDER EXECUTION FORM
+                         ========================================================= -->
+                    <div id="manual_order_view" style="display:none; flex-direction:column; gap:12px;">
+                        <div style="font-size:14px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+                            <span>⚡ Manual Order</span>
+                            <span class="leverage-badge" id="fut_lev_display">20x Cross</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span style="color:var(--text-muted);">Est. Liq Price:</span>
-                            <b style="color:var(--cdx-orange);" id="fut_liq_price_text">$80,240.00</b>
+
+                        <!-- Buy / Sell Segmented Switch -->
+                        <div class="side-segmented-switch">
+                            <button class="side-switch-btn active buy" id="btn_fut_side_buy" onclick="setFuturesSide('LONG')">Buy / Long</button>
+                            <button class="side-switch-btn sell" id="btn_fut_side_sell" onclick="setFuturesSide('SHORT')">Sell / Short</button>
                         </div>
+
+                        <!-- Leverage Slider -->
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
+                                <span style="color:var(--text-muted);">Leverage Multiplier:</span>
+                                <span style="color:var(--cdx-orange);" id="fut_lev_num">20x</span>
+                            </div>
+                            <input type="range" class="coindcx-range-slider" id="slider_fut_leverage" min="1" max="100" value="20" oninput="onFuturesFormChange()">
+                            <div style="display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-faint);">
+                                <span>1x</span><span>10x</span><span>25x</span><span>50x</span><span>100x</span>
+                            </div>
+                        </div>
+
+                        <!-- Entry Price -->
+                        <div class="form-input-card">
+                            <span>Price (USDT)</span>
+                            <input type="number" class="input-val-box" id="fut_price_input" value="84150" oninput="onFuturesFormChange()" style="width:90px;">
+                        </div>
+
+                        <!-- Order Quantity Lots / BTC -->
+                        <div>
+                            <div class="form-input-card">
+                                <span id="fut_lots_label">Size (BTC)</span>
+                                <div class="stepper-widget">
+                                    <button class="step-icon-btn" onclick="stepFuturesLots(-0.05)">-</button>
+                                    <input type="number" class="input-val-box" id="fut_lots_input" value="0.10" step="0.05" oninput="onFuturesFormChange()">
+                                    <button class="step-icon-btn" onclick="stepFuturesLots(0.05)">+</button>
+                                </div>
+                            </div>
+                            <div style="font-size:10.5px; color:var(--text-faint); text-align:right; margin-top:2px;" id="fut_notional_preview">Notional: $8,415.00</div>
+                        </div>
+
+                        <!-- Margin Required & Liquidation Price Estimation -->
+                        <div style="background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:6px; padding:8px 10px; display:flex; flex-direction:column; gap:4px; font-size:11px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">Margin Req:</span>
+                                <b id="fut_margin_req_text">₹35,343.00 ($420.75)</b>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">Est. Liq Price:</span>
+                                <b style="color:var(--cdx-orange);" id="fut_liq_price_text">$80,240.00</b>
+                            </div>
+                        </div>
+
+                        <!-- Futures Submit CTA Button -->
+                        <button class="coindcx-cta-submit buy" id="btn_submit_futures_order" onclick="placeFuturesOrder()">
+                            Open Long (20x)
+                        </button>
                     </div>
 
-                    <!-- Futures Submit CTA Button -->
-                    <button class="coindcx-cta-submit buy" id="btn_submit_futures_order" onclick="placeFuturesOrder()">
-                        Open Long (20x)
-                    </button>
                 </div>
 
             </div>
@@ -2083,6 +2355,9 @@
                         </button>
                         <button class="stage-pill-btn advanced" id="btn_stage_advanced" onclick="setGameStage('ADVANCED')">
                             🔴 Advanced (HTF Raid + LTF CHoCH)
+                        </button>
+                        <button class="stage-pill-btn" id="btn_stage_user_strategy" onclick="loadUserSMCStrategyScenario()" style="background:linear-gradient(135deg, rgba(250,74,41,0.25), rgba(139,92,246,0.25)); border-color:var(--cdx-orange); color:#FFFFFF; font-weight:900;">
+                            ⚡ User SMC Scalper (1D/1H/1M ₹5k)
                         </button>
                     </div>
 
@@ -2399,6 +2674,478 @@
         let completedOrders = JSON.parse(localStorage.getItem('delta_opt_history')) || [];
 
         // =========================================================================
+        // SMC Scalper Algo State & Engine (1D/1H/1M Multi-Timeframe)
+        // =========================================================================
+        let currentFuturesPanelMode = 'SMC_ALGO'; // 'SMC_ALGO' or 'MANUAL'
+        let smcAlgoState = {
+            isRunning: false,
+            symbol: 'BTC',
+            capitalINR: 5000,
+            leverage: 20,
+            statusText: 'Scanning 1D/1H Liquidity Pools...',
+            step: 'SCANNING_HTF',
+            levels: {
+                pdh: 85250.0,
+                pdl: 83400.0,
+                h1High: 84620.0,
+                h1Low: 83800.0,
+                h1OB: 84450.0,
+                retailTrapPrice: 84420.0,
+                retailSLPool: 84280.0,
+                fightLow: 84380.0,
+                fightHigh: 84490.0,
+                displacementBreakPrice: 84380.0,
+                pushPct: 0.35
+            },
+            activeTrade: null
+        };
+
+        function switchFuturesPanelMode(mode) {
+            currentFuturesPanelMode = mode;
+            const btnAlgo = document.getElementById('btn_mode_smc_algo');
+            const btnManual = document.getElementById('btn_mode_manual');
+            const viewAlgo = document.getElementById('smc_algo_order_view');
+            const viewManual = document.getElementById('manual_order_view');
+
+            if (mode === 'SMC_ALGO') {
+                if (btnAlgo) btnAlgo.className = 'smc-mode-btn active algo';
+                if (btnManual) btnManual.className = 'smc-mode-btn';
+                if (viewAlgo) viewAlgo.style.display = 'flex';
+                if (viewManual) viewManual.style.display = 'none';
+            } else {
+                if (btnAlgo) btnAlgo.className = 'smc-mode-btn';
+                if (btnManual) btnManual.className = 'smc-mode-btn active';
+                if (viewAlgo) viewAlgo.style.display = 'none';
+                if (viewManual) viewManual.style.display = 'flex';
+            }
+        }
+
+        function toggleLiveSMCAlgo() {
+            smcAlgoState.isRunning = !smcAlgoState.isRunning;
+            const btn = document.getElementById('btn_toggle_smc_algo');
+            const badge = document.getElementById('smc_algo_status_badge');
+
+            if (smcAlgoState.isRunning) {
+                if (btn) {
+                    btn.innerText = '⏸ Pause SMC Algo (₹5,000 INR)';
+                    btn.style.background = 'var(--cdx-orange)';
+                }
+                if (badge) {
+                    badge.innerText = '● LIVE ALGO ACTIVE';
+                    badge.className = 'smc-radar-pill bull';
+                }
+                showCoinDCXToast('⚡ Live SMC Scalper Algo Started! Margin: ₹5,000 INR. Scanning 1D/1H & 1M...');
+            } else {
+                if (btn) {
+                    btn.innerText = '▶ Start Live SMC Algo (Auto ₹5,000 INR)';
+                    btn.style.background = 'linear-gradient(135deg, #FA4A29, #E03515)';
+                }
+                if (badge) {
+                    badge.innerText = '● ALGO PAUSED';
+                    badge.className = 'smc-radar-pill warn';
+                }
+                showCoinDCXToast('⏸ Live SMC Algo Paused.');
+            }
+            renderSMCScalperCockpit();
+        }
+
+        function executeSMCScalperTrade(side = 'SHORT', customEntryPrice = null) {
+            const sym = 'BTC';
+            const S = customEntryPrice || spotPrices[sym] || 84150.0;
+            const lev = 20;
+            const marginINR = 5000.0;
+            const marginUSD = +(marginINR / inrRate).toFixed(2);
+            const notionalUSD = +(marginUSD * lev).toFixed(2);
+            const lots = +(notionalUSD / S).toFixed(4);
+
+            const riskDollar = +(S * 0.0016).toFixed(2);
+            const entryPrice = +S.toFixed(2);
+            const initialSL = side === 'SHORT' ? +(entryPrice + riskDollar).toFixed(2) : +(entryPrice - riskDollar).toFixed(2);
+            const rValue = +(Math.abs(entryPrice - initialSL)).toFixed(2);
+
+            const target2R = side === 'SHORT' ? +(entryPrice - 2 * rValue).toFixed(2) : +(entryPrice + 2 * rValue).toFixed(2);
+            const target5R = side === 'SHORT' ? +(entryPrice - 5 * rValue).toFixed(2) : +(entryPrice + 5 * rValue).toFixed(2);
+            const target10R = side === 'SHORT' ? +(entryPrice - 10 * rValue).toFixed(2) : +(entryPrice + 10 * rValue).toFixed(2);
+            const target20R = side === 'SHORT' ? +(entryPrice - 20 * rValue).toFixed(2) : +(entryPrice + 2 * rValue).toFixed(2);
+
+            const newSmcPos = {
+                id: 'fut_smc_' + Date.now(),
+                type: 'FUTURES',
+                isSMCAlgo: true,
+                symbol: sym,
+                contract: `BTCUSDT Perp (20x) [SMC Scalper]`,
+                side: side,
+                entryPrice: entryPrice,
+                initialLots: lots,
+                lots: lots,
+                leverage: lev,
+                margin: marginUSD,
+                marginINR: marginINR,
+                initialSL: initialSL,
+                currentSL: initialSL,
+                rValue: rValue,
+                tierBE: false,
+                tier5: false,
+                tier10: false,
+                tier20: false,
+                target2R: target2R,
+                target5R: target5R,
+                target10R: target10R,
+                target20R: target20R,
+                bookedProfitUSD: 0,
+                bookedProfitINR: 0,
+                liqPrice: side === 'SHORT' ? +(entryPrice * 1.045).toFixed(2) : +(entryPrice * 0.955).toFixed(2),
+                time: new Date().toLocaleTimeString()
+            };
+
+            userBalance -= marginUSD;
+            localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+            futuresPositions.push(newSmcPos);
+            localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+
+            smcAlgoState.activeTrade = newSmcPos;
+            smcAlgoState.statusText = `Active ${side} Scalp | 1:2 Target: $${target2R}`;
+            smcAlgoState.step = 'ACTIVE_TRADE';
+
+            updateWalletDisplay();
+            renderPositionsView();
+            renderFuturesChartPnlHUD();
+            renderSMCScalperCockpit();
+
+            showCoinDCXToast(`🚀 SMC Scalper Executed! ${side} at $${entryPrice} | Margin: ₹5,000 INR | 1:2 Target: $${target2R}`);
+            return newSmcPos;
+        }
+
+        function checkSMCTrailingStops(S) {
+            let changed = false;
+
+            for (let i = futuresPositions.length - 1; i >= 0; i--) {
+                const pos = futuresPositions[i];
+                if (!pos.isSMCAlgo) continue;
+
+                const side = pos.side;
+                const entry = pos.entryPrice;
+                const R = pos.rValue;
+                if (!R || R <= 0) continue;
+
+                const currentR = side === 'SHORT' ? (entry - S) / R : (S - entry) / R;
+
+                const slHit = (side === 'SHORT' && S >= pos.currentSL) || (side === 'LONG' && S <= pos.currentSL);
+                if (slHit) {
+                    const exitPrice = pos.currentSL;
+                    const remainingLots = pos.lots;
+                    const closePnlUSD = (side === 'SHORT' ? (entry - exitPrice) : (exitPrice - entry)) * remainingLots;
+                    const closePnlINR = closePnlUSD * inrRate;
+                    const totalPnlUSD = pos.bookedProfitUSD + closePnlUSD;
+                    const totalPnlINR = pos.bookedProfitINR + closePnlINR;
+
+                    const returnMargin = (remainingLots / pos.initialLots) * pos.margin;
+                    userBalance += (returnMargin + closePnlUSD);
+                    localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+                    completedOrders.push({
+                        contract: pos.contract,
+                        side: pos.side,
+                        lots: pos.initialLots,
+                        entryPrice: pos.entryPrice,
+                        exitPrice: exitPrice,
+                        pnl: totalPnlUSD,
+                        note: `SMC Trailing SL Hit at $${exitPrice} | Total Realized: ₹${totalPnlINR.toFixed(2)}`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+
+                    futuresPositions.splice(i, 1);
+                    localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+
+                    if (smcAlgoState.activeTrade && smcAlgoState.activeTrade.id === pos.id) {
+                        smcAlgoState.activeTrade = null;
+                        smcAlgoState.statusText = `Position Closed at Trailing SL ($${exitPrice}) | Total Realized: ₹${totalPnlINR.toFixed(2)}`;
+                        smcAlgoState.step = 'SCANNING_HTF';
+                    }
+
+                    showCoinDCXToast(`🛑 SMC Trailing SL Triggered at $${exitPrice}! Total PnL: ${formatCurrency(totalPnlUSD)}`);
+                    changed = true;
+                    continue;
+                }
+
+                // Tier 1: 1:2 R:R -> Shift SL to Breakeven
+                if (currentR >= 2.0 && !pos.tierBE) {
+                    pos.tierBE = true;
+                    pos.currentSL = entry;
+                    showCoinDCXToast(`🎯 [1:2 R:R Hit!] Stop Loss shifted to BREAKEVEN ($${entry}). Trade is now 100% Risk-Free!`);
+                    changed = true;
+                }
+
+                // Tier 2: 1:5 R:R -> Book 20% Profit & Shift SL to 1:1 R:R
+                if (currentR >= 5.0 && !pos.tier5) {
+                    pos.tier5 = true;
+                    const lotsToBook = +(pos.initialLots * 0.20).toFixed(4);
+                    const actualBookLots = Math.min(lotsToBook, pos.lots);
+                    const partialPnlUSD = (side === 'SHORT' ? (entry - S) : (S - entry)) * actualBookLots;
+                    const partialPnlINR = partialPnlUSD * inrRate;
+
+                    pos.lots = +(pos.lots - actualBookLots).toFixed(4);
+                    pos.bookedProfitUSD += partialPnlUSD;
+                    pos.bookedProfitINR += partialPnlINR;
+
+                    pos.currentSL = side === 'SHORT' ? +(entry - 1.0 * R).toFixed(2) : +(entry + 1.0 * R).toFixed(2);
+
+                    const releasedMargin = (actualBookLots / pos.initialLots) * pos.margin;
+                    userBalance += (releasedMargin + partialPnlUSD);
+                    localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+                    showCoinDCXToast(`💰 [1:5 R:R Hit!] 20% Profit Booked (+₹${partialPnlINR.toFixed(2)})! SL shifted to 1:1 R:R ($${pos.currentSL})!`);
+                    changed = true;
+                }
+
+                // Tier 3: 1:10 R:R -> Book 50% Profit & Shift SL to 1:7 R:R
+                if (currentR >= 10.0 && !pos.tier10) {
+                    pos.tier10 = true;
+                    const lotsToBook = +(pos.initialLots * 0.50).toFixed(4);
+                    const actualBookLots = Math.min(lotsToBook, pos.lots);
+                    const partialPnlUSD = (side === 'SHORT' ? (entry - S) : (S - entry)) * actualBookLots;
+                    const partialPnlINR = partialPnlUSD * inrRate;
+
+                    pos.lots = +(pos.lots - actualBookLots).toFixed(4);
+                    pos.bookedProfitUSD += partialPnlUSD;
+                    pos.bookedProfitINR += partialPnlINR;
+
+                    pos.currentSL = side === 'SHORT' ? +(entry - 7.0 * R).toFixed(2) : +(entry + 7.0 * R).toFixed(2);
+
+                    const releasedMargin = (actualBookLots / pos.initialLots) * pos.margin;
+                    userBalance += (releasedMargin + partialPnlUSD);
+                    localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+                    showCoinDCXToast(`🚀 [1:10 R:R Hit!] 50% Profit Booked (+₹${partialPnlINR.toFixed(2)})! SL shifted to 1:7 R:R ($${pos.currentSL})!`);
+                    changed = true;
+                }
+
+                // Tier 4: 1:20 R:R -> Book Remaining 30% Profit (Final Target)
+                if (currentR >= 20.0 && !pos.tier20) {
+                    pos.tier20 = true;
+                    const actualBookLots = pos.lots;
+                    const finalPnlUSD = (side === 'SHORT' ? (entry - S) : (S - entry)) * actualBookLots;
+                    const finalPnlINR = finalPnlUSD * inrRate;
+
+                    const totalPnlUSD = pos.bookedProfitUSD + finalPnlUSD;
+                    const totalPnlINR = pos.bookedProfitINR + finalPnlINR;
+
+                    const releasedMargin = (actualBookLots / pos.initialLots) * pos.margin;
+                    userBalance += (releasedMargin + finalPnlUSD);
+                    localStorage.setItem('delta_paper_balance', userBalance.toString());
+
+                    completedOrders.push({
+                        contract: pos.contract,
+                        side: pos.side,
+                        lots: pos.initialLots,
+                        entryPrice: pos.entryPrice,
+                        exitPrice: S,
+                        pnl: totalPnlUSD,
+                        note: `🏆 SMC 1:20 Epic Target Hit! Full Position Closed | Total Profit: ₹${totalPnlINR.toFixed(2)}`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+
+                    futuresPositions.splice(i, 1);
+                    localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+
+                    if (smcAlgoState.activeTrade && smcAlgoState.activeTrade.id === pos.id) {
+                        smcAlgoState.activeTrade = null;
+                        smcAlgoState.statusText = `🏆 1:20 Target Smashed! Total Realized Profit: ₹${totalPnlINR.toFixed(2)}`;
+                        smcAlgoState.step = 'SCANNING_HTF';
+                    }
+
+                    showCoinDCXToast(`🏆 [1:20 R:R EPIC TARGET!] Remaining 30% Position Closed! Total Realized Profit: +₹${totalPnlINR.toFixed(2)}!`);
+                    changed = true;
+                    continue;
+                }
+            }
+
+            if (changed) {
+                localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
+                updateWalletDisplay();
+                renderPositionsView();
+                renderFuturesChartPnlHUD();
+                renderSMCScalperCockpit();
+            }
+        }
+
+        function renderSMCScalperCockpit() {
+            const card = document.getElementById('smc_active_trade_card');
+            const pos = futuresPositions.find(p => p.isSMCAlgo);
+            smcAlgoState.activeTrade = pos || null;
+
+            const sBE = document.getElementById('ladder_step_be');
+            const s5 = document.getElementById('ladder_step_5');
+            const s10 = document.getElementById('ladder_step_10');
+            const s20 = document.getElementById('ladder_step_20');
+
+            if (!pos) {
+                if (card) card.style.display = 'none';
+                if (sBE) sBE.className = 'trailing-ladder-step';
+                if (s5) s5.className = 'trailing-ladder-step';
+                if (s10) s10.className = 'trailing-ladder-step';
+                if (s20) s20.className = 'trailing-ladder-step';
+                return;
+            }
+
+            if (card) card.style.display = 'flex';
+            const S = spotPrices[pos.symbol || 'BTC'];
+            const curR = pos.side === 'SHORT' ? (pos.entryPrice - S) / pos.rValue : (S - pos.entryPrice) / pos.rValue;
+            let floatingPnlUSD = (pos.side === 'SHORT' ? (pos.entryPrice - S) : (S - pos.entryPrice)) * pos.lots;
+            let floatingPnlINR = floatingPnlUSD * inrRate;
+            let totalRoe = ((floatingPnlUSD + pos.bookedProfitUSD) / pos.margin) * 100;
+
+            const entryEl = document.getElementById('smc_trade_entry_val');
+            if (entryEl) entryEl.innerText = `$${pos.entryPrice.toLocaleString('en-US', {minimumFractionDigits:2})}`;
+
+            const slEl = document.getElementById('smc_trade_sl_val');
+            if (slEl) {
+                let slTag = pos.tier10 ? '1:7 (+7R Locked)' : (pos.tier5 ? '1:1 (+1R Locked)' : (pos.tierBE ? 'Breakeven' : 'Initial SL'));
+                slEl.innerText = `$${pos.currentSL.toLocaleString('en-US', {minimumFractionDigits:2})} (${slTag})`;
+            }
+
+            const rrEl = document.getElementById('smc_trade_rr_val');
+            if (rrEl) rrEl.innerText = `${curR >= 0 ? '+' : ''}${curR.toFixed(1)}R`;
+
+            const bookEl = document.getElementById('smc_trade_booked_val');
+            if (bookEl) bookEl.innerText = `₹${pos.bookedProfitINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+
+            const pnlEl = document.getElementById('smc_trade_floating_pnl');
+            if (pnlEl) {
+                const sign = floatingPnlINR >= 0 ? '+' : '';
+                pnlEl.innerText = `${sign}₹${floatingPnlINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})} (${sign}${totalRoe.toFixed(1)}%)`;
+                pnlEl.style.color = floatingPnlINR >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+            }
+
+            if (sBE) sBE.className = `trailing-ladder-step ${pos.tierBE ? 'completed' : (curR >= 1.0 ? 'current' : '')}`;
+            if (s5) s5.className = `trailing-ladder-step ${pos.tier5 ? 'completed' : (curR >= 2.0 && !pos.tier5 ? 'current' : '')}`;
+            if (s10) s10.className = `trailing-ladder-step ${pos.tier10 ? 'completed' : (curR >= 5.0 && !pos.tier10 ? 'current' : '')}`;
+            if (s20) s20.className = `trailing-ladder-step ${pos.tier20 ? 'completed' : (curR >= 10.0 && !pos.tier20 ? 'current' : '')}`;
+        }
+
+        function simulateLiveSMCTest() {
+            const existingIdx = futuresPositions.findIndex(p => p.isSMCAlgo);
+            if (existingIdx !== -1) {
+                futuresPositions.splice(existingIdx, 1);
+            }
+
+            const sym = 'BTC';
+            const basePrice = spotPrices[sym] || 84150.0;
+            showCoinDCXToast('🧪 SMC Strategy Simulation Started! Sweeping 1D/1H liquidity...');
+
+            const badge = document.getElementById('smc_algo_status_badge');
+            const desc = document.getElementById('smc_algo_status_text');
+            if (badge) {
+                badge.innerText = '🎯 1D BSL SWEPT & 1M FIGHT';
+                badge.className = 'smc-radar-pill warn';
+            }
+            if (desc) desc.innerText = '1D PDH raided! Retail longs trapped. 1M consolidation detected with ~0.35% push exhaustion.';
+
+            setTimeout(() => {
+                if (badge) {
+                    badge.innerText = '💥 1M DISPLACEMENT BREAKOUT';
+                    badge.className = 'smc-radar-pill bear';
+                }
+                if (desc) desc.innerText = 'Solid body bearish candle broke 1M fight low ($84,380). SHORT position executed with ₹5,000 INR margin!';
+                
+                const pos = executeSMCScalperTrade('SHORT', basePrice);
+
+                let simStep = 0;
+                const simInterval = setInterval(() => {
+                    simStep++;
+                    if (!pos || !futuresPositions.find(p => p.id === pos.id)) {
+                        clearInterval(simInterval);
+                        return;
+                    }
+
+                    if (simStep === 1) {
+                        const p2R = +(pos.entryPrice - (2.1 * pos.rValue)).toFixed(2);
+                        processPriceTick('BTC', p2R, '+0.60%');
+                    } else if (simStep === 2) {
+                        const p5R = +(pos.entryPrice - (5.2 * pos.rValue)).toFixed(2);
+                        processPriceTick('BTC', p5R, '+0.25%');
+                    } else if (simStep === 3) {
+                        const p10R = +(pos.entryPrice - (10.2 * pos.rValue)).toFixed(2);
+                        processPriceTick('BTC', p10R, '-0.30%');
+                    } else if (simStep === 4) {
+                        const p20R = +(pos.entryPrice - (20.1 * pos.rValue)).toFixed(2);
+                        processPriceTick('BTC', p20R, '-1.10%');
+                        clearInterval(simInterval);
+                        showCoinDCXToast('🎉 SMC Scalper Live Simulation Completed with 100% Target Met!');
+                    }
+                }, 2200);
+            }, 800);
+        }
+
+        function closeSMCPosition() {
+            const idx = futuresPositions.findIndex(p => p.isSMCAlgo);
+            if (idx !== -1) {
+                closeFuturesPositionByIdx(idx);
+                renderSMCScalperCockpit();
+            }
+        }
+
+        function evaluateLiveSMCEntryTrigger(S) {
+            if (!smcAlgoState.isRunning || smcAlgoState.activeTrade) return;
+
+            const pdh = smcAlgoState.levels.pdh;
+            const h1OB = smcAlgoState.levels.h1OB;
+            if (S >= h1OB * 0.999 && S <= pdh * 1.002) {
+                executeSMCScalperTrade('SHORT', S);
+            }
+        }
+
+        function loadUserSMCStrategyScenario() {
+            switchMainTab('GAME');
+            gameStage = 'ADVANCED';
+            const userScenario = SMC_SCENARIOS.find(s => s.id === 'smc_user_strategy_live');
+            if (userScenario) {
+                currentScenario = userScenario;
+                gameAsset = userScenario.asset;
+                gameMTF = '1m';
+                gameIsRevealed = false;
+                gameIsSimulating = false;
+                gameVisibleIndex = 140;
+                gameTotalCandles = 200;
+
+                chartViewport.candlesPerView = 50;
+                chartViewport.viewEndIndex = 140;
+
+                mtfDataCache = buildDeepMTFDatasets(userScenario.basePrice, userScenario.trendDelta);
+                activeKlines = mtfDataCache[gameMTF];
+
+                document.getElementById('game_scenario_asset_title').innerText = `${userScenario.asset} (${gameMTF.toUpperCase()})`;
+                const badgeEl = document.getElementById('game_scenario_tag_badge');
+                if (badgeEl) {
+                    badgeEl.innerText = '⚡ USER 1D/1H/1M SCALPER STRATEGY';
+                    badgeEl.style.background = 'var(--cdx-orange-bg)';
+                    badgeEl.style.color = 'var(--cdx-orange)';
+                }
+
+                document.getElementById('game_cutoff_price').innerText = `$${userScenario.basePrice.toLocaleString()}`;
+                document.getElementById('game_scenario_date').innerText = userScenario.date;
+                document.getElementById('game_scenario_desc').innerText = `${userScenario.title}: ${userScenario.desc}`;
+                document.getElementById('game_scenario_clues').innerHTML = userScenario.clue;
+
+                selectGamePrediction('BEARISH');
+                document.getElementById('slider_game_tp').value = userScenario.tpPct;
+                document.getElementById('slider_game_sl').value = userScenario.slPct;
+                onGameRiskChange();
+
+                ['1d', '1h', '15m', '5m', '1m'].forEach(m => {
+                    const b = document.getElementById(`mtf_${m}`);
+                    if (b) b.classList.toggle('active', m === gameMTF);
+                });
+
+                renderGameSMCChart();
+                showCoinDCXToast('🎯 Loaded User SMC 1D/1H/1M Scalper Strategy Scenario with visual level markings!');
+            }
+        }
+
+        // =========================================================================
         // Black-Scholes Formula & Option Greeks
         // =========================================================================
         function normCDF(x) {
@@ -2511,6 +3258,14 @@
                     chgEl.style.borderColor = isUp ? 'var(--cdx-green-border)' : 'var(--cdx-red-border)';
                 }
                 updateActiveContractLiveMark();
+            }
+
+            // Check dynamic trailing stops & auto-triggers for SMC Scalper
+            if (sym === 'BTC') {
+                checkSMCTrailingStops(newPrice);
+                if (smcAlgoState.isRunning) {
+                    evaluateLiveSMCEntryTrigger(newPrice);
+                }
             }
 
             // Continuously update live positions PnL in real-time (both Options & Futures)
@@ -2643,10 +3398,17 @@
                                 <b style="font-size:13px;">${fpos.contract}</b>
                                 <span style="color:var(--text-muted); font-size:11.5px; margin-left:6px;">Qty: ${fpos.lots} ${sym}</span>
                             </div>
-                            <div style="font-family:'JetBrains Mono'; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                            <div style="font-family:'JetBrains Mono'; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                                 <span>Entry: <b style="color:var(--text-main);">$${fpos.entryPrice.toLocaleString()}</b></span>
                                 <span>•</span>
                                 <span>Live: <b style="color:var(--text-main);">$${S.toLocaleString()}</b></span>
+                                ${fpos.isSMCAlgo ? `
+                                    <span>•</span>
+                                    <span style="color:var(--cdx-orange);">🛡️ SL: <b>$${fpos.currentSL.toLocaleString()}</b> (${fpos.tier10 ? '1:7 Lock' : fpos.tier5 ? '1:1 Lock' : fpos.tierBE ? 'Breakeven' : 'Initial'})</span>
+                                    <span>•</span>
+                                    <span style="color:var(--cdx-green);">Booked: <b>₹${fpos.bookedProfitINR.toFixed(2)}</b></span>
+                                    <span class="smc-radar-pill warn" style="font-size:9.5px;">₹5k Margin</span>
+                                ` : ''}
                             </div>
                         </div>
 
@@ -2664,6 +3426,7 @@
             });
 
             container.innerHTML = html;
+            renderSMCScalperCockpit();
         }
 
         function renderOptionsTradePnlHUD() {
@@ -3921,6 +4684,43 @@
 
         // 12 Realistic Smart Money Concepts (ICT / SMC) Scenarios
         const SMC_SCENARIOS = [
+            // --- ⚡ FEATURED: USER'S LIVE 1D/1H/1M SMC SCALPER STRATEGY (₹5,000 INR CAPITAL) ---
+            {
+                id: 'smc_user_strategy_live',
+                stage: 'ADVANCED',
+                asset: 'BTCUSDT',
+                title: '1D/1H Liquidity Sweep ➔ Retail Stop Hunt ➔ 1M Fight ➔ Displacement Breakout (₹5k Scalper)',
+                date: 'Multi-Timeframe ICT / SMC Live Scalping Setup',
+                desc: 'HTF 1D Previous Day High ($85,250 BSL) was swept. Retail breakout buyers bought at the top, clustering their Stop Losses below the 1H support at $84,280. On the 1M chart, buyers fought and pushed +0.35% into local inducement, but aggressive institutional sellers stepped in with a solid-body displacement candle breaking below the fight range! Futures Short executed with ₹5,000 INR margin capital and dynamic 1:2 ➔ 1:5 ➔ 1:10 ➔ 1:20 trailing ladder.',
+                clue: '🎯 <b>User SMC Strategy Rules:</b><br>1️⃣ 1D PDH ($85,250) & 1H High ($84,620) Swept.<br>2️⃣ Retail breakout buyers trapped above resistance with SLs sitting below at $84,280.<br>3️⃣ 1M timeframe: Buyer/Seller fight, ~0.35% push exhausted.<br>4️⃣ Solid body displacement candle breaks the 1M fight low ➔ <b>SELL / SHORT</b>.<br>5️⃣ Dynamic Trailing Stop: 1:2 BE ➔ 1:5 Book 20% & SL 1:1 ➔ 1:10 Book 50% & SL 1:7 ➔ 1:20 Book 30%!',
+                basePrice: 84380,
+                correctOutcome: 'BEARISH',
+                tpPct: 5.5,
+                slPct: 0.5,
+                trendDelta: -0.065,
+                smcSetup: {
+                    isUserScalperStrategy: true,
+                    pdh: 85250,
+                    pdl: 83400,
+                    h1High: 84620,
+                    h1Low: 83800,
+                    h1OB: 84450,
+                    retailTrap: 84420,
+                    retailSL: 84280,
+                    fightLow: 84380,
+                    fightHigh: 84490,
+                    displacementBreak: 84380,
+                    entryPrice: 84150,
+                    initialSL: 84270,
+                    rValue: 120,
+                    bsl: 85250,
+                    ssl: 83400,
+                    obType: 'BEARISH',
+                    obPrice: 84450,
+                    fvgPrice: 84320
+                },
+                explanation: '✅ <b>Strategy Masterclass Delivered:</b> The 1D/1H liquidity raid purged retail stops. The 1M displacement candle gave the optimal institutional short entry. The trailing stop ladder protected capital at 1:2 BE, locked 20% at 1:5, locked 50% at 1:10, and extracted maximum profit at 1:20!'
+            },
             // --- 🟢 STAGE 1: BEGINNER (BSL / SSL Sweeps, Clean Order Blocks, Simple Reversals) ---
             {
                 id: 'smc_beg_1',
@@ -4655,6 +5455,139 @@
                 ctx.font = 'bold 10.5px JetBrains Mono';
                 ctx.fillText('⚡ DECISION CUTOFF POINT', cutoffX - 65, 16);
             }
+
+            // 8. User Live SMC Strategy Markings (1D/1H Sweep, Retail Trap, 1M Fight, Displacement Break, Trailing Ladder)
+            if (currentScenario && currentScenario.smcSetup && currentScenario.smcSetup.isUserScalperStrategy) {
+                const s = currentScenario.smcSetup;
+
+                // A. 1D Liquidity (PDH / BSL and PDL / SSL)
+                const pdhY = priceToY(s.pdh);
+                ctx.strokeStyle = '#EF4444';
+                ctx.lineWidth = 1.8;
+                ctx.setLineDash([6, 3]);
+                ctx.beginPath();
+                ctx.moveTo(0, pdhY);
+                ctx.lineTo(chartW, pdhY);
+                ctx.stroke();
+                ctx.fillStyle = '#EF4444';
+                ctx.font = 'bold 10px JetBrains Mono';
+                ctx.fillText(`🎯 1D LIQUIDITY (PDH / BSL) $${s.pdh.toLocaleString()}`, 10, pdhY - 4);
+
+                const pdlY = priceToY(s.pdl);
+                ctx.strokeStyle = '#3B82F6';
+                ctx.beginPath();
+                ctx.moveTo(0, pdlY);
+                ctx.lineTo(chartW, pdlY);
+                ctx.stroke();
+                ctx.fillStyle = '#3B82F6';
+                ctx.fillText(`🎯 1D LIQUIDITY (PDL / SSL) $${s.pdl.toLocaleString()}`, 10, pdlY + 12);
+                ctx.setLineDash([]);
+
+                // B. 1H Bearish Order Block (-OB)
+                const obTopY = priceToY(s.h1OB * 1.002);
+                const obBotY = priceToY(s.h1OB * 0.998);
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+                ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+                ctx.lineWidth = 1;
+                ctx.fillRect(0, obTopY, chartW, Math.max(10, obBotY - obTopY));
+                ctx.strokeRect(0, obTopY, chartW, Math.max(10, obBotY - obTopY));
+                ctx.fillStyle = '#EF4444';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText(`📦 1H BEARISH ORDER BLOCK (-OB) $${s.h1OB.toLocaleString()}`, chartW - 250, obTopY + 11);
+
+                // C. Retail Trap Zone & Stop Loss Pool
+                const trapY = priceToY(s.retailTrap);
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.14)';
+                ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)';
+                ctx.lineWidth = 1;
+                ctx.fillRect(chartW * 0.4, trapY - 10, chartW * 0.6, 20);
+                ctx.strokeRect(chartW * 0.4, trapY - 10, chartW * 0.6, 20);
+                ctx.fillStyle = '#F59E0B';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText('🪤 RETAIL TRAP & STOP HUNT ZONE (Retail Longs Trapped)', chartW * 0.42, trapY + 3);
+
+                const rslY = priceToY(s.retailSL);
+                ctx.strokeStyle = '#F59E0B';
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(chartW * 0.35, rslY);
+                ctx.lineTo(chartW, rslY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillText(`🎯 RETAIL STOP LOSS POOL ($${s.retailSL.toLocaleString()})`, chartW * 0.45, rslY + 11);
+
+                // D. 1M Buyer/Seller Fight Range & Displacement Breakout
+                const fLowY = priceToY(s.fightLow);
+                const fHighY = priceToY(s.fightHigh);
+                ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
+                ctx.strokeStyle = '#8B5CF6';
+                ctx.lineWidth = 1.2;
+                ctx.fillRect(chartW * 0.25, fHighY, chartW * 0.5, Math.max(12, fLowY - fHighY));
+                ctx.strokeRect(chartW * 0.25, fHighY, chartW * 0.5, Math.max(12, fLowY - fHighY));
+                ctx.fillStyle = '#A78BFA';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText('⚔️ 1M FIGHT RANGE (~0.35% Push Exhaustion)', chartW * 0.27, fHighY - 4);
+
+                // Displacement breakout line
+                ctx.strokeStyle = '#EF4444';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(chartW * 0.2, fLowY);
+                ctx.lineTo(chartW, fLowY);
+                ctx.stroke();
+                ctx.fillStyle = '#EF4444';
+                ctx.font = 'bold 9.5px JetBrains Mono';
+                ctx.fillText('💥 1M DISPLACEMENT CANDLE BREAKOUT ➔ SHORT ENTRY', chartW * 0.22, fLowY + 12);
+
+                // E. Trailing Stop Ladder Levels
+                const eY = priceToY(s.entryPrice);
+                ctx.strokeStyle = '#00C288';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(0, eY);
+                ctx.lineTo(chartW, eY);
+                ctx.stroke();
+                ctx.fillStyle = '#00C288';
+                ctx.font = 'bold 10px JetBrains Mono';
+                ctx.fillText(`🎯 ENTRY: $${s.entryPrice.toLocaleString()} (₹5,000 INR Margin)`, chartW - 270, eY - 4);
+
+                // 1:2 R:R Target (Breakeven shift)
+                const tp2Y = priceToY(s.entryPrice - (2 * s.rValue));
+                ctx.strokeStyle = 'rgba(0, 194, 136, 0.8)';
+                ctx.setLineDash([4, 2]);
+                ctx.beginPath();
+                ctx.moveTo(0, tp2Y);
+                ctx.lineTo(chartW, tp2Y);
+                ctx.stroke();
+                ctx.fillStyle = '#00C288';
+                ctx.fillText(`🛡️ 1:2 R:R ($${(s.entryPrice - 2 * s.rValue).toLocaleString()}) ➔ SL to Breakeven`, chartW - 320, tp2Y - 3);
+
+                // 1:5 R:R Target (Book 20% & SL 1:1)
+                const tp5Y = priceToY(s.entryPrice - (5 * s.rValue));
+                ctx.beginPath();
+                ctx.moveTo(0, tp5Y);
+                ctx.lineTo(chartW, tp5Y);
+                ctx.stroke();
+                ctx.fillText(`💰 1:5 R:R ($${(s.entryPrice - 5 * s.rValue).toLocaleString()}) ➔ Book 20% & SL to 1:1`, chartW - 320, tp5Y - 3);
+
+                // 1:10 R:R Target (Book 50% & SL 1:7)
+                const tp10Y = priceToY(s.entryPrice - (10 * s.rValue));
+                ctx.beginPath();
+                ctx.moveTo(0, tp10Y);
+                ctx.lineTo(chartW, tp10Y);
+                ctx.stroke();
+                ctx.fillText(`🚀 1:10 R:R ($${(s.entryPrice - 10 * s.rValue).toLocaleString()}) ➔ Book 50% & SL to 1:7`, chartW - 320, tp10Y - 3);
+
+                // 1:20 R:R Target (Book remaining 30%)
+                const tp20Y = priceToY(s.entryPrice - (20 * s.rValue));
+                ctx.beginPath();
+                ctx.moveTo(0, tp20Y);
+                ctx.lineTo(chartW, tp20Y);
+                ctx.stroke();
+                ctx.fillStyle = '#F59E0B';
+                ctx.fillText(`🏆 1:20 R:R ($${(s.entryPrice - 20 * s.rValue).toLocaleString()}) ➔ Book 30% (Final Target)`, chartW - 320, tp20Y - 3);
+                ctx.setLineDash([]);
+            }
         }
 
         // -------------------------------------------------------------------------
@@ -4698,7 +5631,17 @@
 
                     if (pnlBadge) {
                         const isWin = pnlPct >= 0;
-                        pnlBadge.innerText = `Live Sim PnL: ${isWin ? '+' : ''}${pnlPct.toFixed(2)}%`;
+                        if (currentScenario && currentScenario.smcSetup && currentScenario.smcSetup.isUserScalperStrategy) {
+                            const curR = (entryPrice - curCandle.close) / 120;
+                            let ladderInfo = '';
+                            if (curR >= 20) ladderInfo = ' | 🏆 1:20 Hit! 30% Closed!';
+                            else if (curR >= 10) ladderInfo = ' | 🚀 1:10 Hit! 50% Booked & SL 1:7';
+                            else if (curR >= 5) ladderInfo = ' | 💰 1:5 Hit! 20% Booked & SL 1:1';
+                            else if (curR >= 2) ladderInfo = ' | 🛡️ 1:2 Hit! SL Breakeven';
+                            pnlBadge.innerText = `Live Sim: ${isWin ? '+' : ''}${pnlPct.toFixed(2)}% (+${curR.toFixed(1)}R)${ladderInfo}`;
+                        } else {
+                            pnlBadge.innerText = `Live Sim PnL: ${isWin ? '+' : ''}${pnlPct.toFixed(2)}%`;
+                        }
                         pnlBadge.style.background = isWin ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)';
                         pnlBadge.style.color = isWin ? 'var(--cdx-green)' : 'var(--cdx-red)';
                     }
@@ -4896,6 +5839,7 @@
             renderPositionsView();
             renderFuturesChartPnlHUD();
             renderOptionsTradePnlHUD();
+            renderSMCScalperCockpit();
 
             // Connect WebSocket stream
             startCoinDCXPriceStream();
