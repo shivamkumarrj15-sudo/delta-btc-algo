@@ -35,6 +35,7 @@ class ActiveTrade:
         self.stage_5_tp = signal['stage_5_tp']  # 1:20 RR (SL to 1:15)
         self.stage_6_tp = signal['stage_6_tp']  # 1:25 RR (SL to 1:20)
         
+        self.sl_1_1_price = signal.get('sl_1_1_price', round(self.entry_price + (self.risk_per_unit if self.side == 'BUY' else -self.risk_per_unit), 2))
         self.sl_1_2_price = signal['sl_1_2_price']
         self.sl_1_5_price = signal['sl_1_5_price']
         self.sl_1_7_price = signal['sl_1_7_price']
@@ -120,7 +121,7 @@ class ActiveTrade:
                 return {'event': 'TRADE_CLOSED', 'trade': self, 'pnl': self.realized_pnl, 'reason': self.exit_reason}
 
             # -------------------------------------------------------------
-            # 2. Stage 1: 1:2 RR Hit -> Move SL to CTC
+            # 2. Stage 1: 1:2 RR Hit -> Move SL to Breakeven (CTC)
             # -------------------------------------------------------------
             if self.stage == 0 and current_price >= self.stage_1_tp:
                 self.stage = 1
@@ -129,59 +130,48 @@ class ActiveTrade:
                 return {'event': 'STAGE_1_CTC_SHIFT', 'trade': self, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 3. Stage 2: 1:5 RR Hit -> Exit 50% Qty & Shift SL to 1:2 RR
+            # 3. Stage 2: 1:5 RR Hit -> Exit 20% Qty & Shift SL to 1:1 RR
             # -------------------------------------------------------------
             if self.stage == 1 and current_price >= self.stage_2_tp:
                 self.stage = 2
-                exit_qty = round(self.initial_qty * 0.5, 6)
+                exit_qty = round(self.initial_qty * 0.20, 6)
                 gain_per_unit = current_price - self.entry_price
                 partial_pnl = gain_per_unit * exit_qty
                 self.realized_pnl += partial_pnl
                 self.remaining_qty -= exit_qty
-                self.current_sl = self.sl_1_2_price
-                self.history_logs.append(f"[{now_str}] 💰 1:5 RR Hit at ${current_price:.2f}! Exited 50% qty (+${partial_pnl:.2f}). SL shifted to 1:2 RR (${self.current_sl:.2f}).")
+                self.current_sl = self.sl_1_1_price
+                self.history_logs.append(f"[{now_str}] 💰 1:5 RR Hit at ${current_price:.2f}! Exited 20% qty (+${partial_pnl:.2f}). SL shifted to 1:1 RR (${self.current_sl:.2f}).")
                 return {'event': 'STAGE_2_PARTIAL_EXIT', 'trade': self, 'partial_pnl': partial_pnl, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 4. Stage 3: 1:7 RR Hit -> Shift SL to 1:5 RR
+            # 4. Stage 3: 1:10 RR Hit -> Exit 50% Qty & Shift SL to 1:7 RR
             # -------------------------------------------------------------
-            if self.stage == 2 and current_price >= self.stage_3_tp:
-                self.stage = 3
-                self.current_sl = self.sl_1_5_price
-                self.history_logs.append(f"[{now_str}] 🔥 1:7 RR Hit at ${current_price:.2f}! SL moved to 1:5 RR (${self.current_sl:.2f}).")
-                return {'event': 'STAGE_3_TRAIL_SHIFT', 'trade': self, 'new_sl': self.current_sl}
-
-            # -------------------------------------------------------------
-            # 5. Stage 4: 1:10 RR Hit -> Exit 40% Qty & Shift SL to 1:7 RR (10% Runner remains)
-            # -------------------------------------------------------------
-            if self.stage == 3 and current_price >= self.stage_4_tp:
+            if self.stage in (2, 3) and current_price >= self.stage_4_tp:
                 self.stage = 4
-                exit_qty = round(self.initial_qty * 0.4, 6)
+                exit_qty = round(self.initial_qty * 0.50, 6)
                 gain_per_unit = current_price - self.entry_price
                 partial_pnl = gain_per_unit * exit_qty
                 self.realized_pnl += partial_pnl
                 self.remaining_qty -= exit_qty
-                self.current_sl = self.sl_1_7_price  # SL to 1:7
-                self.history_logs.append(f"[{now_str}] 🎯 1:10 RR Hit at ${current_price:.2f}! Exited 40% qty (+${partial_pnl:.2f}). 10% Runner trailing with SL at 1:7 RR (${self.current_sl:.2f})!")
+                self.current_sl = self.sl_1_7_price  # SL to 1:7 RR
+                self.history_logs.append(f"[{now_str}] 🎯 1:10 RR Hit at ${current_price:.2f}! Exited 50% qty (+${partial_pnl:.2f}). Remaining 30% trailing with SL at 1:7 RR (${self.current_sl:.2f})!")
                 return {'event': 'STAGE_4_PARTIAL_EXIT', 'trade': self, 'partial_pnl': partial_pnl, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 6. Stage 5: 1:20 RR Hit -> Shift SL to 1:15 RR
+            # 5. Stage 4: 1:20 RR Hit -> Exit remaining 30% Qty (Final Target)
             # -------------------------------------------------------------
             if self.stage == 4 and current_price >= self.stage_5_tp:
                 self.stage = 5
-                self.current_sl = self.sl_1_15_price
-                self.history_logs.append(f"[{now_str}] 🚀 1:20 RR Hit at ${current_price:.2f}! SL moved to 1:15 RR (${self.current_sl:.2f}).")
-                return {'event': 'STAGE_5_TRAIL_SHIFT', 'trade': self, 'new_sl': self.current_sl}
-
-            # -------------------------------------------------------------
-            # 7. Stage 6: 1:25 RR Hit -> Shift SL to 1:20 RR
-            # -------------------------------------------------------------
-            if self.stage == 5 and current_price >= self.stage_6_tp:
-                self.stage = 6
-                self.current_sl = self.sl_1_20_price
-                self.history_logs.append(f"[{now_str}] 💎 1:25 RR Hit at ${current_price:.2f}! SL moved to 1:20 RR (${self.current_sl:.2f}).")
-                return {'event': 'STAGE_6_TRAIL_SHIFT', 'trade': self, 'new_sl': self.current_sl}
+                exit_qty = self.remaining_qty
+                gain_per_unit = current_price - self.entry_price
+                final_pnl = gain_per_unit * exit_qty
+                self.realized_pnl += final_pnl
+                self.remaining_qty = 0
+                self.is_closed = True
+                self.exit_time = pd.Timestamp.now()
+                self.exit_reason = "1:20 Epic Target Hit (Remaining 30% Booked)"
+                self.history_logs.append(f"[{now_str}] 🏆 1:20 RR Hit at ${current_price:.2f}! Closed remaining 30% qty (+${final_pnl:.2f}). Total PnL: ${self.realized_pnl:.2f}")
+                return {'event': 'TRADE_CLOSED', 'trade': self, 'pnl': self.realized_pnl, 'reason': self.exit_reason}
 
             # -------------------------------------------------------------
             # 8. Stage 7+: Dynamic +5R Trailing Ladder (1:30 -> SL 1:25, 1:35 -> SL 1:30...)
@@ -231,59 +221,57 @@ class ActiveTrade:
                 return {'event': 'TRADE_CLOSED', 'trade': self, 'pnl': self.realized_pnl, 'reason': self.exit_reason}
 
             # -------------------------------------------------------------
-            # 2. Stage 1: 1:2 RR Hit -> Move SL to CTC
+            # 2. Stage 1: 1:2 RR Hit -> Move SL to Breakeven (CTC)
             # -------------------------------------------------------------
             if self.stage == 0 and current_price <= self.stage_1_tp:
                 self.stage = 1
                 self.current_sl = self.entry_price
-                self.history_logs.append(f"[{now_str}] 🚀 1:2 RR Hit at ${current_price:.2f}! SL moved to CTC (${self.entry_price:.2f}).")
+                self.history_logs.append(f"[{now_str}] 🚀 1:2 RR Hit at ${current_price:.2f}! SL moved to Cost-to-Cost (${self.entry_price:.2f}). Risk-Free Trade!")
                 return {'event': 'STAGE_1_CTC_SHIFT', 'trade': self, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 3. Stage 2: 1:5 RR Hit -> Exit 50% Qty & Shift SL to 1:2 RR
+            # 3. Stage 2: 1:5 RR Hit -> Exit 20% Qty & Shift SL to 1:1 RR
             # -------------------------------------------------------------
             if self.stage == 1 and current_price <= self.stage_2_tp:
                 self.stage = 2
-                exit_qty = round(self.initial_qty * 0.5, 6)
+                exit_qty = round(self.initial_qty * 0.20, 6)
                 gain_per_unit = self.entry_price - current_price
                 partial_pnl = gain_per_unit * exit_qty
                 self.realized_pnl += partial_pnl
                 self.remaining_qty -= exit_qty
-                self.current_sl = self.sl_1_2_price
-                self.history_logs.append(f"[{now_str}] 💰 1:5 RR Hit at ${current_price:.2f}! Exited 50% qty (+${partial_pnl:.2f}). SL shifted to 1:2 RR (${self.current_sl:.2f}).")
+                self.current_sl = self.sl_1_1_price
+                self.history_logs.append(f"[{now_str}] 💰 1:5 RR Hit at ${current_price:.2f}! Exited 20% qty (+${partial_pnl:.2f}). SL shifted to 1:1 RR (${self.current_sl:.2f}).")
                 return {'event': 'STAGE_2_PARTIAL_EXIT', 'trade': self, 'partial_pnl': partial_pnl, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 4. Stage 3: 1:7 RR Hit -> Shift SL to 1:5 RR
+            # 4. Stage 3: 1:10 RR Hit -> Exit 50% Qty & Shift SL to 1:7 RR
             # -------------------------------------------------------------
-            if self.stage == 2 and current_price <= self.stage_3_tp:
-                self.stage = 3
-                self.current_sl = self.sl_1_5_price
-                self.history_logs.append(f"[{now_str}] 🔥 1:7 RR Hit at ${current_price:.2f}! SL moved to 1:5 RR.")
-                return {'event': 'STAGE_3_TRAIL_SHIFT', 'trade': self, 'new_sl': self.current_sl}
-
-            # -------------------------------------------------------------
-            # 5. Stage 4: 1:10 RR Hit -> Exit 40% Qty & Shift SL to 1:7 RR (10% Runner remains)
-            # -------------------------------------------------------------
-            if self.stage == 3 and current_price <= self.stage_4_tp:
+            if self.stage in (2, 3) and current_price <= self.stage_4_tp:
                 self.stage = 4
-                exit_qty = round(self.initial_qty * 0.4, 6)
+                exit_qty = round(self.initial_qty * 0.50, 6)
                 gain_per_unit = self.entry_price - current_price
                 partial_pnl = gain_per_unit * exit_qty
                 self.realized_pnl += partial_pnl
                 self.remaining_qty -= exit_qty
-                self.current_sl = self.sl_1_7_price  # SL to 1:7
-                self.history_logs.append(f"[{now_str}] 🎯 1:10 RR Hit at ${current_price:.2f}! Exited 40% qty (+${partial_pnl:.2f}). 10% Runner trailing with SL at 1:7 RR!")
+                self.current_sl = self.sl_1_7_price  # SL to 1:7 RR
+                self.history_logs.append(f"[{now_str}] 🎯 1:10 RR Hit at ${current_price:.2f}! Exited 50% qty (+${partial_pnl:.2f}). Remaining 30% trailing with SL at 1:7 RR (${self.current_sl:.2f})!")
                 return {'event': 'STAGE_4_PARTIAL_EXIT', 'trade': self, 'partial_pnl': partial_pnl, 'new_sl': self.current_sl}
 
             # -------------------------------------------------------------
-            # 6. Stage 5: 1:20 RR Hit -> Shift SL to 1:15 RR
+            # 5. Stage 4: 1:20 RR Hit -> Exit remaining 30% Qty (Final Target)
             # -------------------------------------------------------------
             if self.stage == 4 and current_price <= self.stage_5_tp:
                 self.stage = 5
-                self.current_sl = self.sl_1_15_price
-                self.history_logs.append(f"[{now_str}] 🚀 1:20 RR Hit at ${current_price:.2f}! SL moved to 1:15 RR (${self.current_sl:.2f}).")
-                return {'event': 'STAGE_5_TRAIL_SHIFT', 'trade': self, 'new_sl': self.current_sl}
+                exit_qty = self.remaining_qty
+                gain_per_unit = self.entry_price - current_price
+                final_pnl = gain_per_unit * exit_qty
+                self.realized_pnl += final_pnl
+                self.remaining_qty = 0
+                self.is_closed = True
+                self.exit_time = pd.Timestamp.now()
+                self.exit_reason = "1:20 Epic Target Hit (Remaining 30% Booked)"
+                self.history_logs.append(f"[{now_str}] 🏆 1:20 RR Hit at ${current_price:.2f}! Closed remaining 30% qty (+${final_pnl:.2f}). Total PnL: ${self.realized_pnl:.2f}")
+                return {'event': 'TRADE_CLOSED', 'trade': self, 'pnl': self.realized_pnl, 'reason': self.exit_reason}
 
             # -------------------------------------------------------------
             # 7. Stage 6: 1:25 RR Hit -> Shift SL to 1:20 RR

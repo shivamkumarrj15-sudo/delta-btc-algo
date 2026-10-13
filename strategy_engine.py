@@ -219,6 +219,7 @@ class StrategyEngine:
             stage_5_tp = round(entry_price + (risk_per_unit * Config.STAGE_5_RR), 2)   # 1:20 RR
             stage_6_tp = round(entry_price + (risk_per_unit * Config.STAGE_6_RR), 2)   # 1:25 RR
 
+            sl_1_1_price = round(entry_price + (risk_per_unit * 1.0), 2)
             sl_1_2_price = round(entry_price + (risk_per_unit * 2.0), 2)
             sl_1_5_price = round(entry_price + (risk_per_unit * 5.0), 2)
             sl_1_7_price = round(entry_price + (risk_per_unit * 7.0), 2)
@@ -237,6 +238,7 @@ class StrategyEngine:
             stage_5_tp = round(entry_price - (risk_per_unit * Config.STAGE_5_RR), 2)   # 1:20 RR
             stage_6_tp = round(entry_price - (risk_per_unit * Config.STAGE_6_RR), 2)   # 1:25 RR
 
+            sl_1_1_price = round(entry_price - (risk_per_unit * 1.0), 2)
             sl_1_2_price = round(entry_price - (risk_per_unit * 2.0), 2)
             sl_1_5_price = round(entry_price - (risk_per_unit * 5.0), 2)
             sl_1_7_price = round(entry_price - (risk_per_unit * 7.0), 2)
@@ -251,11 +253,12 @@ class StrategyEngine:
             'sl_price': sl_price,
             'risk_per_unit': round(risk_per_unit, 2),
             'stage_1_tp': stage_1_tp,    # 1:2 CTC
-            'stage_2_tp': stage_2_tp,    # 1:5 50% exit
-            'stage_3_tp': stage_3_tp,    # 1:7 SL to 1:5
-            'stage_4_tp': stage_4_tp,    # 1:10 40% exit + SL to 1:7
-            'stage_5_tp': stage_5_tp,    # 1:20 SL to 1:15
+            'stage_2_tp': stage_2_tp,    # 1:5 20% exit
+            'stage_3_tp': stage_3_tp,    # 1:7
+            'stage_4_tp': stage_4_tp,    # 1:10 50% exit + SL to 1:7
+            'stage_5_tp': stage_5_tp,    # 1:20 30% exit
             'stage_6_tp': stage_6_tp,    # 1:25 SL to 1:20
+            'sl_1_1_price': sl_1_1_price,
             'sl_1_2_price': sl_1_2_price,
             'sl_1_5_price': sl_1_5_price,
             'sl_1_7_price': sl_1_7_price,
