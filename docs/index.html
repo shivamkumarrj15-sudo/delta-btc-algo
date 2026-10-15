@@ -1611,6 +1611,287 @@
             border-color: var(--cdx-orange-border);
             color: var(--cdx-orange);
         }
+
+        /* =============================================================
+           FUTURES BOTTOM DOCK & ORDER HISTORY
+           ============================================================= */
+        .futures-bottom-dock {
+            height: 205px;
+            background: var(--bg-surface-secondary);
+            border-top: 1px solid var(--border-ui);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+        .dock-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-ui);
+            padding: 0 12px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+        .dock-tabs-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+        }
+        .dock-tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 0 12px;
+            height: 100%;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+        .dock-tab-btn:hover {
+            color: var(--text-main);
+        }
+        .dock-tab-btn.active {
+            color: var(--cdx-orange);
+            border-bottom-color: var(--cdx-orange);
+        }
+        .dock-count-badge {
+            background: var(--bg-surface-tertiary);
+            border: 1px solid var(--border-ui);
+            border-radius: 10px;
+            padding: 1px 6px;
+            font-size: 9.5px;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        .dock-tab-btn.active .dock-count-badge {
+            background: rgba(250, 74, 41, 0.18);
+            border-color: var(--cdx-orange);
+            color: var(--cdx-orange);
+        }
+        .dock-content-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            padding: 8px 12px;
+        }
+        .dock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .dock-table th {
+            background: var(--bg-surface);
+            color: var(--text-muted);
+            font-weight: 800;
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-ui);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .dock-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-ui);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+        .dock-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        [data-theme="light"] .dock-table tr:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+        .dock-empty-notice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            font-size: 11.5px;
+            text-align: center;
+            padding: 20px;
+            gap: 6px;
+        }
+
+        /* =============================================================
+           SIDE RADAR CARD & TP/SL COCKPIT
+           ============================================================= */
+        .side-radar-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-ui);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            transition: all 0.2s ease;
+        }
+        .side-radar-card.active {
+            border-color: var(--cdx-orange);
+            box-shadow: 0 0 16px rgba(250, 74, 41, 0.12);
+        }
+        .side-radar-card.empty {
+            border-style: dashed;
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .side-radar-hero {
+            background: var(--bg-surface-secondary);
+            border-radius: 6px;
+            padding: 7px 10px;
+            text-align: center;
+            border: 1px solid var(--border-ui);
+            transition: all 0.2s;
+        }
+        .side-radar-hero.win {
+            border-color: rgba(0, 194, 136, 0.4);
+            background: rgba(0, 194, 136, 0.08);
+            color: var(--cdx-green);
+        }
+        .side-radar-hero.loss {
+            border-color: rgba(246, 70, 93, 0.4);
+            background: rgba(246, 70, 93, 0.08);
+            color: var(--cdx-red);
+        }
+        .side-radar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+        .grid-stat {
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 5px;
+            padding: 4px 6px;
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-lbl {
+            font-size: 9.5px;
+            color: var(--text-faint);
+            font-weight: 700;
+        }
+        .stat-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .side-radar-sl-box {
+            background: var(--bg-surface-secondary);
+            border-left: 3px solid var(--cdx-orange);
+            border-radius: 5px;
+            padding: 5px 8px;
+            border-top: 1px solid var(--border-ui);
+            border-right: 1px solid var(--border-ui);
+            border-bottom: 1px solid var(--border-ui);
+        }
+        .radar-tp-step {
+            background: var(--bg-surface-secondary);
+            border: 1px solid var(--border-ui);
+            border-radius: 5px;
+            padding: 3px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+        }
+        .radar-tp-step.active {
+            border-color: var(--cdx-orange);
+            background: rgba(250, 74, 41, 0.12);
+            color: var(--cdx-orange);
+            font-weight: 800;
+        }
+        .radar-tp-step.done {
+            border-color: var(--cdx-green);
+            background: rgba(0, 194, 136, 0.12);
+            color: var(--cdx-green);
+            font-weight: 800;
+        }
+
+        /* =============================================================
+           ON-CHART VISUAL TRADE LEVELS LADDER STRIP
+           ============================================================= */
+        .chart-trade-levels-strip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: rgba(14, 20, 32, 0.90);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-ui);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 10.5px;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        [data-theme="light"] .chart-trade-levels-strip {
+            background: rgba(255, 255, 255, 0.94);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .trade-level-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 800;
+            border: 1px solid transparent;
+        }
+        .trade-level-chip.entry {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38BDF8;
+            color: #38BDF8;
+        }
+        .trade-level-chip.live {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #FFFFFF;
+        }
+        [data-theme="light"] .trade-level-chip.live {
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.2);
+            color: #0F172A;
+        }
+        .trade-level-chip.sl {
+            background: rgba(245, 158, 11, 0.16);
+            border-color: #F59E0B;
+            color: #F59E0B;
+        }
+        .trade-level-chip.tp {
+            background: rgba(0, 194, 136, 0.15);
+            border-color: #00C288;
+            color: #00C288;
+        }
+        .trade-level-chip.tp-final {
+            background: rgba(139, 92, 246, 0.18);
+            border-color: #8B5CF6;
+            color: #8B5CF6;
+        }
+        .trade-level-chip.hit {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
     </style>
 </head>
 <body data-theme="dark">
@@ -2098,7 +2379,7 @@
         <div id="screen_futures">
             <div class="futures-cockpit-layout">
                 
-                <!-- Left: TradingView Chart with Floating Live PnL HUD -->
+                <!-- Left: Futures Chart Viewport + Visual HUD + Futures Bottom Dock -->
                 <div style="height:100%; width:100%; display:flex; flex-direction:column; overflow:hidden; position:relative;">
                     <div class="futures-header-toolbar">
                         <div style="font-weight:800; font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -2115,22 +2396,72 @@
                         </div>
 
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <button class="btn-ui-action" onclick="loadUserSMCStrategyScenario()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800;" title="Open Visual SMC Scalper Chart with all markings">
-                                🎯 View Visual SMC Scalper Chart
+                            <!-- Chart Display Mode Switcher -->
+                            <div style="display:flex; align-items:center; background:var(--bg-surface-secondary); border:1px solid var(--border-ui); border-radius:6px; padding:2px;">
+                                <button class="btn-ui-action active" id="btn_fut_chart_tv" onclick="switchFuturesChartMode('TV')" style="font-size:10.5px; padding:3px 8px; border:none;" title="TradingView Live Web Feed">
+                                    📊 TradingView
+                                </button>
+                                <button class="btn-ui-action" id="btn_fut_chart_canvas" onclick="switchFuturesChartMode('CANVAS')" style="font-size:10.5px; padding:3px 8px; border:none;" title="Visual SMC Scalper Chart with live trade lines">
+                                    🎯 SMC Visual Chart
+                                </button>
+                            </div>
+                            <button class="btn-ui-action" onclick="simulateLiveSMCTest()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-weight:800; font-size:10.5px;" title="Test live ₹5k SMC trade setup with automatic trailing SL ladder">
+                                🧪 Simulate Setup
                             </button>
-                            <button class="btn-ui-action" onclick="toggleUnderlyingSymbol()">🔄 Switch BTC/ETH</button>
+                            <button class="btn-ui-action" onclick="toggleUnderlyingSymbol()" style="font-size:10.5px;">🔄 Switch BTC/ETH</button>
                         </div>
                     </div>
 
-                    <!-- FLOATING LIVE POSITIONS & PnL HUD OVERLAY ON CHART -->
-                    <div class="chart-floating-pnl-hud" id="fut_chart_live_pnl_container"></div>
+                    <!-- Chart Viewport (Flexible height) -->
+                    <div style="flex:1; width:100%; position:relative; min-height:0; overflow:hidden;">
+                        <!-- FLOATING LIVE POSITIONS & VISUAL TRADE LEVEL HUD OVERLAY ON CHART -->
+                        <div class="chart-floating-pnl-hud" id="fut_chart_live_pnl_container"></div>
 
-                    <div id="tradingview_embed_box" style="flex:1; width:100%; height:calc(100% - 48px);"></div>
+                        <!-- 1. TradingView Embed Box -->
+                        <div id="tradingview_embed_box" style="width:100%; height:100%;"></div>
+
+                        <!-- 2. Visual SMC Scalper HTML5 Canvas Box (Candles + Drawn Entry/SL/TP Levels) -->
+                        <div id="futures_smc_canvas_box" style="display:none; width:100%; height:100%; position:relative; background:var(--bg-main);">
+                            <canvas id="futures_trade_canvas" style="width:100%; height:100%; display:block;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- FUTURES BOTTOM DOCK: OPEN POSITIONS & ORDER HISTORY ("कब ट्रेड लिया") -->
+                    <div class="futures-bottom-dock" id="futures_bottom_dock">
+                        <div class="dock-header-bar">
+                            <div class="dock-tabs-group">
+                                <button class="dock-tab-btn active" id="btn_dock_tab_pos" onclick="switchFuturesDockTab('POSITIONS')">
+                                    ⚡ Open Position <span class="dock-count-badge" id="dock_pos_count">0</span>
+                                </button>
+                                <button class="dock-tab-btn" id="btn_dock_tab_hist" onclick="switchFuturesDockTab('HISTORY')">
+                                    📜 Order History (कब ट्रेड लिया - Trade Log) <span class="dock-count-badge" id="dock_hist_count">0</span>
+                                </button>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:10.5px; color:var(--text-muted); font-family:'JetBrains Mono';" id="dock_realized_pnl_summary">Realized: ₹0.00</span>
+                                <button class="btn-ui-action" onclick="clearFuturesOrderHistory()" style="font-size:10px; padding:2px 6px; color:var(--text-muted);" title="Clear completed order history">
+                                    🗑️ Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dock Content: Open Positions Tab -->
+                        <div class="dock-content-area" id="dock_view_positions" style="display:block;">
+                            <div id="dock_positions_table_container"></div>
+                        </div>
+
+                        <!-- Dock Content: Order History ("कब ट्रेड लिया") Tab -->
+                        <div class="dock-content-area" id="dock_view_history" style="display:none;">
+                            <div id="dock_history_table_container"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right: CoinDCX Futures Order Execution Panel -->
                 <div class="futures-order-panel">
-                    
+                    <!-- TOP PERMANENT COCKPIT: LIVE POSITION, ROE, TP/SL RADAR -->
+                    <div id="fut_side_position_radar"></div>
+
                     <!-- Panel Mode Switcher: Live SMC Algo (₹5,000 INR) vs Manual Trading -->
                     <div class="smc-mode-switcher">
                         <button class="smc-mode-btn active algo" id="btn_mode_smc_algo" onclick="switchFuturesPanelMode('SMC_ALGO')">
@@ -2766,7 +3097,11 @@
             const target2R = side === 'SHORT' ? +(entryPrice - 2 * rValue).toFixed(2) : +(entryPrice + 2 * rValue).toFixed(2);
             const target5R = side === 'SHORT' ? +(entryPrice - 5 * rValue).toFixed(2) : +(entryPrice + 5 * rValue).toFixed(2);
             const target10R = side === 'SHORT' ? +(entryPrice - 10 * rValue).toFixed(2) : +(entryPrice + 10 * rValue).toFixed(2);
-            const target20R = side === 'SHORT' ? +(entryPrice - 20 * rValue).toFixed(2) : +(entryPrice + 2 * rValue).toFixed(2);
+            const target20R = side === 'SHORT' ? +(entryPrice - 20 * rValue).toFixed(2) : +(entryPrice + 20 * rValue).toFixed(2);
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + timeStr;
 
             const newSmcPos = {
                 id: 'fut_smc_' + Date.now(),
@@ -2795,7 +3130,8 @@
                 bookedProfitUSD: 0,
                 bookedProfitINR: 0,
                 liqPrice: side === 'SHORT' ? +(entryPrice * 1.045).toFixed(2) : +(entryPrice * 0.955).toFixed(2),
-                time: new Date().toLocaleTimeString()
+                entryTime: dateStr,
+                time: timeStr
             };
 
             userBalance -= marginUSD;
@@ -2845,12 +3181,20 @@
                     localStorage.setItem('delta_paper_balance', userBalance.toString());
 
                     completedOrders.push({
+                        entryTime: pos.entryTime || pos.time,
+                        exitTime: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + new Date().toLocaleTimeString(),
                         contract: pos.contract,
                         side: pos.side,
                         lots: pos.initialLots,
+                        marginINR: pos.marginINR || 5000,
+                        marginUSD: pos.margin,
                         entryPrice: pos.entryPrice,
                         exitPrice: exitPrice,
                         pnl: totalPnlUSD,
+                        pnlUSD: totalPnlUSD,
+                        pnlINR: totalPnlINR,
+                        roe: ((totalPnlUSD / pos.margin) * 100).toFixed(1),
+                        reason: `🛑 SMC Trailing SL Hit at $${exitPrice}`,
                         note: `SMC Trailing SL Hit at $${exitPrice} | Total Realized: ₹${totalPnlINR.toFixed(2)}`,
                         time: new Date().toLocaleTimeString()
                     });
@@ -2896,6 +3240,26 @@
                     userBalance += (releasedMargin + partialPnlUSD);
                     localStorage.setItem('delta_paper_balance', userBalance.toString());
 
+                    completedOrders.push({
+                        entryTime: pos.entryTime || pos.time,
+                        exitTime: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + new Date().toLocaleTimeString(),
+                        contract: pos.contract + ' (20% Booked)',
+                        side: pos.side,
+                        lots: actualBookLots,
+                        marginINR: (pos.marginINR || 5000) * 0.20,
+                        marginUSD: pos.margin * 0.20,
+                        entryPrice: pos.entryPrice,
+                        exitPrice: S,
+                        pnl: partialPnlUSD,
+                        pnlUSD: partialPnlUSD,
+                        pnlINR: partialPnlINR,
+                        roe: ((partialPnlUSD / (pos.margin * 0.20)) * 100).toFixed(1),
+                        reason: `🎯 1:5 Hit! Booked 20% & SL ➔ 1:1 ($${pos.currentSL})`,
+                        note: `1:5 R:R Milestone Booked 20% | SL ➔ 1:1`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+
                     showCoinDCXToast(`💰 [1:5 R:R Hit!] 20% Profit Booked (+₹${partialPnlINR.toFixed(2)})! SL shifted to 1:1 R:R ($${pos.currentSL})!`);
                     changed = true;
                 }
@@ -2918,6 +3282,26 @@
                     userBalance += (releasedMargin + partialPnlUSD);
                     localStorage.setItem('delta_paper_balance', userBalance.toString());
 
+                    completedOrders.push({
+                        entryTime: pos.entryTime || pos.time,
+                        exitTime: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + new Date().toLocaleTimeString(),
+                        contract: pos.contract + ' (50% Booked)',
+                        side: pos.side,
+                        lots: actualBookLots,
+                        marginINR: (pos.marginINR || 5000) * 0.50,
+                        marginUSD: pos.margin * 0.50,
+                        entryPrice: pos.entryPrice,
+                        exitPrice: S,
+                        pnl: partialPnlUSD,
+                        pnlUSD: partialPnlUSD,
+                        pnlINR: partialPnlINR,
+                        roe: ((partialPnlUSD / (pos.margin * 0.50)) * 100).toFixed(1),
+                        reason: `🚀 1:10 Hit! Booked 50% & SL ➔ 1:7 ($${pos.currentSL})`,
+                        note: `1:10 R:R Milestone Booked 50% | SL ➔ 1:7`,
+                        time: new Date().toLocaleTimeString()
+                    });
+                    localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+
                     showCoinDCXToast(`🚀 [1:10 R:R Hit!] 50% Profit Booked (+₹${partialPnlINR.toFixed(2)})! SL shifted to 1:7 R:R ($${pos.currentSL})!`);
                     changed = true;
                 }
@@ -2937,12 +3321,20 @@
                     localStorage.setItem('delta_paper_balance', userBalance.toString());
 
                     completedOrders.push({
-                        contract: pos.contract,
+                        entryTime: pos.entryTime || pos.time,
+                        exitTime: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + new Date().toLocaleTimeString(),
+                        contract: pos.contract + ' (Final 30%)',
                         side: pos.side,
-                        lots: pos.initialLots,
+                        lots: actualBookLots,
+                        marginINR: (pos.marginINR || 5000) * 0.30,
+                        marginUSD: pos.margin * 0.30,
                         entryPrice: pos.entryPrice,
                         exitPrice: S,
-                        pnl: totalPnlUSD,
+                        pnl: finalPnlUSD,
+                        pnlUSD: finalPnlUSD,
+                        pnlINR: finalPnlINR,
+                        roe: ((finalPnlUSD / (pos.margin * 0.30)) * 100).toFixed(1),
+                        reason: `🏆 1:20 Epic Target Hit! Full Exit (₹${totalPnlINR.toFixed(2)} Profit)`,
                         note: `🏆 SMC 1:20 Epic Target Hit! Full Position Closed | Total Profit: ₹${totalPnlINR.toFixed(2)}`,
                         time: new Date().toLocaleTimeString()
                     });
@@ -3366,6 +3758,66 @@
         // =========================================================================
         // Live Real-Time P&L HUD on Charts (Futures Chart HUD & Options Trade HUD)
         // =========================================================================
+        let currentFuturesDockTab = 'POSITIONS'; // 'POSITIONS' or 'HISTORY'
+        let currentFuturesChartMode = 'TV'; // 'TV' or 'CANVAS'
+        let futuresCanvasCandles = [];
+
+        function switchFuturesDockTab(tab) {
+            currentFuturesDockTab = tab;
+            const btnPos = document.getElementById('btn_dock_tab_pos');
+            const btnHist = document.getElementById('btn_dock_tab_hist');
+            const viewPos = document.getElementById('dock_view_positions');
+            const viewHist = document.getElementById('dock_view_history');
+
+            if (tab === 'POSITIONS') {
+                if (btnPos) btnPos.classList.add('active');
+                if (btnHist) btnHist.classList.remove('active');
+                if (viewPos) viewPos.style.display = 'block';
+                if (viewHist) viewHist.style.display = 'none';
+            } else {
+                if (btnPos) btnPos.classList.remove('active');
+                if (btnHist) btnHist.classList.add('active');
+                if (viewPos) viewPos.style.display = 'none';
+                if (viewHist) viewHist.style.display = 'block';
+            }
+            renderFuturesBottomDock();
+        }
+
+        function switchFuturesChartMode(mode) {
+            currentFuturesChartMode = mode;
+            const btnTV = document.getElementById('btn_fut_chart_tv');
+            const btnCanvas = document.getElementById('btn_fut_chart_canvas');
+            const boxTV = document.getElementById('tradingview_embed_box');
+            const boxCanvas = document.getElementById('futures_smc_canvas_box');
+
+            if (mode === 'TV') {
+                if (btnTV) btnTV.classList.add('active');
+                if (btnCanvas) btnCanvas.classList.remove('active');
+                if (boxTV) boxTV.style.display = 'block';
+                if (boxCanvas) boxCanvas.style.display = 'none';
+                loadTradingViewChart();
+            } else {
+                if (btnTV) btnTV.classList.remove('active');
+                if (btnCanvas) btnCanvas.classList.add('active');
+                if (boxTV) boxTV.style.display = 'none';
+                if (boxCanvas) boxCanvas.style.display = 'block';
+                renderFuturesCanvasChart();
+            }
+        }
+
+        function clearFuturesOrderHistory() {
+            if (completedOrders.length === 0) {
+                showCoinDCXToast('Order history is already empty.');
+                return;
+            }
+            if (confirm('Are you sure you want to clear your futures order history?')) {
+                completedOrders = [];
+                localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
+                renderFuturesBottomDock();
+                showCoinDCXToast('🗑️ Futures order history cleared.');
+            }
+        }
+
         function renderFuturesChartPnlHUD() {
             const container = document.getElementById('fut_chart_live_pnl_container');
             if (!container) return;
@@ -3373,9 +3825,12 @@
             if (futuresPositions.length === 0) {
                 container.innerHTML = `
                     <div class="chart-pos-pill empty">
-                        <span>⚡ <b>No Active Futures Position</b> | Open a Long or Short trade on the right to track your live P&L on this chart</span>
+                        <span>⚡ <b>No Active Futures Position</b> | Open a Long/Short trade or Start Live SMC Algo (₹5,000 INR) to track visual trade levels on chart</span>
                     </div>
                 `;
+                renderFuturesSidePositionRadar();
+                renderFuturesBottomDock();
+                if (currentFuturesChartMode === 'CANVAS') renderFuturesCanvasChart();
                 return;
             }
 
@@ -3383,50 +3838,700 @@
             futuresPositions.forEach((fpos, idx) => {
                 const sym = fpos.symbol || 'BTC';
                 const S = spotPrices[sym];
-                let pnl = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
-                const isWin = pnl >= 0;
-                const sign = pnl >= 0 ? '+' : '';
-                const roe = ((pnl / fpos.margin) * 100).toFixed(1);
+                let pnlUSD = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+                let pnlINR = pnlUSD * inrRate;
+                const isWin = pnlUSD >= 0;
+                const sign = isWin ? '+' : '';
+                const roe = ((pnlUSD / fpos.margin) * 100).toFixed(1);
+                const curR = fpos.rValue && fpos.rValue > 0 ? (fpos.side === 'SHORT' ? (fpos.entryPrice - S) / fpos.rValue : (S - fpos.entryPrice) / fpos.rValue) : 0;
+                const slTag = fpos.tier10 ? '1:7 (+7R Locked)' : (fpos.tier5 ? '1:1 (+1R Locked)' : (fpos.tierBE ? 'Breakeven Locked' : 'Initial SL'));
 
                 html += `
                     <div class="chart-pos-pill ${isWin ? 'win' : 'loss'}">
-                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                            <span class="moneyness-chip" style="background:${fpos.side === 'LONG' ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)'}; color:${fpos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-size:11px; font-weight:900; padding:3px 8px; border-radius:4px;">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span class="moneyness-chip" style="background:${fpos.side === 'LONG' ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)'}; color:${fpos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-size:11px; font-weight:900; padding:2px 7px; border-radius:4px;">
                                 ${fpos.side === 'LONG' ? '🟢 LONG' : '🔴 SHORT'} ${fpos.leverage}x
                             </span>
                             <div>
-                                <b style="font-size:13px;">${fpos.contract}</b>
-                                <span style="color:var(--text-muted); font-size:11.5px; margin-left:6px;">Qty: ${fpos.lots} ${sym}</span>
+                                <b style="font-size:12.5px;">${fpos.contract}</b>
+                                <span style="color:var(--text-muted); font-size:11px; margin-left:4px;">(Margin: ₹${(fpos.marginINR || (fpos.margin * inrRate)).toLocaleString('en-IN')})</span>
                             </div>
-                            <div style="font-family:'JetBrains Mono'; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <div style="font-family:'JetBrains Mono'; font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <span style="color:var(--text-faint);">🕒 कब लिया: <b style="color:var(--text-main);">${fpos.entryTime || fpos.time}</b></span>
+                                <span>•</span>
                                 <span>Entry: <b style="color:var(--text-main);">$${fpos.entryPrice.toLocaleString()}</b></span>
                                 <span>•</span>
                                 <span>Live: <b style="color:var(--text-main);">$${S.toLocaleString()}</b></span>
-                                ${fpos.isSMCAlgo ? `
-                                    <span>•</span>
-                                    <span style="color:var(--cdx-orange);">🛡️ SL: <b>$${fpos.currentSL.toLocaleString()}</b> (${fpos.tier10 ? '1:7 Lock' : fpos.tier5 ? '1:1 Lock' : fpos.tierBE ? 'Breakeven' : 'Initial'})</span>
-                                    <span>•</span>
-                                    <span style="color:var(--cdx-green);">Booked: <b>₹${fpos.bookedProfitINR.toFixed(2)}</b></span>
-                                    <span class="smc-radar-pill warn" style="font-size:9.5px;">₹5k Margin</span>
-                                ` : ''}
+                                <span>•</span>
+                                <span style="color:var(--cdx-orange);">🛡️ SL: <b>$${(fpos.currentSL || fpos.initialSL || fpos.entryPrice).toLocaleString()}</b> (${slTag})</span>
+                                ${fpos.bookedProfitINR > 0 ? `<span>•</span><span style="color:var(--cdx-green);">Booked: <b>₹${fpos.bookedProfitINR.toFixed(2)}</b></span>` : ''}
                             </div>
                         </div>
 
                         <div style="display:flex; align-items:center; gap:10px;">
                             <div class="chart-pos-pnl-val ${isWin ? 'win' : 'loss'}">
-                                <span style="font-size:10px; opacity:0.85;">LIVE P&L:</span>
-                                <span>${sign}${formatCurrency(pnl)} (${sign}${roe}%)</span>
+                                <span style="font-size:9.5px; opacity:0.85;">LIVE P&L:</span>
+                                <span>${sign}₹${pnlINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})} (${sign}${roe}%)</span>
                             </div>
                             <button class="hud-close-btn" onclick="closeFuturesPositionByIdx(${idx})" title="Square off this position immediately">
-                                ✕ Close Position
+                                ✕ Close
                             </button>
                         </div>
+                    </div>
+
+                    <!-- VISUAL TRADE LEVELS LADDER STRIP DIRECTLY VISIBLE OVER CHART -->
+                    <div class="chart-trade-levels-strip">
+                        <span class="trade-level-chip entry" title="Trade Entry Price">
+                            🔵 ENTRY: $${fpos.entryPrice.toLocaleString()} (${fpos.side} ${fpos.leverage}x)
+                        </span>
+                        <span class="trade-level-chip live" title="Current Live Price">
+                            ⚪ LIVE: $${S.toLocaleString()} (${curR >= 0 ? '+' : ''}${curR.toFixed(1)}R)
+                        </span>
+                        <span class="trade-level-chip sl" title="Current Trailing Stop Loss">
+                            🛡️ SL: $${(fpos.currentSL || fpos.initialSL || fpos.entryPrice).toLocaleString()} [${slTag}]
+                        </span>
+                        ${fpos.target2R ? `
+                            <span class="trade-level-chip tp ${fpos.tierBE ? 'hit' : ''}" title="Target 1 (1:2 R:R) - Shift SL to Breakeven">
+                                🎯 TP1 (1:2): $${fpos.target2R.toLocaleString()} ${fpos.tierBE ? '✅' : '⏳'}
+                            </span>
+                        ` : ''}
+                        ${fpos.target5R ? `
+                            <span class="trade-level-chip tp ${fpos.tier5 ? 'hit' : ''}" title="Target 2 (1:5 R:R) - Book 20% & Shift SL to 1:1">
+                                🎯 TP2 (1:5): $${fpos.target5R.toLocaleString()} ${fpos.tier5 ? '✅' : '⏳'}
+                            </span>
+                        ` : ''}
+                        ${fpos.target10R ? `
+                            <span class="trade-level-chip tp ${fpos.tier10 ? 'hit' : ''}" title="Target 3 (1:10 R:R) - Book 50% & Shift SL to 1:7">
+                                🎯 TP3 (1:10): $${fpos.target10R.toLocaleString()} ${fpos.tier10 ? '✅' : '⏳'}
+                            </span>
+                        ` : ''}
+                        ${fpos.target20R ? `
+                            <span class="trade-level-chip tp-final ${fpos.tier20 ? 'hit' : ''}" title="Target 4 (1:20 R:R) - Book Remaining 30% / Shift SL to 1:15">
+                                🏆 TP4 (1:20): $${fpos.target20R.toLocaleString()} ${fpos.tier20 ? '✅' : '⏳'}
+                            </span>
+                        ` : ''}
                     </div>
                 `;
             });
 
             container.innerHTML = html;
             renderSMCScalperCockpit();
+            renderFuturesSidePositionRadar();
+            renderFuturesBottomDock();
+            if (currentFuturesChartMode === 'CANVAS') renderFuturesCanvasChart();
+        }
+
+        function renderFuturesSidePositionRadar() {
+            const container = document.getElementById('fut_side_position_radar');
+            if (!container) return;
+
+            if (futuresPositions.length === 0) {
+                container.innerHTML = `
+                    <div class="side-radar-card empty">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:800; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:5px;">
+                                <span>⚡</span> ACTIVE POSITION RADAR
+                            </span>
+                            <span class="smc-radar-pill warn" style="font-size:9.5px;">NO ACTIVE TRADE</span>
+                        </div>
+                        <p style="font-size:11px; color:var(--text-faint); margin:2px 0 4px 0; line-height:1.4;">
+                            No open futures position. The SMC Scalper scanner is tracking 1D PDH/PDL sweeps, 1H Order Blocks, and 1M displacement.
+                        </p>
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; border-top:1px solid var(--border-ui); padding-top:4px;">
+                            <span style="color:var(--text-muted);">Algo Capital:</span>
+                            <b style="color:var(--cdx-green);">₹5,000 INR (Fixed)</b>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px;">
+                            <span style="color:var(--text-muted);">Trailing Ladder:</span>
+                            <span style="color:var(--text-main); font-weight:700;">1:2 BE ➔ 1:5 ➔ 1:10 ➔ 1:20</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const fpos = futuresPositions[0];
+            const sym = fpos.symbol || 'BTC';
+            const S = spotPrices[sym];
+            let floatingPnlUSD = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+            let floatingPnlINR = floatingPnlUSD * inrRate;
+            const isWin = floatingPnlUSD >= 0;
+            const sign = isWin ? '+' : '';
+            const roe = (((floatingPnlUSD + (fpos.bookedProfitUSD || 0)) / fpos.margin) * 100).toFixed(1);
+            const curR = fpos.rValue && fpos.rValue > 0 ? (fpos.side === 'SHORT' ? (fpos.entryPrice - S) / fpos.rValue : (S - fpos.entryPrice) / fpos.rValue) : 0;
+            const slTag = fpos.tier10 ? '1:7 (+7R Locked)' : (fpos.tier5 ? '1:1 (+1R Locked)' : (fpos.tierBE ? 'Breakeven (Cost-to-Cost)' : 'Initial SL'));
+
+            container.innerHTML = `
+                <div class="side-radar-card active">
+                    <!-- Header -->
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="moneyness-chip" style="background:${fpos.side === 'LONG' ? 'var(--cdx-green-bg)' : 'var(--cdx-red-bg)'}; color:${fpos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-size:11px; font-weight:900; padding:2px 7px; border-radius:4px;">
+                            ${fpos.side === 'LONG' ? '🟢 LONG' : '🔴 SHORT'} ${fpos.leverage}x
+                        </span>
+                        <span class="smc-radar-pill warn" style="font-size:9.5px;">
+                            ${fpos.isSMCAlgo ? '⚡ SMC Scalper (₹5k)' : '📝 Manual Trade'}
+                        </span>
+                    </div>
+
+                    <!-- Timestamp: कब ट्रेड लिया -->
+                    <div style="display:flex; align-items:center; justify-content:space-between; font-size:10.5px; color:var(--text-faint); margin-top:2px;">
+                        <span>🕒 <b>कब ट्रेड लिया:</b></span>
+                        <b style="color:var(--text-main); font-family:'JetBrains Mono';">${fpos.entryTime || fpos.time}</b>
+                    </div>
+
+                    <!-- Hero Glowing Live PnL & ROE Display -->
+                    <div class="side-radar-hero ${isWin ? 'win' : 'loss'}">
+                        <div style="font-size:9.5px; font-weight:800; opacity:0.85; text-transform:uppercase; letter-spacing:0.5px;">LIVE UNREALIZED P&L</div>
+                        <div style="font-size:20px; font-weight:900; font-family:'JetBrains Mono'; margin:2px 0;">
+                            ${sign}₹${floatingPnlINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+                        </div>
+                        <div style="font-size:11.5px; font-weight:800;">
+                            ${sign}${roe}% ROE &nbsp;|&nbsp; ${sign}$${floatingPnlUSD.toFixed(2)} USD
+                        </div>
+                    </div>
+
+                    <!-- 2x3 Metrics Grid -->
+                    <div class="side-radar-grid">
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Entry Price</span>
+                            <span class="stat-val">$${fpos.entryPrice.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+                        </div>
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Mark Price</span>
+                            <span class="stat-val" style="color:var(--text-main);">$${S.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+                        </div>
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Margin (Capital)</span>
+                            <span class="stat-val" style="color:var(--cdx-orange);">₹${(fpos.marginINR || (fpos.margin * inrRate)).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Position Size</span>
+                            <span class="stat-val">${fpos.lots} ${sym}</span>
+                        </div>
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Booked Profit</span>
+                            <span class="stat-val" style="color:var(--cdx-green);">₹${(fpos.bookedProfitINR || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="grid-stat">
+                            <span class="stat-lbl">Est. Liq Price</span>
+                            <span class="stat-val" style="color:var(--cdx-red);">$${fpos.liqPrice ? fpos.liqPrice.toLocaleString('en-US', {minimumFractionDigits:2}) : 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Trailing SL Box -->
+                    <div class="side-radar-sl-box">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:10px; font-weight:800; color:var(--text-muted);">🛡️ DYNAMIC TRAILING SL:</span>
+                            <span class="smc-radar-pill ${fpos.tierBE ? 'bull' : 'warn'}" style="font-size:9px;">
+                                ${slTag}
+                            </span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:3px;">
+                            <b style="font-family:'JetBrains Mono'; font-size:12.5px; color:var(--cdx-orange);">$${(fpos.currentSL || fpos.initialSL || fpos.entryPrice).toLocaleString('en-US', {minimumFractionDigits:2})}</b>
+                            <span style="font-size:10px; color:var(--text-faint);">${fpos.tierBE ? '100% Risk Free' : 'Initial SL'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Full TP Ladder Status -->
+                    <div style="display:flex; flex-direction:column; gap:3px;">
+                        <span style="font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:1px;">🎯 TAKE PROFIT LADDER:</span>
+                        <div class="radar-tp-step ${fpos.tierBE ? 'done' : (curR >= 1.0 ? 'active' : '')}">
+                            <span>1:2 R:R ($${fpos.target2R ? fpos.target2R.toLocaleString() : 'N/A'})</span>
+                            <span>${fpos.tierBE ? '✅ SL @ Breakeven' : '🛡️ Shift SL to BE'}</span>
+                        </div>
+                        <div class="radar-tp-step ${fpos.tier5 ? 'done' : (curR >= 2.0 && !fpos.tier5 ? 'active' : '')}">
+                            <span>1:5 R:R ($${fpos.target5R ? fpos.target5R.toLocaleString() : 'N/A'})</span>
+                            <span>${fpos.tier5 ? '✅ 20% Booked | SL 1:1' : '💰 Book 20% & SL 1:1'}</span>
+                        </div>
+                        <div class="radar-tp-step ${fpos.tier10 ? 'done' : (curR >= 5.0 && !fpos.tier10 ? 'active' : '')}">
+                            <span>1:10 R:R ($${fpos.target10R ? fpos.target10R.toLocaleString() : 'N/A'})</span>
+                            <span>${fpos.tier10 ? '✅ 50% Booked | SL 1:7' : '🚀 Book 50% & SL 1:7'}</span>
+                        </div>
+                        <div class="radar-tp-step ${fpos.tier20 ? 'done' : (curR >= 10.0 && !fpos.tier20 ? 'active' : '')}">
+                            <span>1:20 R:R ($${fpos.target20R ? fpos.target20R.toLocaleString() : 'N/A'})</span>
+                            <span>${fpos.tier20 ? '✅ 30% Closed' : '🏆 Book 30% / SL 1:15'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Square Off CTA Button -->
+                    <button class="coindcx-cta-submit sell" onclick="closeFuturesPositionByIdx(0)" style="padding:6px; font-size:11px; margin-top:2px; background:linear-gradient(135deg, #F6465D, #D02B41);">
+                        ✕ Square Off Position (तुरंत पोजीशन बंद करें)
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderFuturesBottomDock() {
+            const posCountEl = document.getElementById('dock_pos_count');
+            const histCountEl = document.getElementById('dock_hist_count');
+            const summaryEl = document.getElementById('dock_realized_pnl_summary');
+            const posContainer = document.getElementById('dock_positions_table_container');
+            const histContainer = document.getElementById('dock_history_table_container');
+
+            if (posCountEl) posCountEl.innerText = futuresPositions.length;
+            if (histCountEl) histCountEl.innerText = completedOrders.length;
+
+            // Realized PnL summary
+            let totalRealizedUSD = 0;
+            completedOrders.forEach(o => { totalRealizedUSD += (o.pnlUSD !== undefined ? o.pnlUSD : (o.pnl || 0)); });
+            const totalRealizedINR = totalRealizedUSD * inrRate;
+            if (summaryEl) {
+                const sign = totalRealizedINR >= 0 ? '+' : '';
+                summaryEl.innerText = `Realized: ${sign}₹${totalRealizedINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+                summaryEl.style.color = totalRealizedINR >= 0 ? 'var(--cdx-green)' : 'var(--cdx-red)';
+            }
+
+            // 1. Render Open Positions Table
+            if (posContainer) {
+                if (futuresPositions.length === 0) {
+                    posContainer.innerHTML = `
+                        <div class="dock-empty-notice">
+                            <span style="font-size:18px;">⚡</span>
+                            <b>No Active Open Futures Positions</b>
+                            <span style="color:var(--text-faint); font-size:10.5px;">
+                                The SMC Scanner is actively tracking 1D PDH/PDL sweeps & 1M fight triggers to auto-execute ₹5k trades.
+                            </span>
+                            <button class="btn-ui-action" onclick="simulateLiveSMCTest()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-size:10.5px; margin-top:4px;">
+                                🧪 Test & Simulate Setup (लाइव टेस्ट करें)
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    let html = `
+                        <table class="dock-table">
+                            <thead>
+                                <tr>
+                                    <th>कब ट्रेड लिया (Time)</th>
+                                    <th>Contract & Type</th>
+                                    <th>Side</th>
+                                    <th>Capital / Size</th>
+                                    <th>Entry Price</th>
+                                    <th>Mark Price</th>
+                                    <th>Trailing SL</th>
+                                    <th>Next Target</th>
+                                    <th>Booked</th>
+                                    <th>Unrealized P&L</th>
+                                    <th>ROE %</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    futuresPositions.forEach((pos, idx) => {
+                        const sym = pos.symbol || 'BTC';
+                        const S = spotPrices[sym];
+                        let pnlUSD = pos.side === 'LONG' ? (S - pos.entryPrice) * pos.lots : (pos.entryPrice - S) * pos.lots;
+                        let pnlINR = pnlUSD * inrRate;
+                        const isWin = pnlUSD >= 0;
+                        const sign = isWin ? '+' : '';
+                        const roe = ((pnlUSD / pos.margin) * 100).toFixed(1);
+                        const slTag = pos.tier10 ? '1:7 Lock' : (pos.tier5 ? '1:1 Lock' : (pos.tierBE ? 'Breakeven' : 'Initial'));
+                        const nextTargetStr = !pos.tierBE ? `1:2 ($${pos.target2R})` : (!pos.tier5 ? `1:5 ($${pos.target5R})` : (!pos.tier10 ? `1:10 ($${pos.target10R})` : `1:20 ($${pos.target20R})`));
+
+                        html += `
+                            <tr>
+                                <td style="color:var(--text-muted);"><span style="color:var(--text-main); font-weight:700;">🕒 ${pos.entryTime || pos.time}</span></td>
+                                <td>
+                                    <b>${pos.contract}</b>
+                                    ${pos.isSMCAlgo ? '<span class="smc-radar-pill warn" style="font-size:9px; margin-left:4px;">SMC ₹5k</span>' : ''}
+                                </td>
+                                <td style="color:${pos.side === 'LONG' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${pos.side === 'LONG' ? '🟢 LONG' : '🔴 SHORT'} ${pos.leverage}x
+                                </td>
+                                <td>
+                                    <b style="color:var(--cdx-orange);">₹${(pos.marginINR || (pos.margin * inrRate)).toLocaleString('en-IN')}</b>
+                                    <span style="color:var(--text-faint); font-size:10px;"> (${pos.lots} ${sym})</span>
+                                </td>
+                                <td>$${pos.entryPrice.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td style="font-weight:800;">$${S.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td style="color:var(--cdx-orange); font-weight:800;">
+                                    $${(pos.currentSL || pos.initialSL || pos.entryPrice).toLocaleString('en-US', {minimumFractionDigits:2})}
+                                    <span style="font-size:9.5px; opacity:0.8;">(${slTag})</span>
+                                </td>
+                                <td style="color:var(--cdx-blue); font-weight:700;">${nextTargetStr}</td>
+                                <td style="color:var(--cdx-green);">₹${(pos.bookedProfitINR || 0).toFixed(2)}</td>
+                                <td style="color:${isWin ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${sign}₹${pnlINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+                                    <span style="font-size:9.5px; opacity:0.85;">(${sign}$${pnlUSD.toFixed(2)})</span>
+                                </td>
+                                <td style="color:${isWin ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${sign}${roe}%
+                                </td>
+                                <td>
+                                    <button class="hud-close-btn" onclick="closeFuturesPositionByIdx(${idx})" style="padding:2px 8px; font-size:10px;">
+                                        ✕ Square Off
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    html += `</tbody></table>`;
+                    posContainer.innerHTML = html;
+                }
+            }
+
+            // 2. Render Order History Table ("कब ट्रेड लिया")
+            if (histContainer) {
+                if (completedOrders.length === 0) {
+                    histContainer.innerHTML = `
+                        <div class="dock-empty-notice">
+                            <span style="font-size:18px;">📜</span>
+                            <b>No Order History Yet (अभी कोई बंद ट्रेड नहीं है)</b>
+                            <span style="color:var(--text-faint); font-size:10.5px;">
+                                Completed trades, trailing stop hunts, and milestone bookings will show here with exact timestamps.
+                            </span>
+                            <button class="btn-ui-action" onclick="simulateLiveSMCTest()" style="border-color:var(--cdx-orange); color:var(--cdx-orange); font-size:10.5px; margin-top:4px;">
+                                🧪 Test Trade Execution & Milestones
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    let html = `
+                        <table class="dock-table">
+                            <thead>
+                                <tr>
+                                    <th>कब ट्रेड लिया (Entry)</th>
+                                    <th>कब बंद हुआ (Exit)</th>
+                                    <th>Contract & Type</th>
+                                    <th>Side</th>
+                                    <th>Margin Capital</th>
+                                    <th>Size</th>
+                                    <th>Entry Price</th>
+                                    <th>Exit Price</th>
+                                    <th>Realized P&L</th>
+                                    <th>ROE %</th>
+                                    <th>Milestone / Exit Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    completedOrders.slice().reverse().forEach((ord) => {
+                        const pnlUSD = ord.pnlUSD !== undefined ? ord.pnlUSD : (ord.pnl || 0);
+                        const pnlINR = ord.pnlINR !== undefined ? ord.pnlINR : (pnlUSD * inrRate);
+                        const isWin = pnlUSD >= 0;
+                        const sign = isWin ? '+' : '';
+                        const roe = ord.roe !== undefined ? ord.roe : ((pnlUSD / (ord.marginUSD || (ord.marginINR / inrRate) || 59.52)) * 100).toFixed(1);
+                        const marginINRStr = ord.marginINR ? `₹${Number(ord.marginINR).toLocaleString('en-IN')}` : '₹5,000';
+
+                        html += `
+                            <tr>
+                                <td style="color:var(--text-main); font-weight:700;">🕒 ${ord.entryTime || ord.time || 'N/A'}</td>
+                                <td style="color:var(--text-muted);">${ord.exitTime || ord.time || 'N/A'}</td>
+                                <td>
+                                    <b>${ord.contract || 'BTCUSDT Perp'}</b>
+                                </td>
+                                <td style="color:${ord.side === 'LONG' || ord.side === 'BUY' ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${ord.side}
+                                </td>
+                                <td style="color:var(--cdx-orange); font-weight:700;">${marginINRStr}</td>
+                                <td>${ord.lots || 0.014}</td>
+                                <td>$${Number(ord.entryPrice || 0).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td style="font-weight:800;">$${Number(ord.exitPrice || 0).toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                                <td style="color:${isWin ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${sign}₹${pnlINR.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})}
+                                    <span style="font-size:9.5px; opacity:0.85;">(${sign}$${pnlUSD.toFixed(2)})</span>
+                                </td>
+                                <td style="color:${isWin ? 'var(--cdx-green)' : 'var(--cdx-red)'}; font-weight:900;">
+                                    ${sign}${roe}%
+                                </td>
+                                <td>
+                                    <span class="smc-radar-pill ${isWin ? 'bull' : 'bear'}" style="font-size:10px;">
+                                        ${ord.reason || ord.note || 'Closed'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    html += `</tbody></table>`;
+                    histContainer.innerHTML = html;
+                }
+            }
+        }
+
+        function renderFuturesCanvasChart() {
+            const canvas = document.getElementById('futures_trade_canvas');
+            const box = document.getElementById('futures_smc_canvas_box');
+            if (!canvas || !box || box.style.display === 'none') return;
+
+            const rect = box.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            const W = rect.width;
+            const H = rect.height;
+            const sym = currentSymbol || 'BTC';
+            const S = spotPrices[sym] || 84150.0;
+            const pos = futuresPositions.find(p => p.symbol === sym) || (futuresPositions.length > 0 ? futuresPositions[0] : null);
+
+            // Generate/update realistic 1m candle series leading to live price S
+            if (futuresCanvasCandles.length === 0 || Math.abs(futuresCanvasCandles[futuresCanvasCandles.length - 1].close - S) > 500) {
+                futuresCanvasCandles = [];
+                let curP = S + 350;
+                const now = Date.now();
+                for (let i = 45; i >= 1; i--) {
+                    const delta = (Math.random() - 0.52) * 45;
+                    const o = curP;
+                    const c = o + delta;
+                    const h = Math.max(o, c) + Math.random() * 25;
+                    const l = Math.min(o, c) - Math.random() * 25;
+                    futuresCanvasCandles.push({
+                        time: now - (i * 60000),
+                        open: +o.toFixed(2),
+                        high: +h.toFixed(2),
+                        low: +l.toFixed(2),
+                        close: +c.toFixed(2)
+                    });
+                    curP = c;
+                }
+                const lastO = curP;
+                futuresCanvasCandles.push({
+                    time: now,
+                    open: +lastO.toFixed(2),
+                    high: Math.max(lastO, S) + 15,
+                    low: Math.min(lastO, S) - 15,
+                    close: +S.toFixed(2)
+                });
+            } else {
+                const last = futuresCanvasCandles[futuresCanvasCandles.length - 1];
+                last.close = +S.toFixed(2);
+                if (S > last.high) last.high = +S.toFixed(2);
+                if (S < last.low) last.low = +S.toFixed(2);
+            }
+
+            let minP = Infinity, maxP = -Infinity;
+            futuresCanvasCandles.forEach(c => {
+                if (c.low < minP) minP = c.low;
+                if (c.high > maxP) maxP = c.high;
+            });
+
+            const extraLevels = [S, 85250, 83400, 84450];
+            if (pos) {
+                extraLevels.push(pos.entryPrice);
+                if (pos.currentSL) extraLevels.push(pos.currentSL);
+                if (pos.target2R) extraLevels.push(pos.target2R);
+                if (pos.target5R) extraLevels.push(pos.target5R);
+                if (pos.target10R) extraLevels.push(pos.target10R);
+                if (pos.target20R) extraLevels.push(pos.target20R);
+            }
+            extraLevels.forEach(p => {
+                if (p < minP) minP = p;
+                if (p > maxP) maxP = p;
+            });
+
+            const pad = (maxP - minP) * 0.08;
+            minP -= pad;
+            maxP += pad;
+
+            const rightMargin = 85;
+            const bottomMargin = 24;
+            const topMargin = 45;
+            const chartW = W - rightMargin;
+            const chartH = H - bottomMargin - topMargin;
+
+            const priceToY = (p) => topMargin + chartH - ((p - minP) / (maxP - minP)) * chartH;
+
+            // Background
+            ctx.fillStyle = currentTheme === 'dark' ? '#090D14' : '#FFFFFF';
+            ctx.fillRect(0, 0, W, H);
+
+            // Grid lines
+            ctx.strokeStyle = currentTheme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+
+            const gridSteps = 6;
+            for (let i = 0; i <= gridSteps; i++) {
+                const p = minP + (i / gridSteps) * (maxP - minP);
+                const y = priceToY(p);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(chartW, y);
+                ctx.stroke();
+
+                ctx.fillStyle = currentTheme === 'dark' ? '#64748B' : '#94A3B8';
+                ctx.font = '10px "JetBrains Mono", monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(`$${p.toFixed(0)}`, chartW + 6, y + 3);
+            }
+
+            // Draw Liquidity Zone 1H Bearish Order Block ($84,450)
+            const obTop = priceToY(84510);
+            const obBottom = priceToY(84410);
+            ctx.fillStyle = 'rgba(246, 70, 93, 0.12)';
+            ctx.fillRect(0, obTop, chartW, Math.max(10, obBottom - obTop));
+            ctx.strokeStyle = 'rgba(246, 70, 93, 0.4)';
+            ctx.setLineDash([2, 2]);
+            ctx.strokeRect(0, obTop, chartW, Math.max(10, obBottom - obTop));
+            ctx.fillStyle = '#F6465D';
+            ctx.font = 'bold 9.5px sans-serif';
+            ctx.fillText('📦 1H Bearish Order Block (-OB $84,450)', 10, obTop + 14);
+
+            // Draw 1M Fight Zone ($84,380 - $84,490)
+            const fightTop = priceToY(84490);
+            const fightBottom = priceToY(84380);
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
+            ctx.fillRect(0, fightTop, chartW, Math.max(8, fightBottom - fightTop));
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
+            ctx.setLineDash([4, 4]);
+            ctx.strokeRect(0, fightTop, chartW, Math.max(8, fightBottom - fightTop));
+            ctx.fillStyle = '#F59E0B';
+            ctx.fillText('⚔️ 1M Fight Zone ($84,380 - $84,490)', 10, fightBottom - 5);
+
+            // 1D PDH Line ($85,250)
+            const pdhY = priceToY(85250);
+            if (pdhY >= topMargin && pdhY <= topMargin + chartH) {
+                ctx.strokeStyle = '#F6465D';
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(0, pdhY);
+                ctx.lineTo(chartW, pdhY);
+                ctx.stroke();
+                ctx.fillStyle = '#F6465D';
+                ctx.fillText('🎯 1D PDH $85,250 (BSL Swept)', chartW - 190, pdhY - 4);
+            }
+
+            // Draw Candlesticks
+            ctx.setLineDash([]);
+            const candleCount = futuresCanvasCandles.length;
+            const candleWidth = chartW / candleCount;
+            const barW = Math.max(3, candleWidth * 0.72);
+
+            futuresCanvasCandles.forEach((c, idx) => {
+                const x = idx * candleWidth + (candleWidth / 2);
+                const isBull = c.close >= c.open;
+                const candleColor = isBull ? '#00C288' : '#F6465D';
+
+                const oY = priceToY(c.open);
+                const cY = priceToY(c.close);
+                const hY = priceToY(c.high);
+                const lY = priceToY(c.low);
+
+                // Wick
+                ctx.strokeStyle = candleColor;
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(x, hY);
+                ctx.lineTo(x, lY);
+                ctx.stroke();
+
+                // Body
+                ctx.fillStyle = candleColor;
+                const topY = Math.min(oY, cY);
+                const bodyH = Math.max(2, Math.abs(cY - oY));
+                ctx.fillRect(x - barW / 2, topY, barW, bodyH);
+            });
+
+            // Draw Live Trade Overlay Lines on Canvas
+            if (pos) {
+                const entryY = priceToY(pos.entryPrice);
+                const slY = priceToY(pos.currentSL || pos.initialSL);
+                const slTag = pos.tier10 ? '1:7 Lock' : (pos.tier5 ? '1:1 Lock' : (pos.tierBE ? 'Breakeven' : 'Initial SL'));
+
+                // 1. Entry Line (Cyan Dotted)
+                ctx.strokeStyle = '#38BDF8';
+                ctx.lineWidth = 1.8;
+                ctx.setLineDash([4, 3]);
+                ctx.beginPath();
+                ctx.moveTo(0, entryY);
+                ctx.lineTo(chartW, entryY);
+                ctx.stroke();
+
+                // Entry Badge
+                ctx.fillStyle = '#38BDF8';
+                ctx.fillRect(chartW + 2, entryY - 9, 80, 18);
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 9.5px "JetBrains Mono"';
+                ctx.textAlign = 'center';
+                ctx.fillText(`ENTRY $${pos.entryPrice.toFixed(0)}`, chartW + 42, entryY + 4);
+
+                // 2. Trailing Stop Loss Line (Orange/Red Dashed)
+                ctx.strokeStyle = '#F59E0B';
+                ctx.lineWidth = 2.0;
+                ctx.setLineDash([5, 4]);
+                ctx.beginPath();
+                ctx.moveTo(0, slY);
+                ctx.lineTo(chartW, slY);
+                ctx.stroke();
+
+                // SL Badge
+                ctx.fillStyle = '#F59E0B';
+                ctx.fillRect(chartW + 2, slY - 9, 80, 18);
+                ctx.fillStyle = '#000000';
+                ctx.fillText(`🛡️ SL $${(pos.currentSL || pos.initialSL).toFixed(0)}`, chartW + 42, slY + 4);
+
+                // 3. Take Profit Lines (TP 1:2, 1:5, 1:10, 1:20)
+                const tpTargets = [
+                    { label: 'TP 1:2', p: pos.target2R, hit: pos.tierBE, col: '#00C288' },
+                    { label: 'TP 1:5', p: pos.target5R, hit: pos.tier5, col: '#00C288' },
+                    { label: 'TP 1:10', p: pos.target10R, hit: pos.tier10, col: '#00C288' },
+                    { label: 'TP 1:20', p: pos.target20R, hit: pos.tier20, col: '#8B5CF6' }
+                ];
+
+                tpTargets.forEach(tgt => {
+                    if (!tgt.p) return;
+                    const tpY = priceToY(tgt.p);
+                    if (tpY >= topMargin && tpY <= topMargin + chartH) {
+                        ctx.strokeStyle = tgt.hit ? 'rgba(0, 194, 136, 0.4)' : tgt.col;
+                        ctx.lineWidth = tgt.hit ? 1 : 1.5;
+                        ctx.setLineDash([3, 3]);
+                        ctx.beginPath();
+                        ctx.moveTo(0, tpY);
+                        ctx.lineTo(chartW, tpY);
+                        ctx.stroke();
+
+                        ctx.fillStyle = tgt.hit ? 'rgba(0, 194, 136, 0.5)' : tgt.col;
+                        ctx.fillRect(chartW + 2, tpY - 8, 80, 16);
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.font = 'bold 9px "JetBrains Mono"';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`${tgt.label} $${tgt.p.toFixed(0)}`, chartW + 42, tpY + 4);
+                    }
+                });
+
+                // Top Floating Canvas PnL Badge
+                let pnlUSD = pos.side === 'LONG' ? (S - pos.entryPrice) * pos.lots : (pos.entryPrice - S) * pos.lots;
+                let pnlINR = pnlUSD * inrRate;
+                const isWin = pnlUSD >= 0;
+                const roe = ((pnlUSD / pos.margin) * 100).toFixed(1);
+                const sign = isWin ? '+' : '';
+
+                ctx.fillStyle = isWin ? 'rgba(0, 194, 136, 0.92)' : 'rgba(246, 70, 93, 0.92)';
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(14, 10, 290, 28, 6) : ctx.fillRect(14, 10, 290, 28);
+                ctx.fill();
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 11.5px "JetBrains Mono", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`⚡ LIVE P&L: ${sign}₹${pnlINR.toFixed(2)} (${sign}${roe}%) | ${pos.side} 20x`, 22, 28);
+            }
+
+            // Current Live Price Line & Pulsing Dot
+            const liveY = priceToY(S);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(0, liveY);
+            ctx.lineTo(chartW, liveY);
+            ctx.stroke();
+
+            ctx.fillStyle = '#00C288';
+            ctx.beginPath();
+            ctx.arc(chartW - 6, liveY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#00C288';
+            ctx.fillRect(chartW + 2, liveY - 10, 80, 20);
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 10px "JetBrains Mono"';
+            ctx.textAlign = 'center';
+            ctx.fillText(`$${S.toFixed(1)}`, chartW + 42, liveY + 4);
         }
 
         function renderOptionsTradePnlHUD() {
@@ -3527,7 +4632,13 @@
                 document.getElementById('fut_price_input').value = spotPrices[currentSymbol];
                 onFuturesFormChange();
                 renderFuturesChartPnlHUD();
-                loadTradingViewChart();
+                renderFuturesSidePositionRadar();
+                renderFuturesBottomDock();
+                if (currentFuturesChartMode === 'TV') {
+                    loadTradingViewChart();
+                } else {
+                    renderFuturesCanvasChart();
+                }
             } else if (tab === 'GAME') {
                 if (scrGame) scrGame.style.display = 'flex';
                 if (navGame) navGame.classList.add('active');
@@ -4450,18 +5561,28 @@
                 ? price * (1 - (1 / lev) + 0.005) 
                 : price * (1 + (1 / lev) - 0.005);
 
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+            const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + timeStr;
+
             const newFutPos = {
                 id: 'fut_' + Date.now(),
                 type: 'FUTURES',
+                isSMCAlgo: false,
                 symbol: sym,
                 contract: `${sym}USDT Perp (${lev}x)`,
                 side: activeFuturesTrade.side,
                 entryPrice: price,
+                initialLots: lots,
                 lots: lots,
                 leverage: lev,
                 margin: margin,
+                marginINR: margin * inrRate,
+                initialSL: activeFuturesTrade.side === 'LONG' ? +(price * 0.98).toFixed(2) : +(price * 1.02).toFixed(2),
+                currentSL: activeFuturesTrade.side === 'LONG' ? +(price * 0.98).toFixed(2) : +(price * 1.02).toFixed(2),
                 liqPrice: Math.max(0, liqPrice),
-                time: new Date().toLocaleTimeString()
+                entryTime: dateStr,
+                time: timeStr
             };
 
             futuresPositions.push(newFutPos);
@@ -4556,20 +5677,31 @@
 
         function closeFuturesPositionByIdx(idx) {
             const fpos = futuresPositions[idx];
+            if (!fpos) return;
             const sym = fpos.symbol || 'BTC';
             const S = spotPrices[sym];
-            let pnl = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+            let pnlUSD = fpos.side === 'LONG' ? (S - fpos.entryPrice) * fpos.lots : (fpos.entryPrice - S) * fpos.lots;
+            let pnlINR = pnlUSD * inrRate;
+            const roe = ((pnlUSD / fpos.margin) * 100).toFixed(1);
 
-            userBalance += (fpos.margin + pnl);
+            userBalance += (fpos.margin + pnlUSD);
             localStorage.setItem('delta_paper_balance', userBalance.toString());
 
             completedOrders.push({
+                entryTime: fpos.entryTime || fpos.time,
+                exitTime: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' + new Date().toLocaleTimeString(),
                 contract: fpos.contract,
                 side: fpos.side,
                 lots: fpos.lots,
+                marginINR: fpos.marginINR || (fpos.margin * inrRate),
+                marginUSD: fpos.margin,
                 entryPrice: fpos.entryPrice,
                 exitPrice: S,
-                pnl: pnl,
+                pnl: pnlUSD,
+                pnlUSD: pnlUSD,
+                pnlINR: pnlINR,
+                roe: roe,
+                reason: fpos.isSMCAlgo ? 'Manual Square Off' : 'Manual Close',
                 time: new Date().toLocaleTimeString()
             });
             localStorage.setItem('delta_opt_history', JSON.stringify(completedOrders));
@@ -4577,10 +5709,16 @@
             futuresPositions.splice(idx, 1);
             localStorage.setItem('delta_fut_positions', JSON.stringify(futuresPositions));
 
+            if (smcAlgoState.activeTrade && smcAlgoState.activeTrade.id === fpos.id) {
+                smcAlgoState.activeTrade = null;
+                smcAlgoState.statusText = `Position Squared Off manually at $${S}`;
+                smcAlgoState.step = 'SCANNING_HTF';
+            }
+
             updateWalletDisplay();
             renderPositionsView();
             renderFuturesChartPnlHUD();
-            showCoinDCXToast(`✅ Squared Off ${fpos.contract} | PnL: ${formatCurrency(pnl)}`);
+            showCoinDCXToast(`✅ Squared Off ${fpos.contract} | PnL: ${formatCurrency(pnlUSD)} (₹${pnlINR.toFixed(2)})`);
         }
 
         function closeOptionPositionByIdx(idx) {
@@ -5838,6 +6976,8 @@
             selectOptionContract(84000, 'C', true);
             renderPositionsView();
             renderFuturesChartPnlHUD();
+            renderFuturesSidePositionRadar();
+            renderFuturesBottomDock();
             renderOptionsTradePnlHUD();
             renderSMCScalperCockpit();
 
